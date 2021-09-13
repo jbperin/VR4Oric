@@ -1,0 +1,10 @@
+@ECHO OFF
+
+::
+:: Set the build paremeters
+::
+SET OSDKADDR=
+SET OSDKFILE=
+SET OSDKNAME=Main
+SET OSDKDISK=%OSDKNAME%.dsk
+
