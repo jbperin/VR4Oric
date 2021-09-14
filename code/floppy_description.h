@@ -7,10 +7,10 @@
 // Information for the Assembler
 //
 #ifdef LOADER
-FileStartSector .byt 135,136,11,145,142
-FileStartTrack .byt 0,1,1,1,3
-FileSizeLow .byt <8608,<760,<1536,<32768,<32768
-FileSizeHigh .byt >8608,>760,>1536,>32768,>32768
+FileStartSector .byt 135,138,13,130,144
+FileStartTrack .byt 0,1,1,2,3
+FileSizeLow .byt <11396,<760,<1536,<32768,<32768
+FileSizeHigh .byt >11396,>760,>1536,>32768,>32768
 #undef LOADER
 #endif // LOADER
 #undef ASSEMBLER
@@ -35,17 +35,17 @@ FileSizeHigh .byt >8608,>760,>1536,>32768,>32768
 // List of files written to the floppy
 //
 // Entry #0 '..\build\files\Main.o'
-// - Starts on  track 0 sector 7 and is 18 sectors long (4382 compressed bytes: 50% of 8608 bytes).
+// - Starts on  track 0 sector 7 and is 20 sectors long (4929 compressed bytes: 43% of 11396 bytes).
 // Entry #1 '..\build\files\Font6x8.hir'
-// - Starts on  track 1 sector 8 and is 3 sectors long (556 compressed bytes: 73% of 760 bytes).
+// - Starts on  track 1 sector 10 and is 3 sectors long (556 compressed bytes: 73% of 760 bytes).
 // Entry #2 'Reserved sectors'
-// - Starts on  track 1 sector 11 and is 6 sectors long (1536 bytes).
+// - Starts on  track 1 sector 13 and is 6 sectors long (1536 bytes).
 // Entry #3 '..\build\files\pano_02.vrb'
-// - Starts on  track 1 sector 17 and is 31 sectors long (7815 compressed bytes: 23% of 32768 bytes).
+// - Starts on  track 2 sector 2 and is 31 sectors long (7815 compressed bytes: 23% of 32768 bytes).
 // Entry #4 '..\build\files\pano_01.vrb'
-// - Starts on  track 3 sector 14 and is 19 sectors long (4807 compressed bytes: 14% of 32768 bytes).
+// - Starts on  track 3 sector 16 and is 19 sectors long (4807 compressed bytes: 14% of 32768 bytes).
 //
-// 83 sectors used, out of 1428. (5% of the total disk size used)
+// 85 sectors used, out of 1428. (5% of the total disk size used)
 //
 #define LOADER_SECTOR_BUFFER $200
 #define LOADER_BASE_ZERO_PAGE $F2
@@ -53,8 +53,8 @@ FileSizeHigh .byt >8608,>760,>1536,>32768,>32768
 #define LOADER_GAME_PROGRAM_ADDRESS $C000
 #define LOADER_GAME_PROGRAM_TRACK 0
 #define LOADER_GAME_PROGRAM_SECTOR 135
-#define LOADER_GAME_PROGRAM_SIZE 8608
-#define LOADER_GAME_PROGRAM_SIZE_COMPRESSED 4382
+#define LOADER_GAME_PROGRAM_SIZE 11396
+#define LOADER_GAME_PROGRAM_SIZE_COMPRESSED 4929
 #define LOADER_FONT_6x8 1
 #define LOADER_PANO_02 3
 #define LOADER_PANO_01 4
