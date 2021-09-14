@@ -1,5 +1,5 @@
 
-#include <stdio.h>
+// #include <stdio.h>
 
 unsigned char   dda2NbStep;
 unsigned char   dda2StartValue;
@@ -62,19 +62,3 @@ void dda2Init(){
 
 }
 
-// void main () {
-//     printf ("coucou\n");
-
-//     dda2StartValue       = 30;
-//     dda2EndValue         = 7;
-
-//     dda2NbStep           = 5;
-
-//     dda2Init();
-//     printf ("%d\n", dda2CurrentValue);
-//     while (dda2CurrentValue != dda2EndValue) {
-//         (*dda2StepFunction)(); 
-//         printf ("%d\n", dda2CurrentValue);
-//     }
-
-// }

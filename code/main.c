@@ -8,13 +8,16 @@
 
 //#include "image.c"
 extern unsigned char texture_PANO[];
-#include "tabEquiRect.c"
+// #include "tabEquiRect.c"
 // extern unsigned char tabLong2Col[];
 // extern unsigned char tabLat2Lin[];
 // extern signed char tabAtanCol[];
 // extern signed char tabAtanLin[];
 
 #include "keyboard_c.c"
+#include "aei1.c"
+#include "aei2.c"
+#include "tabBorders.c"
 
 #define CHANGE_INK_TO_BLACK             0
 #define CHANGE_INK_TO_RED	            1		
@@ -123,22 +126,80 @@ void lsys(){
 
 void main()
 {
+
+    unsigned char *lowX;
+    unsigned char *middleX;
+    unsigned char *highX;
+    unsigned char *lowY;
+    unsigned char *middleY;
+    unsigned char *highY;
+
     LoadFileAt(LOADER_PANO_01, texture_PANO);
 	SwitchToHires();
 	running = 1;
     kernelInit();
+
+    lowX            = tabLowX_p0_p0;
+    middleX         = tabMiddleX_p0_p0;
+    highX           = tabHighX_p0_p0;
+    lowY            = tabLowY_p0_p0;
+    middleY         = tabMiddleY_p0_p0;
+    highY           = tabHighY_p0_p0;
+
     while (running) {
 
         lsys();
         
         if (refreshNeeded) {
             clearViewport();
-            for (col=0; col< 78; col++) {
-                for (lin=0; lin< 64; lin++) {
+            for (col=0; col< SCREEN_WIDTH; col++) {
+                
+                dda1StartValue       = lowX[col];
+                dda1EndValue         = middleX[col];
+                dda1NbStep           = SCREEN_HEIGHT/2;
+                dda1Init();
 
-                    computeEquiRect();
+                dda2StartValue       = lowY[col];
+                dda2EndValue         = middleY[col];
+                dda2NbStep           = SCREEN_HEIGHT/2;
+                dda2Init();
+
+                for (lin=0; lin< SCREEN_HEIGHT/2; lin++) {
+
+                    X   = dda1CurrentValue;
+                    Y   = dda2CurrentValue;
+
+                    // computeEquiRect();
 
                     colorSquare(lin, col, texture_PANO[X*IMAGE_HEIGHT+Y]);
+
+                    (*dda1StepFunction)();
+                    (*dda2StepFunction)();
+
+                }
+
+                dda1StartValue       = middleX[col];
+                dda1EndValue         = highX[col];
+                dda1NbStep           = SCREEN_HEIGHT/2;
+                dda1Init();
+
+                dda2StartValue       = middleY[col];
+                dda2EndValue         = highY[col];
+                dda2NbStep           = SCREEN_HEIGHT/2;
+                dda2Init();
+
+                for (lin=SCREEN_HEIGHT/2; lin< SCREEN_HEIGHT; lin++) {
+
+                    X   = dda1CurrentValue;
+                    Y   = dda2CurrentValue;
+
+                    // computeEquiRect();
+
+                    colorSquare(lin, col, texture_PANO[X*IMAGE_HEIGHT+Y]);
+
+                    (*dda1StepFunction)();
+                    (*dda2StepFunction)();
+
                 }
             }
 

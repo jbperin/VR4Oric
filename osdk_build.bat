@@ -77,7 +77,7 @@ ECHO Assembling the first part
 SET OSDKLINK=
 SET OSDKADDR=$C000
 SET OSDKNAME=Main
-SET OSDKFILE=main tabBorders aei1 aei2 viewport_s keybuf_s data_s keyboard kernel loader_api 
+SET OSDKFILE=main viewport_s keybuf_s data_s keyboard kernel loader_api 
 SET OSDKDISK=
 CALL %OSDK%\bin\make.bat %OSDKFILE%
 copy build\final.out ..\build\files\Main.o
