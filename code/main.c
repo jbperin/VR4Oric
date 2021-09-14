@@ -17,6 +17,8 @@ extern unsigned char texture_PANO[];
 #include "keyboard_c.c"
 #include "aei1.c"
 #include "aei2.c"
+#include "aei3.c"
+#include "aei4.c"
 #include "tabBorders.c"
 
 #define CHANGE_INK_TO_BLACK             0
@@ -34,16 +36,16 @@ unsigned char X, Y;
 unsigned char running ;
 unsigned char refreshNeeded = 1;
 
-void computeEquiRect(){
-            latitude = tabAtanLin[lin] + rotX;
-            longitude = tabAtanCol[col] + rotZ;
-            if ((abs(latitude) > 64)) {
-                longitude = (longitude + 64);
-                latitude = -latitude + 128;
-            }
-            X = tabLong2Col[(unsigned char)longitude];
-            Y = tabLat2Lin[(unsigned char)latitude];
-}
+// void computeEquiRect(){
+//             latitude = tabAtanLin[lin] + rotX;
+//             longitude = tabAtanCol[col] + rotZ;
+//             if ((abs(latitude) > 64)) {
+//                 longitude = (longitude + 64);
+//                 latitude = -latitude + 128;
+//             }
+//             X = tabLong2Col[(unsigned char)longitude];
+//             Y = tabLat2Lin[(unsigned char)latitude];
+// }
 
 #define ANGLE_INCREMENT 16
 
@@ -134,6 +136,10 @@ void main()
     unsigned char *middleY;
     unsigned char *highY;
 
+    unsigned char *adr;
+    unsigned char theColorLeft;
+    unsigned char theColorRight;
+
     LoadFileAt(LOADER_PANO_01, texture_PANO);
 	SwitchToHires();
 	running = 1;
@@ -152,7 +158,7 @@ void main()
         
         if (refreshNeeded) {
             clearViewport();
-            for (col=0; col< SCREEN_WIDTH; col++) {
+            for (col=2; col< SCREEN_WIDTH; col+=2) {
                 
                 dda1StartValue       = lowX[col];
                 dda1EndValue         = middleX[col];
@@ -164,17 +170,55 @@ void main()
                 dda2NbStep           = SCREEN_HEIGHT/2;
                 dda2Init();
 
+                dda3StartValue       = lowX[col+1];
+                dda3EndValue         = middleX[col+1];
+                dda3NbStep           = SCREEN_HEIGHT/2;
+                dda3Init();
+
+                dda4StartValue       = lowY[col+1];
+                dda4EndValue         = middleY[col+1];
+                dda4NbStep           = SCREEN_HEIGHT/2;
+                dda4Init();
+
                 for (lin=0; lin< SCREEN_HEIGHT/2; lin++) {
+
+                    // computeEquiRect();
+                    // colorSquare(lin, col, texture_PANO[X*IMAGE_HEIGHT+Y]);
 
                     X   = dda1CurrentValue;
                     Y   = dda2CurrentValue;
+                    theColorLeft = texture_PANO[X*IMAGE_HEIGHT+Y];
 
-                    // computeEquiRect();
+                    X   = dda3CurrentValue;
+                    Y   = dda4CurrentValue;
+                    theColorRight = texture_PANO[X*IMAGE_HEIGHT+Y];
 
-                    colorSquare(lin, col, texture_PANO[X*IMAGE_HEIGHT+Y]);
+                    adr = (unsigned char *)(HIRES_SCREEN_ADDRESS + multi40[(lin<<1) + lin] + (col>>1));
+
+                    *adr = tabLeftRed[theColorLeft]  | tabRightRed[theColorRight];
+                    adr += NEXT_SCANLINE_INCREMENT;
+                    *adr = tabLeftGreen[theColorLeft]  | tabRightGreen[theColorRight];
+                    adr += NEXT_SCANLINE_INCREMENT;
+                    *adr = tabLeftBlue[theColorLeft]  | tabRightBlue[theColorRight];
+
+                    // if ((col&0x01) != 0){
+                    //     *adr |= tabRightRed[theColorLeft];
+                    //     adr += NEXT_SCANLINE_INCREMENT;
+                    //     *adr |= tabRightGreen[theColorLeft];
+                    //     adr += NEXT_SCANLINE_INCREMENT;
+                    //     *adr |= tabRightBlue[theColorLeft];
+                    // } else {
+                    //     *adr |= tabLeftRed[theColorLeft];
+                    //     adr += NEXT_SCANLINE_INCREMENT;
+                    //     *adr |= tabLeftGreen[theColorLeft];
+                    //     adr += NEXT_SCANLINE_INCREMENT;
+                    //     *adr |= tabLeftBlue[theColorLeft];
+                    // }
 
                     (*dda1StepFunction)();
                     (*dda2StepFunction)();
+                    (*dda3StepFunction)();
+                    (*dda4StepFunction)();
 
                 }
 
@@ -188,17 +232,54 @@ void main()
                 dda2NbStep           = SCREEN_HEIGHT/2;
                 dda2Init();
 
+                dda3StartValue       = middleX[col+1];
+                dda3EndValue         = highX[col+1];
+                dda3NbStep           = SCREEN_HEIGHT/2;
+                dda3Init();
+
+                dda4StartValue       = middleY[col+1];
+                dda4EndValue         = highY[col+1];
+                dda4NbStep           = SCREEN_HEIGHT/2;
+                dda4Init();
+
+
                 for (lin=SCREEN_HEIGHT/2; lin< SCREEN_HEIGHT; lin++) {
+
+                    // computeEquiRect();
+                    // colorSquare(lin, col, texture_PANO[X*IMAGE_HEIGHT+Y]);
 
                     X   = dda1CurrentValue;
                     Y   = dda2CurrentValue;
+                    theColorLeft = texture_PANO[X*IMAGE_HEIGHT+Y];
 
-                    // computeEquiRect();
+                    X   = dda3CurrentValue;
+                    Y   = dda4CurrentValue;
+                    theColorRight = texture_PANO[X*IMAGE_HEIGHT+Y];
 
-                    colorSquare(lin, col, texture_PANO[X*IMAGE_HEIGHT+Y]);
+                    adr = (unsigned char *)(HIRES_SCREEN_ADDRESS + multi40[(lin<<1) + lin] + (col>>1));
+                    *adr = tabLeftRed[theColorLeft]    | tabRightRed[theColorRight];
+                    adr += NEXT_SCANLINE_INCREMENT;
+                    *adr = tabLeftGreen[theColorLeft]  | tabRightGreen[theColorRight];
+                    adr += NEXT_SCANLINE_INCREMENT;
+                    *adr = tabLeftBlue[theColorLeft]   | tabRightBlue[theColorRight];
+                    // if ((col&0x01) != 0){
+                    //     *adr |= tabRightRed[theColorLeft];
+                    //     adr += NEXT_SCANLINE_INCREMENT;
+                    //     *adr |= tabRightGreen[theColorLeft];
+                    //     adr += NEXT_SCANLINE_INCREMENT;
+                    //     *adr |= tabRightBlue[theColorLeft];
+                    // } else {
+                    //     *adr |= tabLeftRed[theColorLeft];
+                    //     adr += NEXT_SCANLINE_INCREMENT;
+                    //     *adr |= tabLeftGreen[theColorLeft];
+                    //     adr += NEXT_SCANLINE_INCREMENT;
+                    //     *adr |= tabLeftBlue[theColorLeft];
+                    // }
 
                     (*dda1StepFunction)();
                     (*dda2StepFunction)();
+                    (*dda3StepFunction)();
+                    (*dda4StepFunction)();
 
                 }
             }
