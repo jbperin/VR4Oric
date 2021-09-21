@@ -19,19 +19,26 @@ extern unsigned char texture_PANO[];
 #include "aei2.c"
 #include "aei3.c"
 #include "aei4.c"
-#include "tabBorders.c"
+
+#define abs(x)          (((x)<0)?-(x):(x))
+#define ANGLE_INCREMENT 16
 
 #define CHANGE_INK_TO_BLACK             0
 #define CHANGE_INK_TO_RED	            1		
 #define CHANGE_INK_TO_GREEN	            2		
 #define CHANGE_INK_TO_BLUE	            4		
 #define CHANGE_PAPER_TO_WHITE	        23
-#define abs(x)          (((x)<0)?-(x):(x))
+
+
+
+signed char rotX, rotZ;
+#include "tabBorders.c"
+
 
 char IsHires=1;
 unsigned char col, lin;
 signed char latitude, longitude;
-signed char rotX, rotZ;
+
 unsigned char X, Y;
 unsigned char running ;
 unsigned char refreshNeeded = 1;
@@ -47,7 +54,7 @@ unsigned char refreshNeeded = 1;
 //             Y = tabLat2Lin[(unsigned char)latitude];
 // }
 
-#define ANGLE_INCREMENT 16
+
 
 void prepareRGB(){
     int ii;
@@ -85,21 +92,34 @@ void SwitchToHires()
     // *((char*)0xbfb9)=0x00;	
 }
 
+unsigned char rollCoord = 0;
 
 void keyPressed(unsigned char c){
 	// printf ("kp: %x, ", c);
-    if (c == keyForward) {
+    if (c == keyBackward ) {
+        if (rotX < 3*ANGLE_INCREMENT){
             rotX += ANGLE_INCREMENT;
             refreshNeeded   = 1;
-    } else if (c == keyBackward) {
+        }
+    } else if (c == keyForward) {
+        if (rotX > -3*ANGLE_INCREMENT){
             rotX -= ANGLE_INCREMENT;
             refreshNeeded   = 1;
+        }
     } else if (c == keyTurnLeft) {
-            rotZ -= ANGLE_INCREMENT;
-            refreshNeeded   = 1;
-    } else if (c == keyTurnRight) {
+        if (rotZ < 7*ANGLE_INCREMENT){
             rotZ += ANGLE_INCREMENT;
-            refreshNeeded   = 1;
+        }else{
+            rotZ = -8*ANGLE_INCREMENT;
+        }
+        refreshNeeded   = 1;
+    } else if (c == keyTurnRight) {
+        if (rotZ > -8*ANGLE_INCREMENT){
+            rotZ -= ANGLE_INCREMENT;
+        } else {
+            rotZ = 7*ANGLE_INCREMENT;
+        }
+        refreshNeeded   = 1;
     } else if (c == keyStraffeRight) {
             LoadFileAt(LOADER_PANO_02,texture_PANO);
             refreshNeeded           = 1;
@@ -108,6 +128,7 @@ void keyPressed(unsigned char c){
     } else if (c == keyQuit) {
             running = 0;
     }
+    rollCoord       = (abs(rotZ)>4*ANGLE_INCREMENT);
 
 }
 
@@ -126,17 +147,14 @@ void lsys(){
 	}
 }
 
+
 void main()
 {
 
-    unsigned char *lowX;
-    unsigned char *middleX;
-    unsigned char *highX;
-    unsigned char *lowY;
-    unsigned char *middleY;
-    unsigned char *highY;
-
     unsigned char *adr;
+    unsigned char *baseAdrHigh;
+    unsigned char *theBaseAdr;
+    unsigned char *wrtAdr;
     unsigned char theColorLeft;
     unsigned char theColorRight;
 
@@ -145,38 +163,37 @@ void main()
 	running = 1;
     kernelInit();
 
-    lowX            = tabLowX_p0_p0;
-    middleX         = tabMiddleX_p0_p0;
-    highX           = tabHighX_p0_p0;
-    lowY            = tabLowY_p0_p0;
-    middleY         = tabMiddleY_p0_p0;
-    highY           = tabHighY_p0_p0;
+    baseAdrHigh     = (unsigned char *)(HIRES_SCREEN_ADDRESS + multi40[(VIEWPORT_START_LINE<<1) + VIEWPORT_START_LINE] + (VIEWPORT_START_COLUMN>>1));
 
+    // baseAdrLow      = (unsigned char *)(HIRES_SCREEN_ADDRESS + multi40[((VIEWPORT_START_LINE+SCREEN_HEIGHT/2)<<1) + (VIEWPORT_START_LINE+SCREEN_HEIGHT/2)] + (VIEWPORT_START_COLUMN>>1));
     while (running) {
 
         lsys();
         
         if (refreshNeeded) {
-            clearViewport();
-            for (col=2; col< SCREEN_WIDTH; col+=2) {
-                
-                dda1StartValue       = lowX[col];
-                dda1EndValue         = middleX[col];
+            // clearViewport();
+            rollCoord       = (abs(rotZ)>4*ANGLE_INCREMENT);
+            selectTables();
+            theBaseAdr      = baseAdrHigh;
+            for (col=VIEWPORT_START_COLUMN; col< SCREEN_WIDTH; col+=2) {
+                wrtAdr              = theBaseAdr;
+                dda1StartValue       = tabLowX[col];
+                dda1EndValue         = tabMiddleX[col];
                 dda1NbStep           = SCREEN_HEIGHT/2;
                 dda1Init();
 
-                dda2StartValue       = lowY[col];
-                dda2EndValue         = middleY[col];
+                dda2StartValue       = tabLowY[col];
+                dda2EndValue         = tabMiddleY[col];
                 dda2NbStep           = SCREEN_HEIGHT/2;
                 dda2Init();
 
-                dda3StartValue       = lowX[col+1];
-                dda3EndValue         = middleX[col+1];
+                dda3StartValue       = tabLowX[col+1];
+                dda3EndValue         = tabMiddleX[col+1];
                 dda3NbStep           = SCREEN_HEIGHT/2;
                 dda3Init();
 
-                dda4StartValue       = lowY[col+1];
-                dda4EndValue         = middleY[col+1];
+                dda4StartValue       = tabLowY[col+1];
+                dda4EndValue         = tabMiddleY[col+1];
                 dda4NbStep           = SCREEN_HEIGHT/2;
                 dda4Init();
 
@@ -186,34 +203,23 @@ void main()
                     // colorSquare(lin, col, texture_PANO[X*IMAGE_HEIGHT+Y]);
 
                     X   = dda1CurrentValue;
+                    if (rollCoord) X+=128;
                     Y   = dda2CurrentValue;
                     theColorLeft = texture_PANO[X*IMAGE_HEIGHT+Y];
 
                     X   = dda3CurrentValue;
+                    if (rollCoord) X+=128;
                     Y   = dda4CurrentValue;
                     theColorRight = texture_PANO[X*IMAGE_HEIGHT+Y];
 
-                    adr = (unsigned char *)(HIRES_SCREEN_ADDRESS + multi40[(lin<<1) + lin] + (col>>1));
+                    // adr = (unsigned char *)(HIRES_SCREEN_ADDRESS + multi40[(lin<<1) + lin] + (col>>1));
 
-                    *adr = tabLeftRed[theColorLeft]  | tabRightRed[theColorRight];
-                    adr += NEXT_SCANLINE_INCREMENT;
-                    *adr = tabLeftGreen[theColorLeft]  | tabRightGreen[theColorRight];
-                    adr += NEXT_SCANLINE_INCREMENT;
-                    *adr = tabLeftBlue[theColorLeft]  | tabRightBlue[theColorRight];
-
-                    // if ((col&0x01) != 0){
-                    //     *adr |= tabRightRed[theColorLeft];
-                    //     adr += NEXT_SCANLINE_INCREMENT;
-                    //     *adr |= tabRightGreen[theColorLeft];
-                    //     adr += NEXT_SCANLINE_INCREMENT;
-                    //     *adr |= tabRightBlue[theColorLeft];
-                    // } else {
-                    //     *adr |= tabLeftRed[theColorLeft];
-                    //     adr += NEXT_SCANLINE_INCREMENT;
-                    //     *adr |= tabLeftGreen[theColorLeft];
-                    //     adr += NEXT_SCANLINE_INCREMENT;
-                    //     *adr |= tabLeftBlue[theColorLeft];
-                    // }
+                    *wrtAdr = tabLeftRed[theColorLeft]  | tabRightRed[theColorRight];
+                    wrtAdr += NEXT_SCANLINE_INCREMENT;
+                    *wrtAdr = tabLeftGreen[theColorLeft]  | tabRightGreen[theColorRight];
+                    wrtAdr += NEXT_SCANLINE_INCREMENT;
+                    *wrtAdr = tabLeftBlue[theColorLeft]  | tabRightBlue[theColorRight];
+                    wrtAdr += NEXT_SCANLINE_INCREMENT;
 
                     (*dda1StepFunction)();
                     (*dda2StepFunction)();
@@ -222,23 +228,23 @@ void main()
 
                 }
 
-                dda1StartValue       = middleX[col];
-                dda1EndValue         = highX[col];
+                dda1StartValue       = tabMiddleX[col];
+                dda1EndValue         = tabHighX[col];
                 dda1NbStep           = SCREEN_HEIGHT/2;
                 dda1Init();
 
-                dda2StartValue       = middleY[col];
-                dda2EndValue         = highY[col];
+                dda2StartValue       = tabMiddleY[col];
+                dda2EndValue         = tabHighY[col];
                 dda2NbStep           = SCREEN_HEIGHT/2;
                 dda2Init();
 
-                dda3StartValue       = middleX[col+1];
-                dda3EndValue         = highX[col+1];
+                dda3StartValue       = tabMiddleX[col+1];
+                dda3EndValue         = tabHighX[col+1];
                 dda3NbStep           = SCREEN_HEIGHT/2;
                 dda3Init();
 
-                dda4StartValue       = middleY[col+1];
-                dda4EndValue         = highY[col+1];
+                dda4StartValue       = tabMiddleY[col+1];
+                dda4EndValue         = tabHighY[col+1];
                 dda4NbStep           = SCREEN_HEIGHT/2;
                 dda4Init();
 
@@ -249,19 +255,22 @@ void main()
                     // colorSquare(lin, col, texture_PANO[X*IMAGE_HEIGHT+Y]);
 
                     X   = dda1CurrentValue;
+                    if (rollCoord) X+=128;
                     Y   = dda2CurrentValue;
                     theColorLeft = texture_PANO[X*IMAGE_HEIGHT+Y];
 
                     X   = dda3CurrentValue;
+                    if (rollCoord) X+=128;
                     Y   = dda4CurrentValue;
                     theColorRight = texture_PANO[X*IMAGE_HEIGHT+Y];
 
-                    adr = (unsigned char *)(HIRES_SCREEN_ADDRESS + multi40[(lin<<1) + lin] + (col>>1));
-                    *adr = tabLeftRed[theColorLeft]    | tabRightRed[theColorRight];
-                    adr += NEXT_SCANLINE_INCREMENT;
-                    *adr = tabLeftGreen[theColorLeft]  | tabRightGreen[theColorRight];
-                    adr += NEXT_SCANLINE_INCREMENT;
-                    *adr = tabLeftBlue[theColorLeft]   | tabRightBlue[theColorRight];
+                    // theAdrHigh = (unsigned char *)(HIRES_SCREEN_ADDRESS + multi40[(lin<<1) + lin] + (col>>1));
+                    *wrtAdr = tabLeftRed[theColorLeft]    | tabRightRed[theColorRight];
+                    wrtAdr += NEXT_SCANLINE_INCREMENT;
+                    *wrtAdr = tabLeftGreen[theColorLeft]  | tabRightGreen[theColorRight];
+                    wrtAdr += NEXT_SCANLINE_INCREMENT;
+                    *wrtAdr = tabLeftBlue[theColorLeft]   | tabRightBlue[theColorRight];
+                    wrtAdr += NEXT_SCANLINE_INCREMENT;
                     // if ((col&0x01) != 0){
                     //     *adr |= tabRightRed[theColorLeft];
                     //     adr += NEXT_SCANLINE_INCREMENT;
@@ -282,6 +291,7 @@ void main()
                     (*dda4StepFunction)();
 
                 }
+                theBaseAdr += 1;
             }
 
             refreshNeeded = 0;
