@@ -22,6 +22,6 @@
 #define IMAGE_HEIGHT        128 
 
 #define VIEWPORT_WIDTH                  78 
-#define VIEWPORT_START_COLUMN           1 
+#define VIEWPORT_START_COLUMN           2 
 #define VIEWPORT_START_LINE             0
 
