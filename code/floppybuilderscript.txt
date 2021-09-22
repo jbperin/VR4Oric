@@ -74,9 +74,9 @@ AddDefine LOADER_FONT_6x8 {FileIndex}
 ;
 ReserveSectors 6                                    ; 5 sectors
 
-AddFile ..\build\files\pano_02.vrb
+AddFile ..\build\files\indoor.vrb
 AddDefine LOADER_PANO_02 {FileIndex}
-AddFile ..\build\files\pano_01.vrb
+AddFile ..\build\files\outdoor.vrb
 AddDefine LOADER_PANO_01 {FileIndex}
 
 

@@ -26,8 +26,10 @@ SET PICTCONV=%OSDK%\Bin\PictConv.exe
 :: Fonts
 %PICTCONV% -f0 -d0 -o2 data\Font6x8.png build\files\Font6x8.hir
 
-COPY data\pano_01.vrb build\files\pano_01.vrb
-COPY data\pano_02.vrb build\files\pano_02.vrb
+COPY data\pano_01.vrb build\files
+COPY data\pano_02.vrb build\files
+COPY data\indoor.vrb build\files
+COPY data\outdoor.vrb build\files
 
 :: Delete the floppy, just to be sure
 IF EXIST build\%OSDKDISK%  del build\%OSDKDISK%

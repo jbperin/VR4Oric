@@ -108,16 +108,16 @@ void selectTables(){
                 tabHighY[idxColumn]    = 128 - tabBorderY_02[idxColumn];   
             }
             break;
-        // case 3*ANGLE_INCREMENT:
-        //     for (idxColumn=0; idxColumn<NB_VAL; idxColumn++) {
-        //         tabLowX[idxColumn]     = tabBorderX_02[idxColumn] - rotZ;
-        //         tabMiddleX[idxColumn]  = tabBorderX_03[idxColumn] - rotZ;
-        //         tabHighX[idxColumn]    = tabBorderX_04[idxColumn] - rotZ;
-        //         tabLowY[idxColumn]     = 128 - tabBorderY_03[idxColumn];
-        //         tabMiddleY[idxColumn]  = 128 - tabBorderY_02[idxColumn];
-        //         tabHighY[idxColumn]    = 128 - tabBorderY_01[idxColumn];   
-        //     }
-        //     break;
+        case 3*ANGLE_INCREMENT:
+            for (idxColumn=0; idxColumn<NB_VAL; idxColumn++) {
+                tabLowX[idxColumn]     = tabBorderX_02[idxColumn] - rotZ;
+                tabMiddleX[idxColumn]  = tabBorderX_03[idxColumn] - rotZ;
+                tabHighX[idxColumn]    = tabBorderX_04[idxColumn] - rotZ;
+                tabLowY[idxColumn]     = 128 - tabBorderY_03[idxColumn];
+                tabMiddleY[idxColumn]  = 128 - tabBorderY_02[idxColumn];
+                tabHighY[idxColumn]    = 128 - tabBorderY_01[idxColumn];   
+            }
+            break;
         case -1*ANGLE_INCREMENT:
             for (idxColumn=0; idxColumn<NB_VAL; idxColumn++) {
                 tabLowX[idxColumn]     = tabBorderX_02[idxColumn] - rotZ;
@@ -138,18 +138,18 @@ void selectTables(){
                 tabHighY[idxColumn]    = tabBorderY_04[idxColumn];   
             }
             break;
-        // case -3*ANGLE_INCREMENT:
-        //     for (idxColumn=0; idxColumn<NB_VAL; idxColumn++) {
-        //         tabLowX[idxColumn]     = tabBorderX_04[idxColumn] - rotZ;
-        //         tabMiddleX[idxColumn]  = tabBorderX_03[idxColumn] - rotZ;
-        //         tabHighX[idxColumn]    = tabBorderX_02[idxColumn] - rotZ;
-        //         tabLowY[idxColumn]     = tabBorderY_01[idxColumn];
-        //         tabMiddleY[idxColumn]  = tabBorderY_02[idxColumn];
-        //         tabHighY[idxColumn]    = tabBorderY_03[idxColumn];   
-        //     }
-        //     break;
-        // default:
-        //     break;
+        case -3*ANGLE_INCREMENT:
+            for (idxColumn=0; idxColumn<NB_VAL; idxColumn++) {
+                tabLowX[idxColumn]     = tabBorderX_04[idxColumn] - rotZ;
+                tabMiddleX[idxColumn]  = tabBorderX_03[idxColumn] - rotZ;
+                tabHighX[idxColumn]    = tabBorderX_02[idxColumn] - rotZ;
+                tabLowY[idxColumn]     = tabBorderY_01[idxColumn];
+                tabMiddleY[idxColumn]  = tabBorderY_02[idxColumn];
+                tabHighY[idxColumn]    = tabBorderY_03[idxColumn];   
+            }
+            break;
+        default:
+            break;
     }
     if ((abs(rotZ)) > 4*ANGLE_INCREMENT) {
         for (idxColumn=0; idxColumn<NB_VAL; idxColumn++){
