@@ -11,67 +11,95 @@ unsigned char tabHighY[NB_VAL];
 unsigned char idxColumn;
 
 unsigned char tabBorderX_01[] = {
-	109, 110, 110, 110, 111, 111, 112, 112, 113, 113, 113, 114, 114, 115, 115, 116
-	, 116, 117, 117, 118, 118, 119, 119, 120, 120, 121, 121, 122, 122, 123, 123, 124
-	, 124, 125, 125, 126, 126, 127, 127, 128, 129, 129, 130, 130, 131, 131, 132, 132
-	, 133, 133, 134, 134, 135, 135, 136, 136, 137, 137, 138, 138, 139, 139, 140, 140
-	, 141, 141, 142, 142, 143, 143, 143, 144, 144, 145, 145, 146, 146, 146};
+	64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64
+	, 64, 64, 64, 64, 65, 65, 65, 65, 65, 65, 65, 65, 66, 66, 66, 66
+	, 66, 66, 67, 68, 68, 71, 76, 128, 180, 185, 188, 188, 189, 190, 190, 190
+	, 190, 190, 190, 191, 191, 191, 191, 191, 191, 191, 191, 192, 192, 192, 192, 192
+	, 192, 192, 192, 192, 192, 192, 192, 192, 192, 192, 192, 192, 192, 192};
 
 unsigned char tabBorderX_02[] = {
-	104, 104, 105, 105, 106, 106, 107, 108, 108, 109, 109, 110, 110, 111, 112, 112
-	, 113, 114, 114, 115, 115, 116, 116, 117, 118, 118, 119, 120, 120, 121, 122, 122
-	, 123, 124, 125, 125, 126, 127, 127, 128, 129, 129, 130, 131, 131, 132, 133, 134
-	, 134, 135, 136, 136, 137, 138, 138, 139, 140, 140, 141, 141, 142, 142, 143, 144
-	, 144, 145, 146, 146, 147, 147, 148, 148, 149, 150, 150, 151, 151, 152};
+	85, 86, 86, 87, 87, 88, 88, 89, 90, 90, 91, 92, 92, 93, 94, 95
+	, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 107, 108, 110, 111, 113, 114
+	, 116, 117, 119, 121, 123, 124, 126, 128, 130, 132, 133, 135, 137, 139, 140, 142
+	, 143, 145, 146, 148, 149, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161
+	, 162, 163, 164, 164, 165, 166, 166, 167, 168, 168, 169, 169, 170, 170};
 
 unsigned char tabBorderX_03[] = {
-	92, 92, 93, 93, 94, 94, 95, 96, 96, 97, 98, 98, 99, 100, 101, 101
-	, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 116, 116, 118
-	, 119, 120, 122, 123, 124, 125, 127, 128, 129, 131, 132, 133, 134, 136, 137, 138
-	, 140, 140, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155
-	, 155, 156, 157, 158, 158, 159, 160, 160, 161, 162, 162, 163, 163, 164};
+	81, 82, 82, 82, 83, 84, 84, 84, 85, 86, 86, 87, 88, 88, 89, 90
+	, 90, 92, 92, 94, 94, 96, 96, 98, 99, 100, 102, 104, 105, 107, 108, 110
+	, 112, 114, 117, 119, 121, 123, 126, 128, 130, 133, 135, 137, 139, 142, 144, 146
+	, 148, 149, 151, 152, 154, 156, 157, 158, 160, 160, 162, 162, 164, 164, 166, 166
+	, 167, 168, 168, 169, 170, 170, 171, 172, 172, 172, 173, 174, 174, 174};
 
 unsigned char tabBorderX_04[] = {
-	64, 64, 64, 64, 64, 64, 64, 65, 65, 65, 65, 65, 65, 65, 65, 65
-	, 66, 66, 66, 66, 66, 66, 66, 66, 66, 66, 66, 66, 66, 67, 67, 68
-	, 68, 69, 70, 72, 74, 78, 88, 128, 168, 178, 182, 184, 186, 187, 188, 188
-	, 189, 189, 190, 190, 190, 190, 190, 190, 190, 190, 190, 190, 190, 190, 190, 191
-	, 191, 191, 191, 191, 191, 191, 191, 191, 192, 192, 192, 192, 192, 192};
+	98, 99, 99, 100, 100, 101, 102, 102, 103, 103, 104, 104, 105, 106, 106, 108
+	, 108, 109, 110, 110, 111, 112, 112, 114, 114, 116, 116, 117, 118, 118, 120, 120
+	, 122, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 134, 136
+	, 136, 138, 138, 139, 140, 140, 142, 142, 144, 144, 145, 146, 146, 147, 148, 148
+	, 150, 150, 151, 152, 152, 153, 153, 154, 154, 155, 156, 156, 157, 157};
+
+unsigned char tabBorderX_05[] = {
+	91, 92, 92, 93, 94, 94, 95, 95, 96, 97, 97, 98, 99, 100, 100, 101
+	, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 116, 117, 118
+	, 119, 120, 122, 123, 124, 125, 127, 128, 129, 131, 132, 133, 134, 136, 137, 138
+	, 139, 140, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155
+	, 156, 156, 157, 158, 159, 159, 160, 161, 161, 162, 162, 163, 164, 164};
 
 unsigned char tabBorderY_01[] = {
-	18, 17, 17, 16, 16, 16, 15, 15, 14, 14, 13, 13, 13, 12, 12, 11
-	, 11, 10, 10, 9, 9, 9, 8, 8, 7, 7, 6, 6, 5, 5, 4, 4
-	, 3, 3, 2, 2, 1, 1, 1, 0, 1, 1, 1, 2, 2, 3, 3, 4
-	, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9, 9, 10, 10, 11, 11
-	, 12, 12, 13, 13, 13, 14, 14, 15, 15, 16, 16, 16, 17, 17};
-
-unsigned char tabBorderY_02[] = {
-	24, 24, 24, 23, 22, 22, 22, 22, 22, 22, 21, 21, 20, 20, 20, 20
-	, 20, 19, 19, 19, 18, 18, 18, 18, 18, 17, 17, 17, 17, 17, 17, 17
-	, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 17
-	, 17, 17, 17, 17, 17, 17, 18, 18, 18, 18, 18, 19, 19, 19, 20, 20
-	, 20, 20, 20, 21, 21, 22, 22, 22, 22, 22, 22, 23, 24, 24};
-
-unsigned char tabBorderY_03[] = {
-	36, 36, 35, 35, 35, 35, 35, 35, 35, 34, 34, 34, 34, 34, 34, 34
-	, 34, 33, 33, 33, 33, 33, 33, 33, 33, 33, 33, 32, 32, 32, 32, 32
-	, 32, 32, 32, 32, 32, 32, 32, 32, 32, 32, 32, 32, 32, 32, 32, 32
-	, 32, 32, 32, 32, 33, 33, 33, 33, 33, 33, 33, 33, 33, 33, 34, 34
-	, 34, 34, 34, 34, 34, 34, 35, 35, 35, 35, 35, 35, 35, 36};
-
-unsigned char tabBorderY_04[] = {
-	50, 50, 50, 49, 49, 49, 49, 49, 49, 49, 49, 49, 49, 49, 49, 49
-	, 49, 49, 49, 49, 48, 48, 48, 48, 48, 48, 48, 48, 48, 48, 48, 48
-	, 48, 48, 48, 48, 48, 48, 48, 48, 48, 48, 48, 48, 48, 48, 48, 48
-	, 48, 48, 48, 48, 48, 48, 48, 48, 48, 48, 48, 49, 49, 49, 49, 49
-	, 49, 49, 49, 49, 49, 49, 49, 49, 49, 49, 49, 49, 50, 50};
-
-unsigned char tabBorderY_05[] = {
 	64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64
 	, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64
 	, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64
 	, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64
 	, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64};
+
+unsigned char tabBorderY_02[] = {
+	41, 41, 40, 40, 40, 40, 39, 39, 39, 38, 38, 38, 37, 37, 37, 37
+	, 36, 36, 36, 35, 35, 35, 35, 34, 34, 34, 34, 33, 33, 33, 33, 33
+	, 32, 32, 32, 32, 32, 32, 32, 32, 32, 32, 32, 32, 32, 32, 32, 33
+	, 33, 33, 33, 33, 34, 34, 34, 34, 35, 35, 35, 35, 36, 36, 36, 37
+	, 37, 37, 37, 38, 38, 38, 39, 39, 39, 40, 40, 40, 40, 41};
+
+unsigned char tabBorderY_03[] = {
+	75, 76, 76, 76, 76, 76, 76, 76, 77, 77, 77, 77, 77, 77, 77, 77
+	, 78, 78, 78, 78, 78, 78, 78, 78, 79, 79, 79, 79, 79, 79, 79, 79
+	, 79, 79, 79, 79, 79, 79, 79, 79, 79, 79, 79, 79, 79, 79, 79, 79
+	, 79, 79, 79, 79, 79, 79, 79, 78, 78, 78, 78, 78, 78, 78, 78, 77
+	, 77, 77, 77, 77, 77, 77, 77, 76, 76, 76, 76, 76, 76, 76};
+
+unsigned char tabBorderY_04[] = {
+	54, 54, 54, 54, 53, 53, 53, 53, 53, 52, 52, 52, 52, 52, 52, 51
+	, 51, 51, 51, 51, 50, 50, 50, 50, 50, 49, 49, 49, 49, 49, 49, 49
+	, 48, 48, 48, 48, 48, 48, 48, 48, 48, 48, 48, 48, 48, 48, 48, 49
+	, 49, 49, 49, 49, 49, 49, 50, 50, 50, 50, 50, 51, 51, 51, 51, 51
+	, 52, 52, 52, 52, 52, 52, 53, 53, 53, 53, 53, 54, 54, 54};
+
+unsigned char tabBorderY_05[] = {
+	32, 32, 32, 31, 31, 30, 30, 29, 29, 28, 28, 27, 27, 26, 26, 25
+	, 25, 24, 24, 23, 22, 22, 21, 21, 20, 20, 19, 19, 19, 18, 18, 17
+	, 17, 17, 17, 16, 16, 16, 16, 16, 16, 16, 16, 16, 17, 17, 17, 17
+	, 18, 18, 19, 19, 19, 20, 20, 21, 21, 22, 22, 23, 24, 24, 25, 25
+	, 26, 26, 27, 27, 28, 28, 29, 29, 30, 30, 31, 31, 32, 32};
+
+unsigned char tabBorderY_06[] = {
+	64, 64, 64, 63, 63, 63, 63, 63, 63, 63, 63, 63, 63, 63, 63, 63
+	, 63, 63, 63, 63, 63, 63, 63, 63, 63, 63, 63, 63, 63, 63, 63, 63
+	, 63, 63, 63, 63, 63, 63, 63, 63, 63, 63, 63, 63, 63, 63, 63, 63
+	, 63, 63, 63, 63, 63, 63, 63, 63, 63, 63, 63, 63, 63, 63, 63, 63
+	, 63, 63, 63, 63, 63, 63, 63, 63, 63, 63, 63, 63, 64, 64};
+
+unsigned char tabBorderY_07[] = {
+	45, 45, 44, 44, 44, 43, 43, 43, 42, 42, 42, 41, 41, 40, 40, 40
+	, 39, 39, 38, 38, 37, 37, 37, 36, 36, 35, 35, 35, 34, 34, 33, 33
+	, 33, 33, 32, 32, 32, 32, 32, 32, 32, 32, 32, 32, 32, 33, 33, 33
+	, 33, 34, 34, 35, 35, 35, 36, 36, 37, 37, 37, 38, 38, 39, 39, 40
+	, 40, 40, 41, 41, 42, 42, 42, 43, 43, 43, 44, 44, 44, 45};
+
+unsigned char tabBorderY_08[] = {
+	29, 28, 28, 27, 27, 26, 26, 25, 24, 24, 23, 23, 22, 21, 21, 20
+	, 19, 18, 18, 17, 16, 15, 15, 14, 13, 12, 11, 11, 10, 9, 8, 7
+	, 6, 5, 4, 4, 3, 2, 1, 0, 1, 2, 3, 4, 4, 5, 6, 7
+	, 8, 9, 10, 11, 11, 12, 13, 14, 15, 15, 16, 17, 18, 18, 19, 20
+	, 21, 21, 22, 23, 23, 24, 24, 25, 26, 26, 27, 27, 28, 28};
 
 
 void selectTables(){
@@ -80,74 +108,74 @@ void selectTables(){
     switch (rotX) {
         case 0:
             for (idxColumn=0; idxColumn<NB_VAL; idxColumn++) {
-                tabLowX[idxColumn]     = tabBorderX_01[idxColumn] - rotZ;
-                tabMiddleX[idxColumn]  = tabBorderX_01[idxColumn] - rotZ;
-                tabHighX[idxColumn]    = tabBorderX_01[idxColumn] - rotZ;
-                tabLowY[idxColumn]     = tabBorderY_04[idxColumn];
-                tabMiddleY[idxColumn]  = tabBorderY_05[idxColumn];
-                tabHighY[idxColumn]    = 128-tabBorderY_04[idxColumn];   
+                tabLowX[idxColumn]     = tabBorderX_05[idxColumn] - rotZ;
+                tabMiddleX[idxColumn]  = tabBorderX_05[idxColumn] - rotZ;
+                tabHighX[idxColumn]    = tabBorderX_05[idxColumn] - rotZ;
+                tabLowY[idxColumn]     = tabBorderY_02[idxColumn];
+                tabMiddleY[idxColumn]  = tabBorderY_01[idxColumn];
+                tabHighY[idxColumn]    = 128-tabBorderY_02[idxColumn];   
             }
             break;
         case ANGLE_INCREMENT:
             for (idxColumn=0; idxColumn<NB_VAL; idxColumn++) {
-                tabLowX[idxColumn]     = tabBorderX_01[idxColumn] - rotZ;
-                tabMiddleX[idxColumn]  = tabBorderX_01[idxColumn] - rotZ;
-                tabHighX[idxColumn]    = tabBorderX_02[idxColumn] - rotZ;
-                tabLowY[idxColumn]     = tabBorderY_05[idxColumn];
+                tabLowX[idxColumn]     = tabBorderX_04[idxColumn] - rotZ;
+                tabMiddleX[idxColumn]  = tabBorderX_05[idxColumn] - rotZ;
+                tabHighX[idxColumn]    = tabBorderX_03[idxColumn] - rotZ;
+                tabLowY[idxColumn]     = 128-tabBorderY_03[idxColumn];
                 tabMiddleY[idxColumn]  = 128-tabBorderY_04[idxColumn];
-                tabHighY[idxColumn]    = 128-tabBorderY_03[idxColumn];   
+                tabHighY[idxColumn]    = 128-tabBorderY_05[idxColumn];   
             }
             break;
         case 2*ANGLE_INCREMENT:
             for (idxColumn=0; idxColumn<NB_VAL; idxColumn++) {
-                tabLowX[idxColumn]     = tabBorderX_01[idxColumn] - rotZ;
+                tabLowX[idxColumn]     = tabBorderX_04[idxColumn] - rotZ;
                 tabMiddleX[idxColumn]  = tabBorderX_02[idxColumn] - rotZ;
-                tabHighX[idxColumn]    = tabBorderX_03[idxColumn] - rotZ;
-                tabLowY[idxColumn]     = 128 - tabBorderY_04[idxColumn];
-                tabMiddleY[idxColumn]  = 128 - tabBorderY_03[idxColumn];
-                tabHighY[idxColumn]    = 128 - tabBorderY_02[idxColumn];   
+                tabHighX[idxColumn]    = tabBorderX_01[idxColumn] - rotZ;
+                tabLowY[idxColumn]     = 128 - tabBorderY_06[idxColumn];
+                tabMiddleY[idxColumn]  = 128 - tabBorderY_07[idxColumn];
+                tabHighY[idxColumn]    = 128 - tabBorderY_08[idxColumn];   
             }
             break;
-        case 3*ANGLE_INCREMENT:
-            for (idxColumn=0; idxColumn<NB_VAL; idxColumn++) {
-                tabLowX[idxColumn]     = tabBorderX_02[idxColumn] - rotZ;
-                tabMiddleX[idxColumn]  = tabBorderX_03[idxColumn] - rotZ;
-                tabHighX[idxColumn]    = tabBorderX_04[idxColumn] - rotZ;
-                tabLowY[idxColumn]     = 128 - tabBorderY_03[idxColumn];
-                tabMiddleY[idxColumn]  = 128 - tabBorderY_02[idxColumn];
-                tabHighY[idxColumn]    = 128 - tabBorderY_01[idxColumn];   
-            }
-            break;
+        // case 3*ANGLE_INCREMENT:
+        //     for (idxColumn=0; idxColumn<NB_VAL; idxColumn++) {
+        //         tabLowX[idxColumn]     = tabBorderX_02[idxColumn] - rotZ;
+        //         tabMiddleX[idxColumn]  = tabBorderX_03[idxColumn] - rotZ;
+        //         tabHighX[idxColumn]    = tabBorderX_04[idxColumn] - rotZ;
+        //         tabLowY[idxColumn]     = 128 - tabBorderY_03[idxColumn];
+        //         tabMiddleY[idxColumn]  = 128 - tabBorderY_02[idxColumn];
+        //         tabHighY[idxColumn]    = 128 - tabBorderY_01[idxColumn];   
+        //     }
+        //     break;
         case -1*ANGLE_INCREMENT:
             for (idxColumn=0; idxColumn<NB_VAL; idxColumn++) {
-                tabLowX[idxColumn]     = tabBorderX_02[idxColumn] - rotZ;
-                tabMiddleX[idxColumn]  = tabBorderX_01[idxColumn] - rotZ;
-                tabHighX[idxColumn]    = tabBorderX_01[idxColumn] - rotZ;
-                tabLowY[idxColumn]     = tabBorderY_03[idxColumn];
+                tabLowX[idxColumn]     = tabBorderX_03[idxColumn] - rotZ;
+                tabMiddleX[idxColumn]  = tabBorderX_05[idxColumn] - rotZ;
+                tabHighX[idxColumn]    = tabBorderX_04[idxColumn] - rotZ;
+                tabLowY[idxColumn]     = tabBorderY_05[idxColumn];
                 tabMiddleY[idxColumn]  = tabBorderY_04[idxColumn];
-                tabHighY[idxColumn]    = tabBorderY_05[idxColumn];   
+                tabHighY[idxColumn]    = tabBorderY_03[idxColumn];   
             }
             break;
         case -2*ANGLE_INCREMENT:
             for (idxColumn=0; idxColumn<NB_VAL; idxColumn++) {
-                tabLowX[idxColumn]     = tabBorderX_03[idxColumn] - rotZ;
+                tabLowX[idxColumn]     = tabBorderX_01[idxColumn] - rotZ;
                 tabMiddleX[idxColumn]  = tabBorderX_02[idxColumn] - rotZ;
-                tabHighX[idxColumn]    = tabBorderX_01[idxColumn] - rotZ;
-                tabLowY[idxColumn]     = tabBorderY_02[idxColumn];
-                tabMiddleY[idxColumn]  = tabBorderY_03[idxColumn];
-                tabHighY[idxColumn]    = tabBorderY_04[idxColumn];   
+                tabHighX[idxColumn]    = tabBorderX_04[idxColumn] - rotZ;
+                tabLowY[idxColumn]     = tabBorderY_08[idxColumn];
+                tabMiddleY[idxColumn]  = tabBorderY_07[idxColumn];
+                tabHighY[idxColumn]    = tabBorderY_06[idxColumn];   
             }
             break;
-        case -3*ANGLE_INCREMENT:
-            for (idxColumn=0; idxColumn<NB_VAL; idxColumn++) {
-                tabLowX[idxColumn]     = tabBorderX_04[idxColumn] - rotZ;
-                tabMiddleX[idxColumn]  = tabBorderX_03[idxColumn] - rotZ;
-                tabHighX[idxColumn]    = tabBorderX_02[idxColumn] - rotZ;
-                tabLowY[idxColumn]     = tabBorderY_01[idxColumn];
-                tabMiddleY[idxColumn]  = tabBorderY_02[idxColumn];
-                tabHighY[idxColumn]    = tabBorderY_03[idxColumn];   
-            }
-            break;
+        // case -3*ANGLE_INCREMENT:
+        //     for (idxColumn=0; idxColumn<NB_VAL; idxColumn++) {
+        //         tabLowX[idxColumn]     = tabBorderX_04[idxColumn] - rotZ;
+        //         tabMiddleX[idxColumn]  = tabBorderX_03[idxColumn] - rotZ;
+        //         tabHighX[idxColumn]    = tabBorderX_02[idxColumn] - rotZ;
+        //         tabLowY[idxColumn]     = tabBorderY_01[idxColumn];
+        //         tabMiddleY[idxColumn]  = tabBorderY_02[idxColumn];
+        //         tabHighY[idxColumn]    = tabBorderY_03[idxColumn];   
+        //     }
+        //     break;
         default:
             break;
     }
