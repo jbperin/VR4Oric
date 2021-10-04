@@ -1,18 +1,10 @@
-
-
 #include <lib.h>
 
 #include "loader_api.h"
 #include "config.h"
 #include "texel.c"
 
-//#include "image.c"
 extern unsigned char texture_PANO[];
-// #include "tabEquiRect.c"
-// extern unsigned char tabLong2Col[];
-// extern unsigned char tabLat2Lin[];
-// extern signed char tabAtanCol[];
-// extern signed char tabAtanLin[];
 
 #include "keyboard_c.c"
 #include "aei1.c"
@@ -21,7 +13,7 @@ extern unsigned char texture_PANO[];
 #include "aei4.c"
 
 #define abs(x)          (((x)<0)?-(x):(x))
-#define ANGLE_INCREMENT 16
+#define ANGLE_INCREMENT                 16
 
 #define CHANGE_INK_TO_BLACK             0
 #define CHANGE_INK_TO_RED	            1		
@@ -32,16 +24,25 @@ extern unsigned char texture_PANO[];
 
 
 signed char rotX, rotZ;
+unsigned char rollCoord = 0;
+
 #include "tabBorders.c"
 
 
-char IsHires=1;
 unsigned char col, lin;
-signed char latitude, longitude;
 
-unsigned char X, Y;
+unsigned char theX, theY;
+unsigned char *theBaseAdr;
+unsigned char *wrtAdr;
+unsigned char theColorLeft;
+unsigned char theColorRight;
+
+char IsHires=1;
 unsigned char running ;
 unsigned char refreshNeeded = 1;
+unsigned char scene_number = 0;
+
+// signed char latitude, longitude;
 
 // void computeEquiRect(){
 //             latitude = tabAtanLin[lin] + rotX;
@@ -92,44 +93,46 @@ void SwitchToHires()
     // *((char*)0xbfb9)=0x00;	
 }
 
-unsigned char rollCoord = 0;
 
 void keyPressed(unsigned char c){
-	// printf ("kp: %x, ", c);
-    if (c == keyBackward ) {
-        if (rotX < 3*ANGLE_INCREMENT){
+    if (c == KEY_DOWN ) {
+        if (rotX < 2*ANGLE_INCREMENT){
             rotX += ANGLE_INCREMENT;
             refreshNeeded   = 1;
         }
-    } else if (c == keyForward) {
-        if (rotX > -3*ANGLE_INCREMENT){
+    } else if (c == KEY_UP) {
+        if (rotX > -2*ANGLE_INCREMENT){
             rotX -= ANGLE_INCREMENT;
             refreshNeeded   = 1;
         }
-    } else if (c == keyTurnLeft) {
+    } else if (c == KEY_LEFT) {
         if (rotZ < 7*ANGLE_INCREMENT){
             rotZ += ANGLE_INCREMENT;
         }else{
             rotZ = -8*ANGLE_INCREMENT;
         }
         refreshNeeded   = 1;
-    } else if (c == keyTurnRight) {
+    } else if (c == KEY_RIGHT) {
         if (rotZ > -8*ANGLE_INCREMENT){
             rotZ -= ANGLE_INCREMENT;
         } else {
             rotZ = 7*ANGLE_INCREMENT;
         }
         refreshNeeded   = 1;
-    } else if (c == keyStraffeRight) {
+    } else if (c == KEY_SPACE) {
+        if ((scene_number == 0) && (rotZ==0x00) && (rotX==0x00)){
+            scene_number            = 1;
             LoadFileAt(LOADER_PANO_02,texture_PANO);
             refreshNeeded           = 1;
-    } else if (c == keyStraffeLeft) {
+        } else if ((scene_number == 1) && ((unsigned char)rotZ==0x80) && (rotX==0x00)) { 
+            scene_number            = 0;
+            LoadFileAt(LOADER_PANO_01,texture_PANO);
             refreshNeeded           = 1;
-    } else if (c == keyQuit) {
+        }
+    } else if (c == KEY_ESCAPE) {
             running = 0;
     }
-    rollCoord       = (abs(rotZ)>4*ANGLE_INCREMENT);
-
+    rollCoord       = (abs(rotZ)>4*ANGLE_INCREMENT)?1:0;
 }
 
 void keyReleased(unsigned char c){
@@ -147,26 +150,24 @@ void lsys(){
 	}
 }
 
+#define DEFAULT_BASE_ADRESS (HIRES_SCREEN_ADDRESS + 40*((VIEWPORT_START_LINE<<1) + VIEWPORT_START_LINE) + (VIEWPORT_START_COLUMN>>1))
+
 
 void main()
 {
 
-    unsigned char *adr;
-    unsigned char *baseAdrHigh;
-    unsigned char *theBaseAdr;
-    unsigned char *wrtAdr;
-    unsigned char theColorLeft;
-    unsigned char theColorRight;
 
+    rotX = 0; rotZ = 0x30;
     LoadFileAt(LOADER_PANO_01, texture_PANO);
+    scene_number            = 0;
 	SwitchToHires();
 	running = 1;
     kernelInit();
 
     // OPTIME baseAdrHigh     = (unsigned char *)(HIRES_SCREEN_ADDRESS + multi40[(VIEWPORT_START_LINE<<1) + VIEWPORT_START_LINE] + (VIEWPORT_START_COLUMN>>1));
-    baseAdrHigh     = (unsigned char *)(HIRES_SCREEN_ADDRESS + 40*((VIEWPORT_START_LINE<<1) + VIEWPORT_START_LINE) + (VIEWPORT_START_COLUMN>>1));
-
+    // baseAdrHigh     = (unsigned char *)(DEFAULT_BASE_ADRESS);
     // baseAdrLow      = (unsigned char *)(HIRES_SCREEN_ADDRESS + multi40[((VIEWPORT_START_LINE+SCREEN_HEIGHT/2)<<1) + (VIEWPORT_START_LINE+SCREEN_HEIGHT/2)] + (VIEWPORT_START_COLUMN>>1));
+
     while (running) {
 
         lsys();
@@ -175,7 +176,7 @@ void main()
             // clearViewport();
             rollCoord       = (abs(rotZ)>4*ANGLE_INCREMENT);
             selectTables();
-            theBaseAdr      = baseAdrHigh;
+            theBaseAdr      = (unsigned char *)(DEFAULT_BASE_ADRESS);
             for (col=VIEWPORT_START_COLUMN; col< SCREEN_WIDTH; col+=2) {
                 wrtAdr              = theBaseAdr;
                 dda1StartValue       = tabLowX[col];
@@ -203,15 +204,15 @@ void main()
                     // computeEquiRect();
                     // colorSquare(lin, col, texture_PANO[X*IMAGE_HEIGHT+Y]);
 
-                    X   = dda1CurrentValue;
-                    if (rollCoord) X+=128;
-                    Y   = dda2CurrentValue;
-                    theColorLeft = texture_PANO[X*IMAGE_HEIGHT+Y];
+                    theX   = dda1CurrentValue;
+                    if (rollCoord) theX+=128;
+                    theY   = dda2CurrentValue;
+                    theColorLeft = texture_PANO[theX*IMAGE_HEIGHT+theY];
 
-                    X   = dda3CurrentValue;
-                    if (rollCoord) X+=128;
-                    Y   = dda4CurrentValue;
-                    theColorRight = texture_PANO[X*IMAGE_HEIGHT+Y];
+                    theX   = dda3CurrentValue;
+                    if (rollCoord) theX+=128;
+                    theY   = dda4CurrentValue;
+                    theColorRight = texture_PANO[theX*IMAGE_HEIGHT+theY];
 
                     // adr = (unsigned char *)(HIRES_SCREEN_ADDRESS + multi40[(lin<<1) + lin] + (col>>1));
 
@@ -255,15 +256,15 @@ void main()
                     // computeEquiRect();
                     // colorSquare(lin, col, texture_PANO[X*IMAGE_HEIGHT+Y]);
 
-                    X   = dda1CurrentValue;
-                    if (rollCoord) X+=128;
-                    Y   = dda2CurrentValue;
-                    theColorLeft = texture_PANO[X*IMAGE_HEIGHT+Y];
+                    theX   = dda1CurrentValue;
+                    if (rollCoord) theX+=128;
+                    theY   = dda2CurrentValue;
+                    theColorLeft = texture_PANO[theX*IMAGE_HEIGHT+theY];
 
-                    X   = dda3CurrentValue;
-                    if (rollCoord) X+=128;
-                    Y   = dda4CurrentValue;
-                    theColorRight = texture_PANO[X*IMAGE_HEIGHT+Y];
+                    theX   = dda3CurrentValue;
+                    if (rollCoord) theX+=128;
+                    theY   = dda4CurrentValue;
+                    theColorRight = texture_PANO[theX*IMAGE_HEIGHT+theY];
 
                     // theAdrHigh = (unsigned char *)(HIRES_SCREEN_ADDRESS + multi40[(lin<<1) + lin] + (col>>1));
                     *wrtAdr = tabLeftRed[theColorLeft]    | tabRightRed[theColorRight];
@@ -272,29 +273,13 @@ void main()
                     wrtAdr += NEXT_SCANLINE_INCREMENT;
                     *wrtAdr = tabLeftBlue[theColorLeft]   | tabRightBlue[theColorRight];
                     wrtAdr += NEXT_SCANLINE_INCREMENT;
-                    // if ((col&0x01) != 0){
-                    //     *adr |= tabRightRed[theColorLeft];
-                    //     adr += NEXT_SCANLINE_INCREMENT;
-                    //     *adr |= tabRightGreen[theColorLeft];
-                    //     adr += NEXT_SCANLINE_INCREMENT;
-                    //     *adr |= tabRightBlue[theColorLeft];
-                    // } else {
-                    //     *adr |= tabLeftRed[theColorLeft];
-                    //     adr += NEXT_SCANLINE_INCREMENT;
-                    //     *adr |= tabLeftGreen[theColorLeft];
-                    //     adr += NEXT_SCANLINE_INCREMENT;
-                    //     *adr |= tabLeftBlue[theColorLeft];
-                    // }
-
                     (*dda1StepFunction)();
                     (*dda2StepFunction)();
                     (*dda3StepFunction)();
                     (*dda4StepFunction)();
-
                 }
                 theBaseAdr += 1;
             }
-
             refreshNeeded = 0;
         }
 	}
