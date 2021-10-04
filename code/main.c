@@ -25,12 +25,17 @@ extern unsigned char borderTables[];
 
 
 signed char rotX, rotZ;
-unsigned char rollCoord = 0;
+
+
+
+unsigned char rollCoord = 0; 
+// can be 0 when no rollover occurs on X coordinate of equirectangular image
+// or 128 when a rollover occurs on X coordinate
 
 #include "tabBorders.c"
 
 
-unsigned char col, lin;
+unsigned char idxCol, idxLin;
 
 unsigned char theX, theY;
 unsigned char *theBaseAdr;
@@ -133,7 +138,7 @@ void keyPressed(unsigned char c){
     } else if (c == KEY_ESCAPE) {
             running = 0;
     }
-    rollCoord       = (abs(rotZ)>4*ANGLE_INCREMENT)?1:0;
+    rollCoord       = (abs(rotZ)>4*ANGLE_INCREMENT)?128:0;
 }
 
 void keyReleased(unsigned char c){
@@ -176,45 +181,81 @@ void main()
         
         if (refreshNeeded) {
             // clearViewport();
-            rollCoord       = (abs(rotZ)>4*ANGLE_INCREMENT);
+            // rollCoord       = (abs(rotZ)>4*ANGLE_INCREMENT);
             selectTables();
             theBaseAdr      = (unsigned char *)(DEFAULT_BASE_ADRESS);
-            for (col=VIEWPORT_START_COLUMN; col< SCREEN_WIDTH; col+=2) {
-                wrtAdr              = theBaseAdr;
-                dda1StartValue       = tabLowX[col];
-                dda1EndValue         = tabMiddleX[col];
-                dda1NbStep           = SCREEN_HEIGHT/2;
+            for (idxCol=VIEWPORT_START_COLUMN; idxCol< SCREEN_WIDTH; idxCol+=2) {
+                // wrtAdr              = theBaseAdr;
+                asm ("lda _theBaseAdr: sta _wrtAdr: lda _theBaseAdr+1: sta _wrtAdr+1:");
+                // dda1StartValue       = tabLowX[idxCol];
+                // dda1EndValue         = tabMiddleX[idxCol];
+                asm ("ldy _idxCol:"
+                    " lda _tabLowX, y: sta _dda1StartValue: lda _tabMiddleX, y: sta _dda1EndValue:"
+                    " lda _tabLowY, y: sta _dda2StartValue: lda _tabMiddleY, y: sta _dda2EndValue:"
+                    "iny:"
+                    " lda _tabLowX, y: sta _dda3StartValue: lda _tabMiddleX, y: sta _dda3EndValue:"
+                    " lda _tabLowY, y: sta _dda4StartValue: lda _tabMiddleY, y: sta _dda4EndValue:"
+                    );
+                // dda1NbStep           = SCREEN_HEIGHT/2;
+                asm ("lda #32:"
+                    "sta _dda1NbStep:"
+                    "sta _dda2NbStep:"
+                    "sta _dda3NbStep:"
+                    "sta _dda4NbStep:"
+                ); // FIXME: replace 32 by SCREEN_HEIGHT/2
                 dda1Init();
 
-                dda2StartValue       = tabLowY[col];
-                dda2EndValue         = tabMiddleY[col];
-                dda2NbStep           = SCREEN_HEIGHT/2;
+                // dda2StartValue       = tabLowY[idxCol];
+                // dda2EndValue         = tabMiddleY[idxCol];
+                // dda2NbStep           = SCREEN_HEIGHT/2;
                 dda2Init();
 
-                dda3StartValue       = tabLowX[col+1];
-                dda3EndValue         = tabMiddleX[col+1];
-                dda3NbStep           = SCREEN_HEIGHT/2;
+                // dda3StartValue       = tabLowX[idxCol+1];
+                // dda3EndValue         = tabMiddleX[idxCol+1];
+                // dda3NbStep           = SCREEN_HEIGHT/2;
                 dda3Init();
 
-                dda4StartValue       = tabLowY[col+1];
-                dda4EndValue         = tabMiddleY[col+1];
-                dda4NbStep           = SCREEN_HEIGHT/2;
+                // dda4StartValue       = tabLowY[idxCol+1];
+                // dda4EndValue         = tabMiddleY[idxCol+1];
+                // dda4NbStep           = SCREEN_HEIGHT/2;
                 dda4Init();
 
-                for (lin=0; lin< SCREEN_HEIGHT/2; lin++) {
+                for (idxLin=0; idxLin< SCREEN_HEIGHT/2; idxLin++) {
 
-                    // computeEquiRect();
-                    // colorSquare(lin, col, texture_PANO[X*IMAGE_HEIGHT+Y]);
+                    // // computeEquiRect();
+                    // // colorSquare(lin, col, texture_PANO[X*IMAGE_HEIGHT+Y]);
 
-                    theX   = dda1CurrentValue;
-                    if (rollCoord) theX+=128;
-                    theY   = dda2CurrentValue;
+                    asm (
+                        "lda _dda1CurrentValue: adc _rollCoord: sta _theX:"
+                        "lda _dda2CurrentValue: sta _theY:"
+                    );
+                    // theX   = dda1CurrentValue;
+                    // theX+=rollCoord;
+                    // theY   = dda2CurrentValue;
                     theColorLeft = texture_PANO[theX*IMAGE_HEIGHT+theY];
 
-                    theX   = dda3CurrentValue;
-                    if (rollCoord) theX+=128;
-                    theY   = dda4CurrentValue;
-                    theColorRight = texture_PANO[theX*IMAGE_HEIGHT+theY];
+                    asm (
+                        "lda _dda3CurrentValue: adc _rollCoord: sta _theX:"
+                        "lda _dda4CurrentValue: sta _theY:"
+                    );
+                    // theX   = dda3CurrentValue;
+                    // theX+=rollCoord;
+                    // theY   = dda4CurrentValue;
+
+                    asm (
+                        "toto:lda _theX:asl:asl:asl:asl:asl:asl:asl:"
+                        "clc:adc #<_texture_PANO:"
+                        "sta tmp0:"
+                        "lda _theX:lsr:"
+                        "clc:"
+                        "adc #>_texture_PANO:"
+                        "sta tmp0+1:"
+                        "ldy _theY:"
+                        "lda (tmp0),y:"
+                        "sta _theColorRight:"
+                    );
+                    // theColorRight = texture_PANO[theX*IMAGE_HEIGHT+theY];
+
 
                     // adr = (unsigned char *)(HIRES_SCREEN_ADDRESS + multi40[(lin<<1) + lin] + (col>>1));
 
@@ -232,40 +273,56 @@ void main()
 
                 }
 
-                dda1StartValue       = tabMiddleX[col];
-                dda1EndValue         = tabHighX[col];
-                dda1NbStep           = SCREEN_HEIGHT/2;
+                asm ("ldy _idxCol:"
+                    " lda _tabMiddleX, y: sta _dda1StartValue: lda _tabHighX, y: sta _dda1EndValue:"
+                    " lda _tabMiddleY, y: sta _dda2StartValue: lda _tabHighY, y: sta _dda2EndValue:"
+                    "iny:"
+                    " lda _tabMiddleX, y: sta _dda3StartValue: lda _tabHighX, y: sta _dda3EndValue:"
+                    " lda _tabMiddleY, y: sta _dda4StartValue: lda _tabHighY, y: sta _dda4EndValue:"
+                    );
+                // dda1StartValue       = tabMiddleX[idxCol];
+                // dda1EndValue         = tabHighX[idxCol];
+                // dda1NbStep           = SCREEN_HEIGHT/2;
                 dda1Init();
 
-                dda2StartValue       = tabMiddleY[col];
-                dda2EndValue         = tabHighY[col];
-                dda2NbStep           = SCREEN_HEIGHT/2;
+                // dda2StartValue       = tabMiddleY[idxCol];
+                // dda2EndValue         = tabHighY[idxCol];
+                // dda2NbStep           = SCREEN_HEIGHT/2;
                 dda2Init();
 
-                dda3StartValue       = tabMiddleX[col+1];
-                dda3EndValue         = tabHighX[col+1];
-                dda3NbStep           = SCREEN_HEIGHT/2;
+                // dda3StartValue       = tabMiddleX[idxCol+1];
+                // dda3EndValue         = tabHighX[idxCol+1];
+                // dda3NbStep           = SCREEN_HEIGHT/2;
                 dda3Init();
 
-                dda4StartValue       = tabMiddleY[col+1];
-                dda4EndValue         = tabHighY[col+1];
-                dda4NbStep           = SCREEN_HEIGHT/2;
+                // dda4StartValue       = tabMiddleY[idxCol+1];
+                // dda4EndValue         = tabHighY[idxCol+1];
+                // dda4NbStep           = SCREEN_HEIGHT/2;
                 dda4Init();
 
 
-                for (lin=SCREEN_HEIGHT/2; lin< SCREEN_HEIGHT; lin++) {
+                for (idxLin=SCREEN_HEIGHT/2; idxLin< SCREEN_HEIGHT; idxLin++) {
 
-                    // computeEquiRect();
-                    // colorSquare(lin, col, texture_PANO[X*IMAGE_HEIGHT+Y]);
+                    // // computeEquiRect();
+                    // // colorSquare(lin, col, texture_PANO[X*IMAGE_HEIGHT+Y]);
 
-                    theX   = dda1CurrentValue;
-                    if (rollCoord) theX+=128;
-                    theY   = dda2CurrentValue;
+                    asm (
+                        "lda _dda1CurrentValue: adc _rollCoord: sta _theX:"
+                        "lda _dda2CurrentValue: sta _theY:"
+                    );
+
+                    // theX   = dda1CurrentValue;
+                    // theX+=rollCoord;
+                    // theY   = dda2CurrentValue;
                     theColorLeft = texture_PANO[theX*IMAGE_HEIGHT+theY];
 
-                    theX   = dda3CurrentValue;
-                    if (rollCoord) theX+=128;
-                    theY   = dda4CurrentValue;
+                    asm (
+                        "lda _dda3CurrentValue: adc _rollCoord: sta _theX:"
+                        "lda _dda4CurrentValue: sta _theY:"
+                    );
+                    // theX   = dda3CurrentValue;
+                    // theX+=rollCoord;
+                    // theY   = dda4CurrentValue;
                     theColorRight = texture_PANO[theX*IMAGE_HEIGHT+theY];
 
                     // theAdrHigh = (unsigned char *)(HIRES_SCREEN_ADDRESS + multi40[(lin<<1) + lin] + (col>>1));
