@@ -6,6 +6,6 @@
 //#define USE_C_VIEWPORT
 // #define USE_C_COLORRIGHTTEXEL
 // #define USE_C_COLORLEFTTEXEL
-#define USE_SLOW_TEXEL
+// #define USE_SLOW_TEXEL
 
 #endif // CONFIG_H

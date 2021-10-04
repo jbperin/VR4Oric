@@ -5,6 +5,7 @@
 #include "texel.c"
 
 extern unsigned char texture_PANO[];
+extern unsigned char borderTables[];
 
 #include "keyboard_c.c"
 #include "aei1.c"
@@ -158,6 +159,7 @@ void main()
 
 
     rotX = 0; rotZ = 0x30;
+    LoadFileAt(LOADER_BTABLES, borderTables);
     LoadFileAt(LOADER_PANO_01, texture_PANO);
     scene_number            = 0;
 	SwitchToHires();
