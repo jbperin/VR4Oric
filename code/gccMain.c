@@ -13,9 +13,9 @@
 signed char rotZ;
 signed char rotX;
 
+unsigned char rollCoord = 0;
 #include "tabBorders.c"
 
-unsigned char rollCoord = 0;
 
 unsigned char *baseAdrHigh;
 unsigned char *theBaseAdr;
@@ -23,7 +23,7 @@ unsigned char *wrtAdr;
 unsigned char theColorLeft;
 unsigned char theColorRight;
 unsigned char X, Y;
-unsigned char col, lin;
+unsigned char idxCol, idxLin;
 unsigned char texture_PANO[256*128];
 
 void main (){
@@ -43,32 +43,32 @@ void main (){
 
             selectTables();
 
-            rollCoord       = (abs(rotZ)>4*ANGLE_INCREMENT);
+            rollCoord       = (abs(rotZ)>4*ANGLE_INCREMENT)?128:0;
             selectTables();
             theBaseAdr      = baseAdrHigh;
-            for (col=VIEWPORT_START_COLUMN; col< SCREEN_WIDTH; col+=2) {
+            for (idxCol=VIEWPORT_START_COLUMN; idxCol< SCREEN_WIDTH; idxCol+=2) {
                 wrtAdr              = theBaseAdr;
-                dda1StartValue       = tabLowX[col];
-                dda1EndValue         = tabMiddleX[col];
+                dda1StartValue       = tabLowX[idxCol];
+                dda1EndValue         = tabMiddleX[idxCol];
                 dda1NbStep           = SCREEN_HEIGHT/2;
                 dda1Init();
 
-                dda2StartValue       = tabLowY[col];
-                dda2EndValue         = tabMiddleY[col];
+                dda2StartValue       = tabLowY[idxCol];
+                dda2EndValue         = tabMiddleY[idxCol];
                 dda2NbStep           = SCREEN_HEIGHT/2;
                 dda2Init();
 
-                dda3StartValue       = tabLowX[col+1];
-                dda3EndValue         = tabMiddleX[col+1];
+                dda3StartValue       = tabLowX[idxCol+1];
+                dda3EndValue         = tabMiddleX[idxCol+1];
                 dda3NbStep           = SCREEN_HEIGHT/2;
                 dda3Init();
 
-                dda4StartValue       = tabLowY[col+1];
-                dda4EndValue         = tabMiddleY[col+1];
+                dda4StartValue       = tabLowY[idxCol+1];
+                dda4EndValue         = tabMiddleY[idxCol+1];
                 dda4NbStep           = SCREEN_HEIGHT/2;
                 dda4Init();
 
-                for (lin=0; lin< SCREEN_HEIGHT/2; lin++) {
+                for (idxLin=0; idxLin< SCREEN_HEIGHT/2; idxLin++) {
 
                     X   = dda1CurrentValue;
                     if (rollCoord) X+=128;
@@ -95,28 +95,28 @@ void main (){
 
                 }
 
-                dda1StartValue       = tabMiddleX[col];
-                dda1EndValue         = tabHighX[col];
+                dda1StartValue       = tabMiddleX[idxCol];
+                dda1EndValue         = tabHighX[idxCol];
                 dda1NbStep           = SCREEN_HEIGHT/2;
                 dda1Init();
 
-                dda2StartValue       = tabMiddleY[col];
-                dda2EndValue         = tabHighY[col];
+                dda2StartValue       = tabMiddleY[idxCol];
+                dda2EndValue         = tabHighY[idxCol];
                 dda2NbStep           = SCREEN_HEIGHT/2;
                 dda2Init();
 
-                dda3StartValue       = tabMiddleX[col+1];
-                dda3EndValue         = tabHighX[col+1];
+                dda3StartValue       = tabMiddleX[idxCol+1];
+                dda3EndValue         = tabHighX[idxCol+1];
                 dda3NbStep           = SCREEN_HEIGHT/2;
                 dda3Init();
 
-                dda4StartValue       = tabMiddleY[col+1];
-                dda4EndValue         = tabHighY[col+1];
+                dda4StartValue       = tabMiddleY[idxCol+1];
+                dda4EndValue         = tabHighY[idxCol+1];
                 dda4NbStep           = SCREEN_HEIGHT/2;
                 dda4Init();
 
 
-                for (lin=SCREEN_HEIGHT/2; lin< SCREEN_HEIGHT; lin++) {
+                for (idxLin=SCREEN_HEIGHT/2; idxLin< SCREEN_HEIGHT; idxLin++) {
 
                     X   = dda1CurrentValue;
                     if (rollCoord) X+=128;
