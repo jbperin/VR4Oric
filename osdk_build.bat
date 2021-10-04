@@ -26,6 +26,7 @@ SET PICTCONV=%OSDK%\Bin\PictConv.exe
 :: Fonts
 %PICTCONV% -f0 -d0 -o2 data\Font6x8.png build\files\Font6x8.hir
 
+COPY data\border_tables.vrb build\files
 COPY data\pano_01.vrb build\files
 COPY data\pano_02.vrb build\files
 COPY data\indoor.vrb build\files
