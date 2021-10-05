@@ -201,14 +201,7 @@ void project2ScreenOPTIM () {
             dda1StepFunction     = &dda1Step0;
         }
 
-
-        // dda2CurrentValue         = dda2StartValue;
         dda2NbVal                = dda2EndValue-dda2StartValue;
-        // dda2CurrentError     = dda2NbStep;
-        // dda2StepFunction     = &dda2Step2;
-
-
-        // dda3CurrentValue         = dda3StartValue;
 
         if (dda3EndValue > dda3StartValue) {
             dda3NbVal                = dda3EndValue-dda3StartValue;
@@ -228,10 +221,7 @@ void project2ScreenOPTIM () {
             dda3StepFunction     = &dda3Step0;
         }
 
-        // dda4CurrentValue     = dda4StartValue;
         dda4NbVal            = dda4EndValue-dda4StartValue;
-        // dda4CurrentError     = dda4NbStep;
-        // dda4StepFunction     = &dda4Step2;
 
         for (idxLin=0; idxLin< SCREEN_HEIGHT/2; idxLin++) {
 
@@ -245,9 +235,6 @@ void project2ScreenOPTIM () {
             theX   = dda3CurrentValue + rollCoord;
             theY   = dda4CurrentValue;
             theColorRight = texture_PANO[theX*IMAGE_HEIGHT+theY];
-
-
-            // adr = (unsigned char *)(HIRES_SCREEN_ADDRESS + multi40[(lin<<1) + lin] + (col>>1));
 
             *wrtAdr = tabLeftRed[theColorLeft]  | tabRightRed[theColorRight];
             wrtAdr += NEXT_SCANLINE_INCREMENT;
@@ -274,10 +261,18 @@ void project2ScreenOPTIM () {
         }
 
 
-        dda1StartValue       = tabMiddleX[idxCol];
+        dda1CurrentValue         = (dda1StartValue       = tabMiddleX[idxCol]);
         dda1EndValue         = tabHighX[idxCol];
+        dda2CurrentValue         = (dda2StartValue       = tabMiddleY[idxCol]);
+        dda2EndValue         = tabHighY[idxCol];
+        dda3CurrentValue         = (dda3StartValue       = tabMiddleX[idxCol+1]);
+        dda3EndValue         = tabHighX[idxCol+1];
+        dda4CurrentValue         = (dda4StartValue       = tabMiddleY[idxCol+1]);
+        dda4EndValue         = tabHighY[idxCol+1];
         dda1NbStep           = SCREEN_HEIGHT/2;
-        dda1CurrentValue         = dda1StartValue;
+        dda2CurrentError     = (dda2NbStep           = SCREEN_HEIGHT/2);
+        dda3NbStep           = SCREEN_HEIGHT/2;
+        dda4CurrentError     = (dda4NbStep           = SCREEN_HEIGHT/2);
 
         if (dda1EndValue > dda1StartValue) {
             dda1NbVal                = dda1EndValue-dda1StartValue;
@@ -298,20 +293,7 @@ void project2ScreenOPTIM () {
             dda1StepFunction     = &dda1Step0;
         }
 
-        dda2StartValue       = tabMiddleY[idxCol];
-        dda2EndValue         = tabHighY[idxCol];
-        dda2NbStep           = SCREEN_HEIGHT/2;
-
-        dda2CurrentValue         = dda2StartValue;
         dda2NbVal                = dda2EndValue-dda2StartValue;
-
-        dda2CurrentError     = dda2NbStep;
-        // dda2StepFunction     = &dda2Step2;
-
-        dda3StartValue       = tabMiddleX[idxCol+1];
-        dda3EndValue         = tabHighX[idxCol+1];
-        dda3NbStep           = SCREEN_HEIGHT/2;
-        dda3CurrentValue         = dda3StartValue;
 
         if (dda3EndValue > dda3StartValue) {
             dda3NbVal                = dda3EndValue-dda3StartValue;
@@ -332,15 +314,7 @@ void project2ScreenOPTIM () {
             dda3StepFunction     = &dda3Step0;
         }
 
-        dda4StartValue       = tabMiddleY[idxCol+1];
-        dda4EndValue         = tabHighY[idxCol+1];
-        dda4NbStep           = SCREEN_HEIGHT/2;
-
-        dda4CurrentValue         = dda4StartValue;
         dda4NbVal                = dda4EndValue-dda4StartValue;
-        dda4CurrentError     = dda4NbStep;
-        // dda4StepFunction     = &dda4Step2;
-
 
         for (idxLin=SCREEN_HEIGHT/2; idxLin< SCREEN_HEIGHT; idxLin+=2) {
 
@@ -399,8 +373,6 @@ void project2ScreenOPTIM () {
                 dda4CurrentError     += dda4NbStep;
                 dda4CurrentValue     ++;
             }
-
-
         }
         theBaseAdr += 1;
     }
