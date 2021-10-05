@@ -567,10 +567,10 @@ void project2ScreenASM () {
         // dda1StartValue       = tabLowX[idxCol];
         // dda1EndValue         = tabMiddleX[idxCol];
         asm ("ldy _idxCol:"
-            " lda _tabLowX, y: sta _dda1StartValue: lda _tabMiddleX, y: sta _dda1EndValue:"
+            " lda _tabLowX, y: sta _dda1StartValue: sta _dda1CurrentValue: lda _tabMiddleX, y: sta _dda1EndValue:"
             " lda _tabLowY, y: sta _dda2StartValue: sta _dda2CurrentValue: lda _tabMiddleY, y: sta _dda2EndValue: sec : sbc _dda2StartValue: sta _dda2NbVal:"
             "iny:"
-            " lda _tabLowX, y: sta _dda3StartValue: lda _tabMiddleX, y: sta _dda3EndValue:"
+            " lda _tabLowX, y: sta _dda3StartValue: sta _dda3CurrentValue: lda _tabMiddleX, y: sta _dda3EndValue:"
             " lda _tabLowY, y: sta _dda4StartValue: sta _dda4CurrentValue: lda _tabMiddleY, y: sta _dda4EndValue: sec : sbc _dda4StartValue: sta _dda4NbVal:"
             );
         // dda1NbStep           = SCREEN_HEIGHT/2;
@@ -581,7 +581,7 @@ void project2ScreenASM () {
             "sta _dda4NbStep: sta _dda4CurrentError:"
         ); // FIXME: replace 32 by SCREEN_HEIGHT/2
 
-        dda1CurrentValue         = dda1StartValue;
+        // dda1CurrentValue         = dda1StartValue;
 
         if (dda1EndValue > dda1StartValue) {
             dda1NbVal                = dda1EndValue-dda1StartValue;
@@ -614,7 +614,7 @@ void project2ScreenASM () {
         // dda3StartValue       = tabLowX[idxCol+1];
         // dda3EndValue         = tabMiddleX[idxCol+1];
         // dda3NbStep           = SCREEN_HEIGHT/2;
-        dda3CurrentValue         = dda3StartValue;
+        // dda3CurrentValue         = dda3StartValue;
 
         if (dda3EndValue > dda3StartValue) {
             dda3NbVal                = dda3EndValue-dda3StartValue;
