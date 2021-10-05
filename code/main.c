@@ -161,270 +161,87 @@ void lsys(){
 #define DEFAULT_BASE_ADRESS (HIRES_SCREEN_ADDRESS + 40*((VIEWPORT_START_LINE<<1) + VIEWPORT_START_LINE) + (VIEWPORT_START_COLUMN>>1))
 void project2ScreenASM ();
 
-void project2ScreenOPTIM () {
-    theBaseAdr      = (unsigned char *)(DEFAULT_BASE_ADRESS);
-    for (idxCol=VIEWPORT_START_COLUMN; idxCol< SCREEN_WIDTH; idxCol+=2) {
-        wrtAdr              = theBaseAdr;
-
-        dda1StartValue       = tabLowX[idxCol];
-        dda1EndValue         = tabMiddleX[idxCol];
-        dda2StartValue       = tabLowY[idxCol];
-        dda2EndValue         = tabMiddleY[idxCol];
-        dda3StartValue       = tabLowX[idxCol+1];
-        dda3EndValue         = tabMiddleX[idxCol+1];
-        dda4StartValue       = tabLowY[idxCol+1];
-        dda4EndValue         = tabMiddleY[idxCol+1];
-        dda4NbStep           = SCREEN_HEIGHT/2;
-        dda3NbStep           = SCREEN_HEIGHT/2;
-        dda2NbStep           = SCREEN_HEIGHT/2;
-        dda1NbStep           = SCREEN_HEIGHT/2;
-
-        dda1CurrentValue         = dda1StartValue;
-
-        if (dda1EndValue > dda1StartValue) {
-            dda1NbVal                = dda1EndValue-dda1StartValue;
-            dda1Increment            = 1;
-        } else {
-            dda1NbVal                = dda1StartValue-dda1EndValue;
-            dda1Increment            = -1;
-        }
-        if          (dda1NbVal > dda1NbStep) {
-            dda1CurrentError     = dda1NbVal;
-            dda1StepFunction     = &dda1Step1;
-        } else if   (dda1NbVal < dda1NbStep) {
-            dda1CurrentError     = dda1NbStep;
-            dda1StepFunction     = &dda1Step2;
-        } else {
-            dda1CurrentError     = dda1EndValue;
-            dda1StepFunction     = &dda1Step0;
-        }
-
-
-        dda2CurrentValue         = dda2StartValue;
-        dda2NbVal                = dda2EndValue-dda2StartValue;
-        dda2CurrentError     = dda2NbStep;
-        // dda2StepFunction     = &dda2Step2;
-
-
-        dda3CurrentValue         = dda3StartValue;
-
-        if (dda3EndValue > dda3StartValue) {
-            dda3NbVal                = dda3EndValue-dda3StartValue;
-            dda3Increment            = 1;
-        } else {
-            dda3NbVal                = dda3StartValue-dda3EndValue;
-            dda3Increment            = -1;
-        }
-        if          (dda3NbVal > dda3NbStep) {
-            dda3CurrentError     = dda3NbVal;
-            dda3StepFunction     = &dda3Step1;
-        } else if   (dda3NbVal < dda3NbStep) {
-            dda3CurrentError     = dda3NbStep;
-            dda3StepFunction     = &dda3Step2;
-        } else {
-            dda3CurrentError     = dda3EndValue;
-            dda3StepFunction     = &dda3Step0;
-        }
-
-        dda4CurrentValue     = dda4StartValue;
-        dda4NbVal            = dda4EndValue-dda4StartValue;
-        dda4CurrentError     = dda4NbStep;
-        // dda4StepFunction     = &dda4Step2;
-
-        for (idxLin=0; idxLin< SCREEN_HEIGHT/2; idxLin++) {
-
-            // computeEquiRect();
-            // colorSquare(lin, col, texture_PANO[X*IMAGE_HEIGHT+Y]);
-
-            theX    = dda1CurrentValue + rollCoord;
-            theY    = dda2CurrentValue;
-            theColorLeft = texture_PANO[theX*IMAGE_HEIGHT+theY];
-
-            theX   = dda3CurrentValue + rollCoord;
-            theY   = dda4CurrentValue;
-            theColorRight = texture_PANO[theX*IMAGE_HEIGHT+theY];
-
-
-            // adr = (unsigned char *)(HIRES_SCREEN_ADDRESS + multi40[(lin<<1) + lin] + (col>>1));
-
-            *wrtAdr = tabLeftRed[theColorLeft]  | tabRightRed[theColorRight];
-            wrtAdr += NEXT_SCANLINE_INCREMENT;
-            *wrtAdr = tabLeftGreen[theColorLeft]  | tabRightGreen[theColorRight];
-            wrtAdr += NEXT_SCANLINE_INCREMENT;
-            *wrtAdr = tabLeftBlue[theColorLeft]  | tabRightBlue[theColorRight];
-            wrtAdr += NEXT_SCANLINE_INCREMENT;
-
-            (*dda1StepFunction)();
-
-            dda2CurrentError         -= dda2NbVal; // dda2EndValue-dda2StartValue;
-            if ((dda2CurrentError<<1) < dda2NbStep) {
-                dda2CurrentError     += dda2NbStep;
-                dda2CurrentValue     ++;
-            }
-            (*dda3StepFunction)();
-
-            dda4CurrentError         -= dda4NbVal; 
-            if ((dda4CurrentError<<1) < dda4NbStep) {
-                dda4CurrentError     += dda4NbStep;
-                dda4CurrentValue     ++;
-            }
-
-        }
-
-
-        dda1StartValue       = tabMiddleX[idxCol];
-        dda1EndValue         = tabHighX[idxCol];
-        dda1NbStep           = SCREEN_HEIGHT/2;
-        dda1CurrentValue         = dda1StartValue;
-
-        if (dda1EndValue > dda1StartValue) {
-            dda1NbVal                = dda1EndValue-dda1StartValue;
-            dda1Increment            = 1;
-        } else {
-            dda1NbVal                = dda1StartValue-dda1EndValue;
-            dda1Increment            = -1;
-        }
-        //dda1EndValue             = dda1StartValue + dda1NbVal;
-
-        if          (dda1NbVal > dda1NbStep) {
-            dda1CurrentError     = dda1NbVal;
-            dda1StepFunction     = &dda1Step1;
-        } else if   (dda1NbVal < dda1NbStep) {
-            dda1CurrentError     = dda1NbStep;
-            dda1StepFunction     = &dda1Step2;
-        } else {
-            dda1CurrentError     = dda1EndValue;
-            dda1StepFunction     = &dda1Step0;
-        }
-
-        dda2StartValue       = tabMiddleY[idxCol];
-        dda2EndValue         = tabHighY[idxCol];
-        dda2NbStep           = SCREEN_HEIGHT/2;
-
-        dda2CurrentValue         = dda2StartValue;
-        dda2NbVal                = dda2EndValue-dda2StartValue;
-
-        dda2CurrentError     = dda2NbStep;
-        // dda2StepFunction     = &dda2Step2;
-
-        dda3StartValue       = tabMiddleX[idxCol+1];
-        dda3EndValue         = tabHighX[idxCol+1];
-        dda3NbStep           = SCREEN_HEIGHT/2;
-        dda3CurrentValue         = dda3StartValue;
-
-        if (dda3EndValue > dda3StartValue) {
-            dda3NbVal                = dda3EndValue-dda3StartValue;
-            dda3Increment            = 1;
-        } else {
-            dda3NbVal                = dda3StartValue-dda3EndValue;
-            dda3Increment            = -1;
-        }
-
-        if          (dda3NbVal > dda3NbStep) {
-            dda3CurrentError     = dda3NbVal;
-            dda3StepFunction     = &dda3Step1;
-        } else if   (dda3NbVal < dda3NbStep) {
-            dda3CurrentError     = dda3NbStep;
-            dda3StepFunction     = &dda3Step2;
-        } else {
-            dda3CurrentError     = dda3EndValue;
-            dda3StepFunction     = &dda3Step0;
-        }
-
-        dda4StartValue       = tabMiddleY[idxCol+1];
-        dda4EndValue         = tabHighY[idxCol+1];
-        dda4NbStep           = SCREEN_HEIGHT/2;
-
-        dda4CurrentValue         = dda4StartValue;
-        dda4NbVal                = dda4EndValue-dda4StartValue;
-        dda4CurrentError     = dda4NbStep;
-        // dda4StepFunction     = &dda4Step2;
-
-
-        for (idxLin=SCREEN_HEIGHT/2; idxLin< SCREEN_HEIGHT; idxLin++) {
-
-            // computeEquiRect();
-            // colorSquare(lin, col, texture_PANO[X*IMAGE_HEIGHT+Y]);
-
-
-            theX   = dda1CurrentValue;
-            theX    +=rollCoord;
-            theY   = dda2CurrentValue;
-
-            theColorLeft = texture_PANO[theX*IMAGE_HEIGHT+theY];
-
-            theX   = dda3CurrentValue;
-            theX    +=rollCoord;
-            theY   = dda4CurrentValue;
-
-            theColorRight = texture_PANO[theX*IMAGE_HEIGHT+theY];
-
-            // theAdrHigh = (unsigned char *)(HIRES_SCREEN_ADDRESS + multi40[(lin<<1) + lin] + (col>>1));
-            *wrtAdr = tabLeftRed[theColorLeft]    | tabRightRed[theColorRight];
-            wrtAdr += NEXT_SCANLINE_INCREMENT;
-            *wrtAdr = tabLeftGreen[theColorLeft]  | tabRightGreen[theColorRight];
-            wrtAdr += NEXT_SCANLINE_INCREMENT;
-            *wrtAdr = tabLeftBlue[theColorLeft]   | tabRightBlue[theColorRight];
-            wrtAdr += NEXT_SCANLINE_INCREMENT;
-
-
-            (*dda1StepFunction)();
-            dda2CurrentError         -= dda2NbVal; // dda2EndValue-dda2StartValue;
-            if ((dda2CurrentError<<1) < dda2NbStep) {
-                dda2CurrentError     += dda2NbStep;
-                dda2CurrentValue     ++;
-            }
-
-            (*dda3StepFunction)();
-            dda4CurrentError         -= dda4NbVal; 
-            if ((dda4CurrentError<<1) < dda4NbStep) {
-                dda4CurrentError     += dda4NbStep;
-                dda4CurrentValue     ++;
-            }
-        }
-        theBaseAdr += 1;
-    }
-}
-
-// void project2Screen () {
+// void project2ScreenOPTIM () {
 //     theBaseAdr      = (unsigned char *)(DEFAULT_BASE_ADRESS);
 //     for (idxCol=VIEWPORT_START_COLUMN; idxCol< SCREEN_WIDTH; idxCol+=2) {
 //         wrtAdr              = theBaseAdr;
 
 //         dda1StartValue       = tabLowX[idxCol];
 //         dda1EndValue         = tabMiddleX[idxCol];
-//         dda1NbStep           = SCREEN_HEIGHT/2;
-//         dda1Init();
-
 //         dda2StartValue       = tabLowY[idxCol];
 //         dda2EndValue         = tabMiddleY[idxCol];
-//         dda2NbStep           = SCREEN_HEIGHT/2;
-//         dda2Init();
-
 //         dda3StartValue       = tabLowX[idxCol+1];
 //         dda3EndValue         = tabMiddleX[idxCol+1];
-//         dda3NbStep           = SCREEN_HEIGHT/2;
-//         dda3Init();
-
 //         dda4StartValue       = tabLowY[idxCol+1];
 //         dda4EndValue         = tabMiddleY[idxCol+1];
 //         dda4NbStep           = SCREEN_HEIGHT/2;
-//         dda4Init();
+//         dda3NbStep           = SCREEN_HEIGHT/2;
+//         dda2NbStep           = SCREEN_HEIGHT/2;
+//         dda1NbStep           = SCREEN_HEIGHT/2;
+
+//         dda1CurrentValue         = dda1StartValue;
+
+//         if (dda1EndValue > dda1StartValue) {
+//             dda1NbVal                = dda1EndValue-dda1StartValue;
+//             dda1Increment            = 1;
+//         } else {
+//             dda1NbVal                = dda1StartValue-dda1EndValue;
+//             dda1Increment            = -1;
+//         }
+//         if          (dda1NbVal > dda1NbStep) {
+//             dda1CurrentError     = dda1NbVal;
+//             dda1StepFunction     = &dda1Step1;
+//         } else if   (dda1NbVal < dda1NbStep) {
+//             dda1CurrentError     = dda1NbStep;
+//             dda1StepFunction     = &dda1Step2;
+//         } else {
+//             dda1CurrentError     = dda1EndValue;
+//             dda1StepFunction     = &dda1Step0;
+//         }
+
+
+//         dda2CurrentValue         = dda2StartValue;
+//         dda2NbVal                = dda2EndValue-dda2StartValue;
+//         dda2CurrentError     = dda2NbStep;
+//         // dda2StepFunction     = &dda2Step2;
+
+
+//         dda3CurrentValue         = dda3StartValue;
+
+//         if (dda3EndValue > dda3StartValue) {
+//             dda3NbVal                = dda3EndValue-dda3StartValue;
+//             dda3Increment            = 1;
+//         } else {
+//             dda3NbVal                = dda3StartValue-dda3EndValue;
+//             dda3Increment            = -1;
+//         }
+//         if          (dda3NbVal > dda3NbStep) {
+//             dda3CurrentError     = dda3NbVal;
+//             dda3StepFunction     = &dda3Step1;
+//         } else if   (dda3NbVal < dda3NbStep) {
+//             dda3CurrentError     = dda3NbStep;
+//             dda3StepFunction     = &dda3Step2;
+//         } else {
+//             dda3CurrentError     = dda3EndValue;
+//             dda3StepFunction     = &dda3Step0;
+//         }
+
+//         dda4CurrentValue     = dda4StartValue;
+//         dda4NbVal            = dda4EndValue-dda4StartValue;
+//         dda4CurrentError     = dda4NbStep;
+//         // dda4StepFunction     = &dda4Step2;
 
 //         for (idxLin=0; idxLin< SCREEN_HEIGHT/2; idxLin++) {
 
 //             // computeEquiRect();
 //             // colorSquare(lin, col, texture_PANO[X*IMAGE_HEIGHT+Y]);
 
-//             theX   = dda1CurrentValue;
-//             theX+=rollCoord;
-//             theY   = dda2CurrentValue;
+//             theX    = dda1CurrentValue + rollCoord;
+//             theY    = dda2CurrentValue;
 //             theColorLeft = texture_PANO[theX*IMAGE_HEIGHT+theY];
 
-//             theX   = dda3CurrentValue;
-//             theX+=rollCoord;
+//             theX   = dda3CurrentValue + rollCoord;
 //             theY   = dda4CurrentValue;
-
 //             theColorRight = texture_PANO[theX*IMAGE_HEIGHT+theY];
 
 
@@ -438,9 +255,19 @@ void project2ScreenOPTIM () {
 //             wrtAdr += NEXT_SCANLINE_INCREMENT;
 
 //             (*dda1StepFunction)();
-//             (*dda2StepFunction)();
+
+//             dda2CurrentError         -= dda2NbVal; // dda2EndValue-dda2StartValue;
+//             if ((dda2CurrentError<<1) < dda2NbStep) {
+//                 dda2CurrentError     += dda2NbStep;
+//                 dda2CurrentValue     ++;
+//             }
 //             (*dda3StepFunction)();
-//             (*dda4StepFunction)();
+
+//             dda4CurrentError         -= dda4NbVal; 
+//             if ((dda4CurrentError<<1) < dda4NbStep) {
+//                 dda4CurrentError     += dda4NbStep;
+//                 dda4CurrentValue     ++;
+//             }
 
 //         }
 
@@ -448,22 +275,70 @@ void project2ScreenOPTIM () {
 //         dda1StartValue       = tabMiddleX[idxCol];
 //         dda1EndValue         = tabHighX[idxCol];
 //         dda1NbStep           = SCREEN_HEIGHT/2;
-//         dda1Init();
+//         dda1CurrentValue         = dda1StartValue;
+
+//         if (dda1EndValue > dda1StartValue) {
+//             dda1NbVal                = dda1EndValue-dda1StartValue;
+//             dda1Increment            = 1;
+//         } else {
+//             dda1NbVal                = dda1StartValue-dda1EndValue;
+//             dda1Increment            = -1;
+//         }
+//         //dda1EndValue             = dda1StartValue + dda1NbVal;
+
+//         if          (dda1NbVal > dda1NbStep) {
+//             dda1CurrentError     = dda1NbVal;
+//             dda1StepFunction     = &dda1Step1;
+//         } else if   (dda1NbVal < dda1NbStep) {
+//             dda1CurrentError     = dda1NbStep;
+//             dda1StepFunction     = &dda1Step2;
+//         } else {
+//             dda1CurrentError     = dda1EndValue;
+//             dda1StepFunction     = &dda1Step0;
+//         }
 
 //         dda2StartValue       = tabMiddleY[idxCol];
 //         dda2EndValue         = tabHighY[idxCol];
 //         dda2NbStep           = SCREEN_HEIGHT/2;
-//         dda2Init();
+
+//         dda2CurrentValue         = dda2StartValue;
+//         dda2NbVal                = dda2EndValue-dda2StartValue;
+
+//         dda2CurrentError     = dda2NbStep;
+//         // dda2StepFunction     = &dda2Step2;
 
 //         dda3StartValue       = tabMiddleX[idxCol+1];
 //         dda3EndValue         = tabHighX[idxCol+1];
 //         dda3NbStep           = SCREEN_HEIGHT/2;
-//         dda3Init();
+//         dda3CurrentValue         = dda3StartValue;
+
+//         if (dda3EndValue > dda3StartValue) {
+//             dda3NbVal                = dda3EndValue-dda3StartValue;
+//             dda3Increment            = 1;
+//         } else {
+//             dda3NbVal                = dda3StartValue-dda3EndValue;
+//             dda3Increment            = -1;
+//         }
+
+//         if          (dda3NbVal > dda3NbStep) {
+//             dda3CurrentError     = dda3NbVal;
+//             dda3StepFunction     = &dda3Step1;
+//         } else if   (dda3NbVal < dda3NbStep) {
+//             dda3CurrentError     = dda3NbStep;
+//             dda3StepFunction     = &dda3Step2;
+//         } else {
+//             dda3CurrentError     = dda3EndValue;
+//             dda3StepFunction     = &dda3Step0;
+//         }
 
 //         dda4StartValue       = tabMiddleY[idxCol+1];
 //         dda4EndValue         = tabHighY[idxCol+1];
 //         dda4NbStep           = SCREEN_HEIGHT/2;
-//         dda4Init();
+
+//         dda4CurrentValue         = dda4StartValue;
+//         dda4NbVal                = dda4EndValue-dda4StartValue;
+//         dda4CurrentError     = dda4NbStep;
+//         // dda4StepFunction     = &dda4Step2;
 
 
 //         for (idxLin=SCREEN_HEIGHT/2; idxLin< SCREEN_HEIGHT; idxLin++) {
@@ -473,13 +348,13 @@ void project2ScreenOPTIM () {
 
 
 //             theX   = dda1CurrentValue;
-//             theX+=rollCoord;
+//             theX    +=rollCoord;
 //             theY   = dda2CurrentValue;
 
 //             theColorLeft = texture_PANO[theX*IMAGE_HEIGHT+theY];
 
 //             theX   = dda3CurrentValue;
-//             theX+=rollCoord;
+//             theX    +=rollCoord;
 //             theY   = dda4CurrentValue;
 
 //             theColorRight = texture_PANO[theX*IMAGE_HEIGHT+theY];
@@ -494,13 +369,161 @@ void project2ScreenOPTIM () {
 
 
 //             (*dda1StepFunction)();
-//             (*dda2StepFunction)();
+//             dda2CurrentError         -= dda2NbVal; // dda2EndValue-dda2StartValue;
+//             if ((dda2CurrentError<<1) < dda2NbStep) {
+//                 dda2CurrentError     += dda2NbStep;
+//                 dda2CurrentValue     ++;
+//             }
+
 //             (*dda3StepFunction)();
-//             (*dda4StepFunction)();
+//             dda4CurrentError         -= dda4NbVal; 
+//             if ((dda4CurrentError<<1) < dda4NbStep) {
+//                 dda4CurrentError     += dda4NbStep;
+//                 dda4CurrentValue     ++;
+//             }
 //         }
 //         theBaseAdr += 1;
 //     }
 // }
+
+void project2Screen () {
+    theBaseAdr      = (unsigned char *)(DEFAULT_BASE_ADRESS);
+    for (idxCol=VIEWPORT_START_COLUMN; idxCol< SCREEN_WIDTH; idxCol+=2) {
+        wrtAdr              = theBaseAdr;
+
+        dda1StartValue       = tabLowX[idxCol];
+        dda1EndValue         = tabMiddleX[idxCol];
+        dda1NbStep           = SCREEN_HEIGHT/2;
+        dda1Init();
+
+        dda2StartValue       = tabLowY[idxCol];
+        dda2EndValue         = tabMiddleY[idxCol];
+        dda2NbStep           = SCREEN_HEIGHT/2;
+        dda2Init();
+
+        dda3StartValue       = tabLowX[idxCol+1];
+        dda3EndValue         = tabMiddleX[idxCol+1];
+        dda3NbStep           = SCREEN_HEIGHT/2;
+        dda3Init();
+
+        dda4StartValue       = tabLowY[idxCol+1];
+        dda4EndValue         = tabMiddleY[idxCol+1];
+        dda4NbStep           = SCREEN_HEIGHT/2;
+        dda4Init();
+
+        for (idxLin=0; idxLin< SCREEN_HEIGHT/2; idxLin+=2) {
+            theX   = dda1CurrentValue + rollCoord;
+            theY   = dda2CurrentValue;
+            theColorLeft = texture_PANO[theX*IMAGE_HEIGHT+theY];
+
+            theX   = dda3CurrentValue + rollCoord;
+            theY   = dda4CurrentValue;
+            theColorRight = texture_PANO[theX*IMAGE_HEIGHT+theY];
+
+            *wrtAdr = tabLeftRed[theColorLeft]  | tabRightRed[theColorRight];
+            wrtAdr += NEXT_SCANLINE_INCREMENT;
+            *wrtAdr = tabLeftGreen[theColorLeft]  | tabRightGreen[theColorRight];
+            wrtAdr += NEXT_SCANLINE_INCREMENT;
+            *wrtAdr = tabLeftBlue[theColorLeft]  | tabRightBlue[theColorRight];
+            wrtAdr += NEXT_SCANLINE_INCREMENT;
+
+            (*dda1StepFunction)();
+            (*dda2StepFunction)();
+            (*dda3StepFunction)();
+            (*dda4StepFunction)();
+
+            theX   = dda1CurrentValue + rollCoord;
+            theY   = dda2CurrentValue;
+            theColorLeft = texture_PANO[theX*IMAGE_HEIGHT+theY];
+
+            theX   = dda3CurrentValue + rollCoord;
+            theY   = dda4CurrentValue;
+            theColorRight = texture_PANO[theX*IMAGE_HEIGHT+theY];
+
+            *wrtAdr = tabLeftRed[theColorLeft]  | tabRightRed[theColorRight];
+            wrtAdr += NEXT_SCANLINE_INCREMENT;
+            *wrtAdr = tabLeftGreen[theColorLeft]  | tabRightGreen[theColorRight];
+            wrtAdr += NEXT_SCANLINE_INCREMENT;
+            *wrtAdr = tabLeftBlue[theColorLeft]  | tabRightBlue[theColorRight];
+            wrtAdr += NEXT_SCANLINE_INCREMENT;
+
+            (*dda1StepFunction)();
+            (*dda2StepFunction)();
+            (*dda3StepFunction)();
+            (*dda4StepFunction)();
+
+
+        }
+
+
+        dda1StartValue       = tabMiddleX[idxCol];
+        dda1EndValue         = tabHighX[idxCol];
+        dda1NbStep           = SCREEN_HEIGHT/2;
+        dda1Init();
+
+        dda2StartValue       = tabMiddleY[idxCol];
+        dda2EndValue         = tabHighY[idxCol];
+        dda2NbStep           = SCREEN_HEIGHT/2;
+        dda2Init();
+
+        dda3StartValue       = tabMiddleX[idxCol+1];
+        dda3EndValue         = tabHighX[idxCol+1];
+        dda3NbStep           = SCREEN_HEIGHT/2;
+        dda3Init();
+
+        dda4StartValue       = tabMiddleY[idxCol+1];
+        dda4EndValue         = tabHighY[idxCol+1];
+        dda4NbStep           = SCREEN_HEIGHT/2;
+        dda4Init();
+
+
+        for (idxLin=SCREEN_HEIGHT/2; idxLin< SCREEN_HEIGHT; idxLin+=2) {
+
+            theX   = dda1CurrentValue + rollCoord;
+            theY   = dda2CurrentValue;
+            theColorLeft = texture_PANO[theX*IMAGE_HEIGHT+theY];
+
+            theX   = dda3CurrentValue + rollCoord;
+            theY   = dda4CurrentValue;
+            theColorRight = texture_PANO[theX*IMAGE_HEIGHT+theY];
+
+            *wrtAdr = tabLeftRed[theColorLeft]    | tabRightRed[theColorRight];
+            wrtAdr += NEXT_SCANLINE_INCREMENT;
+            *wrtAdr = tabLeftGreen[theColorLeft]  | tabRightGreen[theColorRight];
+            wrtAdr += NEXT_SCANLINE_INCREMENT;
+            *wrtAdr = tabLeftBlue[theColorLeft]   | tabRightBlue[theColorRight];
+            wrtAdr += NEXT_SCANLINE_INCREMENT;
+
+            (*dda1StepFunction)();
+            (*dda2StepFunction)();
+            (*dda3StepFunction)();
+            (*dda4StepFunction)();
+
+            theX   = dda1CurrentValue + rollCoord;
+            theY   = dda2CurrentValue;
+            theColorLeft = texture_PANO[theX*IMAGE_HEIGHT+theY];
+
+            theX   = dda3CurrentValue + rollCoord;
+            theY   = dda4CurrentValue;
+            theColorRight = texture_PANO[theX*IMAGE_HEIGHT+theY];
+
+            *wrtAdr = tabLeftRed[theColorLeft]    | tabRightRed[theColorRight];
+            wrtAdr += NEXT_SCANLINE_INCREMENT;
+            *wrtAdr = tabLeftGreen[theColorLeft]  | tabRightGreen[theColorRight];
+            wrtAdr += NEXT_SCANLINE_INCREMENT;
+            *wrtAdr = tabLeftBlue[theColorLeft]   | tabRightBlue[theColorRight];
+            wrtAdr += NEXT_SCANLINE_INCREMENT;
+
+            (*dda1StepFunction)();
+            (*dda2StepFunction)();
+            (*dda3StepFunction)();
+            (*dda4StepFunction)();
+
+        }
+
+        theBaseAdr += 1;
+    }
+}
 void main()
 {
     int ii = 0;
@@ -531,7 +554,8 @@ void main()
             // clearViewport();
             // rollCoord       = (abs(rotZ)>4*ANGLE_INCREMENT);
             selectTables();
-            project2ScreenOPTIM ();
+            // project2ScreenOPTIM ();
+            project2Screen ();
 
             refreshNeeded = 0;
         }
