@@ -580,8 +580,27 @@ void project2ScreenASM () {
             "sta _dda3NbStep:"
             "sta _dda4NbStep: sta _dda4CurrentError:"
         ); // FIXME: replace 32 by SCREEN_HEIGHT/2
-        dda1Init();
 
+        dda1CurrentValue         = dda1StartValue;
+
+        if (dda1EndValue > dda1StartValue) {
+            dda1NbVal                = dda1EndValue-dda1StartValue;
+            dda1Increment            = 1;
+        } else {
+            dda1NbVal                = dda1StartValue-dda1EndValue;
+            dda1Increment            = -1;
+        }
+
+        if          (dda1NbVal > dda1NbStep) {
+            dda1CurrentError     = dda1NbVal;
+            dda1StepFunction     = &dda1Step1;
+        } else if   (dda1NbVal < dda1NbStep) {
+            dda1CurrentError     = dda1NbStep;
+            dda1StepFunction     = &dda1Step2;
+        } else {
+            dda1CurrentError     = dda1EndValue;
+            dda1StepFunction     = &dda1Step0;
+        }
         // dda2StartValue       = tabLowY[idxCol];
         // dda2EndValue         = tabMiddleY[idxCol];
         // dda2NbStep           = SCREEN_HEIGHT/2;
@@ -595,7 +614,26 @@ void project2ScreenASM () {
         // dda3StartValue       = tabLowX[idxCol+1];
         // dda3EndValue         = tabMiddleX[idxCol+1];
         // dda3NbStep           = SCREEN_HEIGHT/2;
-        dda3Init();
+        dda3CurrentValue         = dda3StartValue;
+
+        if (dda3EndValue > dda3StartValue) {
+            dda3NbVal                = dda3EndValue-dda3StartValue;
+            dda3Increment            = 1;
+        } else {
+            dda3NbVal                = dda3StartValue-dda3EndValue;
+            dda3Increment            = -1;
+        }
+
+        if          (dda3NbVal > dda3NbStep) {
+            dda3CurrentError     = dda3NbVal;
+            dda3StepFunction     = &dda3Step1;
+        } else if   (dda3NbVal < dda3NbStep) {
+            dda3CurrentError     = dda3NbStep;
+            dda3StepFunction     = &dda3Step2;
+        } else {
+            dda3CurrentError     = dda3EndValue;
+            dda3StepFunction     = &dda3Step0;
+        }
 
         // dda4StartValue       = tabLowY[idxCol+1];
         // dda4EndValue         = tabMiddleY[idxCol+1];
@@ -663,9 +701,17 @@ void project2ScreenASM () {
             // wrtAdr += NEXT_SCANLINE_INCREMENT;
 
             (*dda1StepFunction)();
-            dda2Step2();
+            dda2CurrentError         -= dda2NbVal;
+            if ((dda2CurrentError<<1) < dda2NbStep) {
+                dda2CurrentError     += dda2NbStep;
+                dda2CurrentValue     ++;
+            }
             (*dda3StepFunction)();
-            dda4Step2();
+            dda4CurrentError         -= dda4NbVal; 
+            if ((dda4CurrentError<<1) < dda4NbStep) {
+                dda4CurrentError     += dda4NbStep;
+                dda4CurrentValue     ++;
+            }
 
 
             // theX   = dda1CurrentValue + rollCoord;
@@ -721,11 +767,17 @@ void project2ScreenASM () {
             // wrtAdr += NEXT_SCANLINE_INCREMENT;
 
             (*dda1StepFunction)();
-            dda2Step2();
+            dda2CurrentError         -= dda2NbVal;
+            if ((dda2CurrentError<<1) < dda2NbStep) {
+                dda2CurrentError     += dda2NbStep;
+                dda2CurrentValue     ++;
+            }
             (*dda3StepFunction)();
-            dda4Step2();
-
-
+            dda4CurrentError         -= dda4NbVal; 
+            if ((dda4CurrentError<<1) < dda4NbStep) {
+                dda4CurrentError     += dda4NbStep;
+                dda4CurrentValue     ++;
+            }
 
         }
 
@@ -738,6 +790,13 @@ void project2ScreenASM () {
             " lda _tabMiddleY, y: sta _dda4StartValue: lda _tabHighY, y: sta _dda4EndValue:"
             // " lda _tabMiddleY, y: sta _dda4StartValue: sta _dda4CurrentValue: lda _tabHighY, y: sta _dda4EndValue: sec : sbc _dda4StartValue: sta _dda4NbVal:"
             );
+        // asm ("ldy _idxCol:"
+        //     " lda _tabMiddleX, y: sta _dda1StartValue: lda _tabHighX, y: sta _dda1EndValue:"
+        //     " lda _tabMiddleY, y: sta _dda2StartValue: sta _dda2CurrentValue: lda _tabHighY, y: sta _dda2EndValue: sec : sbc _dda2StartValue: sta _dda2NbVal:"
+        //     "iny:"
+        //     " lda _tabMiddleX, y: sta _dda3StartValue: lda _tabHighX, y: sta _dda3EndValue:"
+        //     " lda _tabMiddleY, y: sta _dda4StartValue: sta _dda4CurrentValue: lda _tabHighY, y: sta _dda4EndValue: sec : sbc _dda4StartValue: sta _dda4NbVal:"
+        //     );
 
         asm ("lda #32:"
             "sta _dda1NbStep:"
@@ -752,7 +811,26 @@ void project2ScreenASM () {
         // dda1StartValue       = tabMiddleX[idxCol];
         // dda1EndValue         = tabHighX[idxCol];
         // dda1NbStep           = SCREEN_HEIGHT/2;
-        dda1Init();
+        dda1CurrentValue         = dda1StartValue;
+
+        if (dda1EndValue > dda1StartValue) {
+            dda1NbVal                = dda1EndValue-dda1StartValue;
+            dda1Increment            = 1;
+        } else {
+            dda1NbVal                = dda1StartValue-dda1EndValue;
+            dda1Increment            = -1;
+        }
+
+        if          (dda1NbVal > dda1NbStep) {
+            dda1CurrentError     = dda1NbVal;
+            dda1StepFunction     = &dda1Step1;
+        } else if   (dda1NbVal < dda1NbStep) {
+            dda1CurrentError     = dda1NbStep;
+            dda1StepFunction     = &dda1Step2;
+        } else {
+            dda1CurrentError     = dda1EndValue;
+            dda1StepFunction     = &dda1Step0;
+        }
 
         // dda2StartValue       = tabMiddleY[idxCol];
         // dda2EndValue         = tabHighY[idxCol];
@@ -767,8 +845,26 @@ void project2ScreenASM () {
         // dda3StartValue       = tabMiddleX[idxCol+1];
         // dda3EndValue         = tabHighX[idxCol+1];
         // dda3NbStep           = SCREEN_HEIGHT/2;
-        dda3Init();
+        dda3CurrentValue         = dda3StartValue;
 
+        if (dda3EndValue > dda3StartValue) {
+            dda3NbVal                = dda3EndValue-dda3StartValue;
+            dda3Increment            = 1;
+        } else {
+            dda3NbVal                = dda3StartValue-dda3EndValue;
+            dda3Increment            = -1;
+        }
+
+        if          (dda3NbVal > dda3NbStep) {
+            dda3CurrentError     = dda3NbVal;
+            dda3StepFunction     = &dda3Step1;
+        } else if   (dda3NbVal < dda3NbStep) {
+            dda3CurrentError     = dda3NbStep;
+            dda3StepFunction     = &dda3Step2;
+        } else {
+            dda3CurrentError     = dda3EndValue;
+            dda3StepFunction     = &dda3Step0;
+        }
         // dda4StartValue       = tabMiddleY[idxCol+1];
         // dda4EndValue         = tabHighY[idxCol+1];
         // dda4NbStep           = SCREEN_HEIGHT/2;
