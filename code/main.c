@@ -168,6 +168,15 @@ void project2ScreenOPTIM () {
 
         dda1StartValue       = tabLowX[idxCol];
         dda1EndValue         = tabMiddleX[idxCol];
+        dda2StartValue       = tabLowY[idxCol];
+        dda2EndValue         = tabMiddleY[idxCol];
+        dda3StartValue       = tabLowX[idxCol+1];
+        dda3EndValue         = tabMiddleX[idxCol+1];
+        dda4StartValue       = tabLowY[idxCol+1];
+        dda4EndValue         = tabMiddleY[idxCol+1];
+        dda4NbStep           = SCREEN_HEIGHT/2;
+        dda3NbStep           = SCREEN_HEIGHT/2;
+        dda2NbStep           = SCREEN_HEIGHT/2;
         dda1NbStep           = SCREEN_HEIGHT/2;
 
         dda1CurrentValue         = dda1StartValue;
@@ -190,9 +199,6 @@ void project2ScreenOPTIM () {
             dda1StepFunction     = &dda1Step0;
         }
 
-        dda2StartValue       = tabLowY[idxCol];
-        dda2EndValue         = tabMiddleY[idxCol];
-        dda2NbStep           = SCREEN_HEIGHT/2;
 
         dda2CurrentValue         = dda2StartValue;
         dda2NbVal                = dda2EndValue-dda2StartValue;
@@ -200,9 +206,6 @@ void project2ScreenOPTIM () {
         // dda2StepFunction     = &dda2Step2;
 
 
-        dda3StartValue       = tabLowX[idxCol+1];
-        dda3EndValue         = tabMiddleX[idxCol+1];
-        dda3NbStep           = SCREEN_HEIGHT/2;
         dda3CurrentValue         = dda3StartValue;
 
         if (dda3EndValue > dda3StartValue) {
@@ -223,9 +226,6 @@ void project2ScreenOPTIM () {
             dda3StepFunction     = &dda3Step0;
         }
 
-        dda4StartValue       = tabLowY[idxCol+1];
-        dda4EndValue         = tabMiddleY[idxCol+1];
-        dda4NbStep           = SCREEN_HEIGHT/2;
         dda4CurrentValue     = dda4StartValue;
         dda4NbVal            = dda4EndValue-dda4StartValue;
         dda4CurrentError     = dda4NbStep;
@@ -255,13 +255,19 @@ void project2ScreenOPTIM () {
             wrtAdr += NEXT_SCANLINE_INCREMENT;
 
             (*dda1StepFunction)();
+
             dda2CurrentError         -= dda2NbVal; // dda2EndValue-dda2StartValue;
             if ((dda2CurrentError<<1) < dda2NbStep) {
                 dda2CurrentError     += dda2NbStep;
                 dda2CurrentValue     ++;
             }
             (*dda3StepFunction)();
-            dda4Step2();
+
+            dda4CurrentError         -= dda4NbVal; 
+            if ((dda4CurrentError<<1) < dda4NbStep) {
+                dda4CurrentError     += dda4NbStep;
+                dda4CurrentValue     ++;
+            }
 
         }
 
@@ -370,7 +376,11 @@ void project2ScreenOPTIM () {
             }
 
             (*dda3StepFunction)();
-            dda4Step2();
+            dda4CurrentError         -= dda4NbVal; 
+            if ((dda4CurrentError<<1) < dda4NbStep) {
+                dda4CurrentError     += dda4NbStep;
+                dda4CurrentValue     ++;
+            }
         }
         theBaseAdr += 1;
     }
