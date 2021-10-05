@@ -169,21 +169,34 @@ void project2ScreenASM ();
 
 //         wrtAdr              = theBaseAdr;
 
-//         dda1CurrentValue     = (dda1StartValue = tabLowX[idxCol]);
-//         dda1EndValue         = tabMiddleX[idxCol];
-//         dda2CurrentValue     = (dda2StartValue       = tabLowY[idxCol]);
-//         dda2EndValue         = tabMiddleY[idxCol];
-//         dda3CurrentValue     = (dda3StartValue       = tabLowX[idxCol+1]);
-//         dda3EndValue         = tabMiddleX[idxCol+1];
-//         dda4CurrentValue     = (dda4StartValue       = tabLowY[idxCol+1]);
-//         dda4EndValue         = tabMiddleY[idxCol+1];
-//         dda2NbVal            = dda2EndValue-dda2StartValue;
-//         dda4NbVal            = dda4EndValue-dda4StartValue;
-//         dda4CurrentError     = (dda4NbStep           = SCREEN_HEIGHT/2);
-//         dda3NbStep           = SCREEN_HEIGHT/2;
-//         dda2CurrentError     = (dda2NbStep           = SCREEN_HEIGHT/2);
-//         dda1NbStep           = SCREEN_HEIGHT/2;
+//         // dda1CurrentValue     = (dda1StartValue = tabLowX[idxCol]);
+//         // dda1EndValue         = tabMiddleX[idxCol];
+//         // dda2CurrentValue     = (dda2StartValue       = tabLowY[idxCol]);
+//         // dda2EndValue         = tabMiddleY[idxCol];
+//         // dda3CurrentValue     = (dda3StartValue       = tabLowX[idxCol+1]);
+//         // dda3EndValue         = tabMiddleX[idxCol+1];
+//         // dda4CurrentValue     = (dda4StartValue       = tabLowY[idxCol+1]);
+//         // dda4EndValue         = tabMiddleY[idxCol+1];
+//         // dda2NbVal            = dda2EndValue-dda2StartValue;
+//         // dda4NbVal            = dda4EndValue-dda4StartValue;
+//         // dda4CurrentError     = (dda4NbStep           = SCREEN_HEIGHT/2);
+//         // dda3NbStep           = SCREEN_HEIGHT/2;
+//         // dda2CurrentError     = (dda2NbStep           = SCREEN_HEIGHT/2);
+//         // dda1NbStep           = SCREEN_HEIGHT/2;
 
+//         asm ("ldy _idxCol:"
+//             " lda _tabLowX, y: sta _dda1StartValue: sta _dda1CurrentValue: lda _tabMiddleX, y: sta _dda1EndValue:"
+//             " lda _tabLowY, y: sta _dda2StartValue: sta _dda2CurrentValue: lda _tabMiddleY, y: sta _dda2EndValue: sec : sbc _dda2StartValue: sta _dda2NbVal:"
+//             "iny:"
+//             " lda _tabLowX, y: sta _dda3StartValue: sta _dda3CurrentValue: lda _tabMiddleX, y: sta _dda3EndValue:"
+//             " lda _tabLowY, y: sta _dda4StartValue: sta _dda4CurrentValue: lda _tabMiddleY, y: sta _dda4EndValue: sec : sbc _dda4StartValue: sta _dda4NbVal:"
+//             );
+//         asm ("lda #32:"
+//             "sta _dda1NbStep:"
+//             "sta _dda2NbStep: sta _dda2CurrentError:"
+//             "sta _dda3NbStep:"
+//             "sta _dda4NbStep: sta _dda4CurrentError:"
+//         ); // FIXME: replace 32 by SCREEN_HEIGHT/2
 
 //         if (dda1EndValue > dda1StartValue) {
 //             dda1NbVal        = dda1EndValue-dda1StartValue;
@@ -223,18 +236,106 @@ void project2ScreenASM ();
 //         }
 
 
-//         for (idxLin=0; idxLin< SCREEN_HEIGHT/2; idxLin++) {
+//         for (idxLin=0; idxLin< SCREEN_HEIGHT/2; idxLin+=2) {
 
-//             // computeEquiRect();
-//             // colorSquare(lin, col, texture_PANO[X*IMAGE_HEIGHT+Y]);
+//             // theX    = dda1CurrentValue + rollCoord;
+//             // theY    = dda2CurrentValue;
+//             asm (
+//                 "lda _dda1CurrentValue: adc _rollCoord: sta _theX:"
+//                 "lda _dda2CurrentValue: sta _theY:"
+//             );
+//             // theColorLeft = texture_PANO[theX*IMAGE_HEIGHT+theY];
+//             asm (
+//                 "ldy _theX:"
+//                 "lda _adrTextureLow,y:"
+//                 "sta tmp0:"
+//                 "lda _adrTextureHigh,y:"
+//                 "sta tmp0+1:"
+//                 "ldy _theY:"
+//                 "lda (tmp0),y:"
+//                 "sta _theColorLeft:"
+//             );
 
-//             theX    = dda1CurrentValue + rollCoord;
-//             theY    = dda2CurrentValue;
+//             // theX   = dda3CurrentValue + rollCoord;
+//             // theY   = dda4CurrentValue;
+//             asm (
+//                 "lda _dda3CurrentValue: adc _rollCoord: sta _theX:"
+//                 "lda _dda4CurrentValue: sta _theY:"
+//             );
+//             // theColorRight = texture_PANO[theX*IMAGE_HEIGHT+theY];
+//             asm (
+//                 "ldy _theX:"
+//                 "lda _adrTextureLow,y:"
+//                 "sta tmp0:"
+//                 "lda _adrTextureHigh,y:"
+//                 "sta tmp0+1:"
+//                 "ldy _theY:"
+//                 "lda (tmp0),y:"
+//                 "sta _theColorRight:"
+//             );
+
+//             // *wrtAdr = tabLeftRed[theColorLeft]  | tabRightRed[theColorRight];
+//             // wrtAdr += NEXT_SCANLINE_INCREMENT;
+//             // *wrtAdr = tabLeftGreen[theColorLeft]  | tabRightGreen[theColorRight];
+//             // wrtAdr += NEXT_SCANLINE_INCREMENT;
+//             // *wrtAdr = tabLeftBlue[theColorLeft]  | tabRightBlue[theColorRight];
+//             // wrtAdr += NEXT_SCANLINE_INCREMENT;
+//             asm (
+//                 "ldy _theColorLeft: lda _tabLeftRed,y: ldy _theColorRight: ora _tabRightRed,y: ldy #0: sta (_wrtAdr),y:"
+//                 "ldy _theColorLeft: lda _tabLeftGreen,y: ldy _theColorRight: ora _tabRightGreen,y: ldy #40: sta (_wrtAdr),y:"
+//                 "ldy _theColorLeft: lda _tabLeftBlue,y: ldy _theColorRight: ora _tabRightBlue,y: ldy #80: sta (_wrtAdr),y:"
+//                 "lda _wrtAdr: clc: adc #120: sta _wrtAdr: .(: bcc skip:    inc _wrtAdr+1: skip: .):"
+//             );
+
+//             (*dda1StepFunction)();
+
+//             dda2CurrentError         -= dda2NbVal; // dda2EndValue-dda2StartValue;
+//             if ((dda2CurrentError<<1) < dda2NbStep) {
+//                 dda2CurrentError     += dda2NbStep;
+//                 dda2CurrentValue     ++;
+//             }
+//             (*dda3StepFunction)();
+
+//             dda4CurrentError         -= dda4NbVal; 
+//             if ((dda4CurrentError<<1) < dda4NbStep) {
+//                 dda4CurrentError     += dda4NbStep;
+//                 dda4CurrentValue     ++;
+//             }
+//             // theX    = dda1CurrentValue + rollCoord;
+//             // theY    = dda2CurrentValue;
+//             asm (
+//                 "lda _dda1CurrentValue: clc: adc _rollCoord: sta _theX:"
+//                 "lda _dda2CurrentValue: sta _theY:"
+//             );
 //             theColorLeft = texture_PANO[theX*IMAGE_HEIGHT+theY];
+//             // asm (
+//             //     "ldy _theX:"
+//             //     "lda _adrTextureLow,y:"
+//             //     "sta tmp0:"
+//             //     "lda _adrTextureHigh,y:"
+//             //     "sta tmp0+1:"
+//             //     "ldy _theY:"
+//             //     "lda (tmp0),y:"
+//             //     "sta _theColorLeft:"
+//             // );
 
-//             theX   = dda3CurrentValue + rollCoord;
-//             theY   = dda4CurrentValue;
+//             // theX   = dda3CurrentValue + rollCoord;
+//             // theY   = dda4CurrentValue;
+//             asm (
+//                 "lda _dda3CurrentValue: clc: adc _rollCoord: sta _theX:"
+//                 "lda _dda4CurrentValue: sta _theY:"
+//             );
 //             theColorRight = texture_PANO[theX*IMAGE_HEIGHT+theY];
+//             // asm (
+//             //     "ldy _theX:"
+//             //     "lda _adrTextureLow,y:"
+//             //     "sta tmp0:"
+//             //     "lda _adrTextureHigh,y:"
+//             //     "sta tmp0+1:"
+//             //     "ldy _theY:"
+//             //     "lda (tmp0),y:"
+//             //     "sta _theColorRight:"
+//             // );
 
 //             *wrtAdr = tabLeftRed[theColorLeft]  | tabRightRed[theColorRight];
 //             wrtAdr += NEXT_SCANLINE_INCREMENT;
@@ -316,7 +417,7 @@ void project2ScreenASM ();
 //         }
 
 
-//         for (idxLin=SCREEN_HEIGHT/2; idxLin< SCREEN_HEIGHT; idxLin+=2) {
+//         for (idxLin=SCREEN_HEIGHT/2; idxLin< SCREEN_HEIGHT; idxLin++) {
 
 //             theX   = dda1CurrentValue + rollCoord;
 //             theY   = dda2CurrentValue;
@@ -346,33 +447,33 @@ void project2ScreenASM ();
 //                 dda4CurrentValue     ++;
 //             }
 
-//             theX   = dda1CurrentValue + rollCoord;
-//             theY   = dda2CurrentValue;
-//             theColorLeft = texture_PANO[theX*IMAGE_HEIGHT+theY];
+//             // theX   = dda1CurrentValue + rollCoord;
+//             // theY   = dda2CurrentValue;
+//             // theColorLeft = texture_PANO[theX*IMAGE_HEIGHT+theY];
 
-//             theX   = dda3CurrentValue + rollCoord;
-//             theY   = dda4CurrentValue;
-//             theColorRight = texture_PANO[theX*IMAGE_HEIGHT+theY];
+//             // theX   = dda3CurrentValue + rollCoord;
+//             // theY   = dda4CurrentValue;
+//             // theColorRight = texture_PANO[theX*IMAGE_HEIGHT+theY];
 
-//             *wrtAdr = tabLeftRed[theColorLeft]    | tabRightRed[theColorRight];
-//             wrtAdr += NEXT_SCANLINE_INCREMENT;
-//             *wrtAdr = tabLeftGreen[theColorLeft]  | tabRightGreen[theColorRight];
-//             wrtAdr += NEXT_SCANLINE_INCREMENT;
-//             *wrtAdr = tabLeftBlue[theColorLeft]   | tabRightBlue[theColorRight];
-//             wrtAdr += NEXT_SCANLINE_INCREMENT;
+//             // *wrtAdr = tabLeftRed[theColorLeft]    | tabRightRed[theColorRight];
+//             // wrtAdr += NEXT_SCANLINE_INCREMENT;
+//             // *wrtAdr = tabLeftGreen[theColorLeft]  | tabRightGreen[theColorRight];
+//             // wrtAdr += NEXT_SCANLINE_INCREMENT;
+//             // *wrtAdr = tabLeftBlue[theColorLeft]   | tabRightBlue[theColorRight];
+//             // wrtAdr += NEXT_SCANLINE_INCREMENT;
 
-//             (*dda1StepFunction)();
-//             dda2CurrentError         -= dda2NbVal;
-//             if ((dda2CurrentError<<1) < dda2NbStep) {
-//                 dda2CurrentError     += dda2NbStep;
-//                 dda2CurrentValue     ++;
-//             }
-//             (*dda3StepFunction)();
-//             dda4CurrentError         -= dda4NbVal; 
-//             if ((dda4CurrentError<<1) < dda4NbStep) {
-//                 dda4CurrentError     += dda4NbStep;
-//                 dda4CurrentValue     ++;
-//             }
+//             // (*dda1StepFunction)();
+//             // dda2CurrentError         -= dda2NbVal;
+//             // if ((dda2CurrentError<<1) < dda2NbStep) {
+//             //     dda2CurrentError     += dda2NbStep;
+//             //     dda2CurrentValue     ++;
+//             // }
+//             // (*dda3StepFunction)();
+//             // dda4CurrentError         -= dda4NbVal; 
+//             // if ((dda4CurrentError<<1) < dda4NbStep) {
+//             //     dda4CurrentError     += dda4NbStep;
+//             //     dda4CurrentValue     ++;
+//             // }
 //         }
 //         theBaseAdr += 1;
 //     }
@@ -1077,12 +1178,12 @@ void project2ScreenASM () {
         }
 
 
-        for (idxLin=0; idxLin< SCREEN_HEIGHT/2; idxLin++) {
+        for (idxLin=0; idxLin< SCREEN_HEIGHT/2; idxLin+=2) {
 
             // theX    = dda1CurrentValue + rollCoord;
             // theY    = dda2CurrentValue;
             asm (
-                "lda _dda1CurrentValue: adc _rollCoord: sta _theX:"
+                "lda _dda1CurrentValue: clc: adc _rollCoord: sta _theX:"
                 "lda _dda2CurrentValue: sta _theY:"
             );
 
@@ -1103,7 +1204,7 @@ void project2ScreenASM () {
             // theX   = dda3CurrentValue + rollCoord;
             // theY   = dda4CurrentValue;
             asm (
-                "lda _dda3CurrentValue: adc _rollCoord: sta _theX:"
+                "lda _dda3CurrentValue: clc: adc _rollCoord: sta _theX:"
                 "lda _dda4CurrentValue: sta _theY:"
             );
 
@@ -1129,7 +1230,7 @@ void project2ScreenASM () {
                 "ldy _theColorLeft: lda _tabLeftRed,y: ldy _theColorRight: ora _tabRightRed,y: ldy #0: sta (_wrtAdr),y:"
                 "ldy _theColorLeft: lda _tabLeftGreen,y: ldy _theColorRight: ora _tabRightGreen,y: ldy #40: sta (_wrtAdr),y:"
                 "ldy _theColorLeft: lda _tabLeftBlue,y: ldy _theColorRight: ora _tabRightBlue,y: ldy #80: sta (_wrtAdr),y:"
-                "lda _wrtAdr: clc: adc #120: sta _wrtAdr: .(: bcc skip:    inc _wrtAdr+1: skip: .):"
+                // "lda _wrtAdr: clc: adc #120: sta _wrtAdr: .(: bcc skip:    inc _wrtAdr+1: skip: .):"
             );
 
             (*dda1StepFunction)();
@@ -1147,6 +1248,74 @@ void project2ScreenASM () {
                 dda4CurrentValue     ++;
             }
 
+            // theX    = dda1CurrentValue + rollCoord;
+            // theY    = dda2CurrentValue;
+            asm (
+                "lda _dda1CurrentValue: clc: adc _rollCoord: sta _theX:"
+                "lda _dda2CurrentValue: sta _theY:"
+            );
+
+            // theColorLeft = texture_PANO[theX*IMAGE_HEIGHT+theY];
+            asm (
+                "ldy _theX:"
+                "lda _adrTextureLow,y:"
+                "sta tmp0:"
+                "lda _adrTextureHigh,y:"
+                "sta tmp0+1:"
+                "ldy _theY:"
+                "lda (tmp0),y:"
+                "sta _theColorLeft:"
+            );
+
+
+
+            // theX   = dda3CurrentValue + rollCoord;
+            // theY   = dda4CurrentValue;
+            asm (
+                "lda _dda3CurrentValue: clc: adc _rollCoord: sta _theX:"
+                "lda _dda4CurrentValue: sta _theY:"
+            );
+
+            // theColorRight = texture_PANO[theX*IMAGE_HEIGHT+theY];
+            asm (
+                "ldy _theX:"
+                "lda _adrTextureLow,y:"
+                "sta tmp0:"
+                "lda _adrTextureHigh,y:"
+                "sta tmp0+1:"
+                "ldy _theY:"
+                "lda (tmp0),y:"
+                "sta _theColorRight:"
+            );
+            
+            // *wrtAdr = tabLeftRed[theColorLeft]  | tabRightRed[theColorRight];
+            // wrtAdr += NEXT_SCANLINE_INCREMENT;
+            // *wrtAdr = tabLeftGreen[theColorLeft]  | tabRightGreen[theColorRight];
+            // wrtAdr += NEXT_SCANLINE_INCREMENT;
+            // *wrtAdr = tabLeftBlue[theColorLeft]  | tabRightBlue[theColorRight];
+            // wrtAdr += NEXT_SCANLINE_INCREMENT;
+            asm (
+                "ldy _theColorLeft: lda _tabLeftRed,y: ldy _theColorRight: ora _tabRightRed,y: ldy #120: sta (_wrtAdr),y:"
+                "ldy _theColorLeft: lda _tabLeftGreen,y: ldy _theColorRight: ora _tabRightGreen,y: ldy #160: sta (_wrtAdr),y:"
+                "ldy _theColorLeft: lda _tabLeftBlue,y: ldy _theColorRight: ora _tabRightBlue,y: ldy #200: sta (_wrtAdr),y:"
+                "lda _wrtAdr: clc: adc #240: sta _wrtAdr: .(: bcc skip:    inc _wrtAdr+1: skip: .):"
+            );
+            (*dda1StepFunction)();
+
+            dda2CurrentError         -= dda2NbVal; // dda2EndValue-dda2StartValue;
+            if ((dda2CurrentError<<1) < dda2NbStep) {
+                dda2CurrentError     += dda2NbStep;
+                dda2CurrentValue     ++;
+            }
+            (*dda3StepFunction)();
+
+            dda4CurrentError         -= dda4NbVal; 
+            if ((dda4CurrentError<<1) < dda4NbStep) {
+                dda4CurrentError     += dda4NbStep;
+                dda4CurrentValue     ++;
+            }
+
+
         }
 
 
@@ -1160,10 +1329,25 @@ void project2ScreenASM () {
         dda4EndValue         = tabHighY[idxCol+1];
         dda2NbVal                = dda2EndValue-dda2StartValue;
         dda4NbVal                = dda4EndValue-dda4StartValue;
-        dda1NbStep           = SCREEN_HEIGHT/2;
-        dda2CurrentError     = (dda2NbStep           = SCREEN_HEIGHT/2);
-        dda3NbStep           = SCREEN_HEIGHT/2;
-        dda4CurrentError     = (dda4NbStep           = SCREEN_HEIGHT/2);
+
+        // asm ("ldy _idxCol:"
+        //     " lda _tabMiddleX, y: sta _dda1StartValue: sta _dda1CurrentValue: lda _tabHighX, y: sta _dda1EndValue:"
+        //     " lda _tabMiddleY, y: sta _dda2StartValue: sta _dda2CurrentValue: lda _tabHighY, y: sta _dda2EndValue: sec : sbc _dda2StartValue: sta _dda2NbVal:"
+        //     "iny:"
+        //     " lda _tabMiddleX, y: sta _dda3StartValue: sta _dda3CurrentValue: lda _tabHighX, y: sta _dda3EndValue:"
+        //     " lda _tabMiddleY, y: sta _dda4StartValue: sta _dda4CurrentValue: lda _tabHighY, y: sta _dda4EndValue: sec : sbc _dda4StartValue: sta _dda4NbVal:"
+        //     );
+
+        // dda1NbStep           = SCREEN_HEIGHT/2;
+        // dda2CurrentError     = (dda2NbStep           = SCREEN_HEIGHT/2);
+        // dda3NbStep           = SCREEN_HEIGHT/2;
+        // dda4CurrentError     = (dda4NbStep           = SCREEN_HEIGHT/2);
+        asm ("lda #32:"
+            "sta _dda1NbStep:"
+            "sta _dda2NbStep: sta _dda2CurrentError:"
+            "sta _dda3NbStep:"
+            "sta _dda4NbStep: sta _dda4CurrentError:"
+        ); // FIXME: replace 32 by SCREEN_HEIGHT/2
 
         if (dda1EndValue > dda1StartValue) {
             dda1NbVal                = dda1EndValue-dda1StartValue;
