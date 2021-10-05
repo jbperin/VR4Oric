@@ -1236,18 +1236,27 @@ void project2ScreenASM () {
 
             (*dda1StepFunction)();
 
-            dda2CurrentError         -= dda2NbVal; // dda2EndValue-dda2StartValue;
-            if ((dda2CurrentError<<1) < dda2NbStep) {
-                dda2CurrentError     += dda2NbStep;
-                dda2CurrentValue     ++;
-            }
+            // dda2CurrentError         -= dda2NbVal; // dda2EndValue-dda2StartValue;
+            // if ((dda2CurrentError<<1) < dda2NbStep) {
+            //     dda2CurrentError     += dda2NbStep;
+            //     dda2CurrentValue     ++;
+            // }
+            asm(
+                "lda _dda2CurrentError: sec: sbc _dda2NbVal: sta _dda2CurrentError:"
+                ":.(:bmi updateError: asl: cmp _dda2NbStep: bcs  done :updateError: lda _dda2CurrentError: clc: adc _dda2NbStep: sta _dda2CurrentError: inc _dda2CurrentValue: done:.):"
+            );
+
             (*dda3StepFunction)();
 
-            dda4CurrentError         -= dda4NbVal; 
-            if ((dda4CurrentError<<1) < dda4NbStep) {
-                dda4CurrentError     += dda4NbStep;
-                dda4CurrentValue     ++;
-            }
+            // dda4CurrentError         -= dda4NbVal; 
+            // if ((dda4CurrentError<<1) < dda4NbStep) {
+            //     dda4CurrentError     += dda4NbStep;
+            //     dda4CurrentValue     ++;
+            // }
+            asm(
+                "lda _dda4CurrentError: sec: sbc _dda4NbVal: sta _dda4CurrentError:"
+                ":.(:bmi updateError: asl: cmp _dda4NbStep: bcs  done :updateError: lda _dda4CurrentError: clc: adc _dda4NbStep: sta _dda4CurrentError: inc _dda4CurrentValue: done:.):"
+            );
 
             // theX    = dda1CurrentValue + rollCoord;
             // theY    = dda2CurrentValue;
@@ -1303,18 +1312,27 @@ void project2ScreenASM () {
             );
             (*dda1StepFunction)();
 
-            dda2CurrentError         -= dda2NbVal; // dda2EndValue-dda2StartValue;
-            if ((dda2CurrentError<<1) < dda2NbStep) {
-                dda2CurrentError     += dda2NbStep;
-                dda2CurrentValue     ++;
-            }
+            // dda2CurrentError         -= dda2NbVal; // dda2EndValue-dda2StartValue;
+            // if ((dda2CurrentError<<1) < dda2NbStep) {
+            //     dda2CurrentError     += dda2NbStep;
+            //     dda2CurrentValue     ++;
+            // }
+            asm(
+                "lda _dda2CurrentError: sec: sbc _dda2NbVal: sta _dda2CurrentError:"
+                ":.(:bmi updateError: asl: cmp _dda2NbStep: bcs  done :updateError: lda _dda2CurrentError: clc: adc _dda2NbStep: sta _dda2CurrentError: inc _dda2CurrentValue: done:.):"
+            );
+
             (*dda3StepFunction)();
 
-            dda4CurrentError         -= dda4NbVal; 
-            if ((dda4CurrentError<<1) < dda4NbStep) {
-                dda4CurrentError     += dda4NbStep;
-                dda4CurrentValue     ++;
-            }
+            // dda4CurrentError         -= dda4NbVal; 
+            // if ((dda4CurrentError<<1) < dda4NbStep) {
+            //     dda4CurrentError     += dda4NbStep;
+            //     dda4CurrentValue     ++;
+            // }
+            asm(
+                "lda _dda4CurrentError: sec: sbc _dda4NbVal: sta _dda4CurrentError:"
+                ":.(:bmi updateError: asl: cmp _dda4NbStep: bcs  done :updateError: lda _dda4CurrentError: clc: adc _dda4NbStep: sta _dda4CurrentError: inc _dda4CurrentValue: done:.):"
+            );
 
 
         }
@@ -1442,17 +1460,29 @@ void project2ScreenASM () {
             );
 
             (*dda1StepFunction)();
-            dda2CurrentError         -= dda2NbVal;
-            if ((dda2CurrentError<<1) < dda2NbStep) {
-                dda2CurrentError     += dda2NbStep;
-                dda2CurrentValue     ++;
-            }
+
+            // dda2CurrentError         -= dda2NbVal;
+            // if ((dda2CurrentError<<1) < dda2NbStep) {
+            //     dda2CurrentError     += dda2NbStep;
+            //     dda2CurrentValue     ++;
+            // }
+            asm(
+                "lda _dda2CurrentError: sec: sbc _dda2NbVal: sta _dda2CurrentError:"
+                ":.(:bmi updateError: asl: cmp _dda2NbStep: bcs  done :updateError: lda _dda2CurrentError: clc: adc _dda2NbStep: sta _dda2CurrentError: inc _dda2CurrentValue: done:.):"
+            );
+
+
             (*dda3StepFunction)();
-            dda4CurrentError         -= dda4NbVal; 
-            if ((dda4CurrentError<<1) < dda4NbStep) {
-                dda4CurrentError     += dda4NbStep;
-                dda4CurrentValue     ++;
-            }
+
+            // dda4CurrentError         -= dda4NbVal; 
+            // if ((dda4CurrentError<<1) < dda4NbStep) {
+            //     dda4CurrentError     += dda4NbStep;
+            //     dda4CurrentValue     ++;
+            // }
+            asm(
+                "lda _dda4CurrentError: sec: sbc _dda4NbVal: sta _dda4CurrentError:"
+                ":.(:bmi updateError: asl: cmp _dda4NbStep: bcs  done :updateError: lda _dda4CurrentError: clc: adc _dda4NbStep: sta _dda4CurrentError: inc _dda4CurrentValue: done:.):"
+            );
 
             // theX   = dda1CurrentValue + rollCoord;
             // theY   = dda2CurrentValue;
@@ -1504,18 +1534,29 @@ void project2ScreenASM () {
             );
 
             (*dda1StepFunction)();
-            dda2CurrentError         -= dda2NbVal;
-            if ((dda2CurrentError<<1) < dda2NbStep) {
-                dda2CurrentError     += dda2NbStep;
-                dda2CurrentValue     ++;
-            }
+
+            // dda2CurrentError         -= dda2NbVal;
+            // if ((dda2CurrentError<<1) < dda2NbStep) {
+            //     dda2CurrentError     += dda2NbStep;
+            //     dda2CurrentValue     ++;
+            // }
+            asm(
+                "lda _dda2CurrentError: sec: sbc _dda2NbVal: sta _dda2CurrentError:"
+                ":.(:bmi updateError: asl: cmp _dda2NbStep: bcs  done :updateError: lda _dda2CurrentError: clc: adc _dda2NbStep: sta _dda2CurrentError: inc _dda2CurrentValue: done:.):"
+            );
+
             (*dda3StepFunction)();
-            dda4CurrentError         -= dda4NbVal; 
-            if ((dda4CurrentError<<1) < dda4NbStep) {
-                dda4CurrentError     += dda4NbStep;
-                dda4CurrentValue     ++;
-            }
-        }
+
+            // dda4CurrentError         -= dda4NbVal; 
+            // if ((dda4CurrentError<<1) < dda4NbStep) {
+            //     dda4CurrentError     += dda4NbStep;
+            //     dda4CurrentValue     ++;
+            // }
+            asm(
+                "lda _dda4CurrentError: sec: sbc _dda4NbVal: sta _dda4CurrentError:"
+                ":.(:bmi updateError: asl: cmp _dda4NbStep: bcs  done :updateError: lda _dda4CurrentError: clc: adc _dda4NbStep: sta _dda4CurrentError: inc _dda4CurrentValue: done:.):"
+            );
+       }
         theBaseAdr += 1;
     }
 }
