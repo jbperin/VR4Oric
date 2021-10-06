@@ -627,7 +627,7 @@ void main()
     }
     LoadFileAt(LOADER_BTABLES, borderTables);
     LoadFileAt(LOADER_PANO_01, texture_PANO);
-    rotX = 0; rotZ = 0x30;
+    rotX = 0; rotZ = 0xC0;
     scene_number            = 0;
 
 
@@ -1148,8 +1148,9 @@ void project2ScreenASM () {
         //     dda1NbVal        = dda1StartValue-dda1EndValue;
         //     dda1Increment    = -1;
         // }
+        
         asm (
-            ":.(:"
+            ":break1:.(:"
             "lda _dda1StartValue:"
             "cmp _dda1EndValue:"
             "bcs else:"
@@ -1160,48 +1161,124 @@ void project2ScreenASM () {
             "lda #$FF: sta _dda1Increment:"
             ":endif:.):"
         );
-        if          (dda1NbVal > dda1NbStep) {
-            dda1CurrentError     = dda1NbVal;
-            dda1StepFunction     = &dda1Step1;
-        } else if   (dda1NbVal < dda1NbStep) {
-            dda1CurrentError     = dda1NbStep;
-            dda1StepFunction     = &dda1Step2;
-        } else {
-            dda1CurrentError     = dda1EndValue;
-            dda1StepFunction     = &dda1Step0;
-        }
 
 
-        if (dda3EndValue > dda3StartValue) {
-            dda3NbVal                = dda3EndValue-dda3StartValue;
-            dda3Increment            = 1;
-        } else {
-            dda3NbVal                = dda3StartValue-dda3EndValue;
-            dda3Increment            = -1;
-        }
-        // asm (
-        //     ":breakhere:.(:"
-        //     "lda _dda3StartValue:"
-        //     "cmp _dda3EndValue:"
-        //     "bcs else:"
-        //     "lda _dda3EndValue: sec: sbc _dda3StartValue: sta _dda3NbVal:"
-        //     "lda #1: sta _dda3Increment:"
-        //     "jmp endif:else:"
-        //     "lda _dda3StartValue: sec: sbc _dda3EndValue: sta _dda3NbVal:"
-        //     "lda #$FF: sta _dda3Increment:"
-        //     ":endif:.):"
-        // );
-        if (dda3NbVal > dda3NbStep) {
-            dda3CurrentError     = dda3NbVal;
-            dda3StepFunction     = &dda3Step1;
-        } else if   (dda3NbVal < dda3NbStep) {
-            dda3CurrentError     = dda3NbStep;
-            dda3StepFunction     = &dda3Step2;
-        } else {
-            dda3CurrentError     = dda3EndValue;
-            dda3StepFunction     = &dda3Step0;
-        }
+        // if          (dda1NbVal > dda1NbStep) {
+        //     dda1CurrentError     = dda1NbVal;
+        //     dda1StepFunction     = &dda1Step1;
+        // } else if   (dda1NbVal < dda1NbStep) {
+        //     dda1CurrentError     = dda1NbStep;
+        //     dda1StepFunction     = &dda1Step2;
+        // } else {
+        //     dda1CurrentError     = dda1EndValue;
+        //     dda1StepFunction     = &dda1Step0;
+        // }
 
+
+asm (
+    // ".("
+    "lda _dda1NbStep:"
+    "cmp _dda1NbVal:"
+    "beq NbStepEqualsNbVal_1234:"
+    "bcs NbStepGreaterThanNbVal_1234:"
+        "lda _dda1NbVal:"
+        "sta _dda1CurrentError:"
+        "lda #<(_dda1Step1):"
+        "sta _dda1StepFunction:"
+        "lda #>(_dda1Step1):"
+        "sta _dda1StepFunction+1:"
+    "jmp dda1InitDone_1234:"
+        );
+        asm(
+    "NbStepGreaterThanNbVal_1234    :"
+        "lda _dda1NbStep:"
+        "sta _dda1CurrentError:"
+        "lda #<(_dda1Step2):"
+        "sta _dda1StepFunction:"
+        "lda #>(_dda1Step2):"
+        "sta _dda1StepFunction+1:"
+    "jmp dda1InitDone_1234:"
+        );
+        asm(
+    "NbStepEqualsNbVal_1234    :"
+        "lda _dda1EndValue:"
+        "sta _dda1CurrentError:"
+        "lda #<(_dda1Step0):"
+        "sta _dda1StepFunction:"
+        "lda #>(_dda1Step0):"
+        "sta _dda1StepFunction+1:"
+    "dda1InitDone_1234:"
+    // ".):"
+);
+
+
+
+        // if (dda3EndValue > dda3StartValue) {
+        //     dda3NbVal                = dda3EndValue-dda3StartValue;
+        //     dda3Increment            = 1;
+        // } else {
+        //     dda3NbVal                = dda3StartValue-dda3EndValue;
+        //     dda3Increment            = -1;
+        // }
+        dda3Increment    = 0;
+        asm (
+            ":break2:.(:"
+            "lda _dda3StartValue:"
+            "cmp _dda3EndValue:"
+            "bcs else3:"
+            "lda _dda3EndValue: sec: sbc _dda3StartValue: sta _dda3NbVal:"
+            "lda #1: sta _dda3Increment:"
+            "jmp endif3:else3:"
+            "lda _dda3StartValue: sec: sbc _dda3EndValue: sta _dda3NbVal:"
+            "lda #$FF: sta _dda3Increment:"
+            ":endif3:.):"
+        );
+        // if (dda3NbVal > dda3NbStep) {
+        //     dda3CurrentError     = dda3NbVal;
+        //     dda3StepFunction     = &dda3Step1;
+        // } else if   (dda3NbVal < dda3NbStep) {
+        //     dda3CurrentError     = dda3NbStep;
+        //     dda3StepFunction     = &dda3Step2;
+        // } else {
+        //     dda3CurrentError     = dda3EndValue;
+        //     dda3StepFunction     = &dda3Step0;
+        // }
+
+asm (
+    // ".("
+    "lda _dda3NbStep:"
+    "cmp _dda3NbVal:"
+    "beq NbStepEqualsNbVal_4321:"
+    "bcs NbStepGreaterThanNbVal_4321:"
+        "lda _dda3NbVal:"
+        "sta _dda3CurrentError:"
+        "lda #<(_dda3Step1):"
+        "sta _dda3StepFunction:"
+        "lda #>(_dda3Step1):"
+        "sta _dda3StepFunction+1:"
+    "jmp dda3InitDone_4321:"
+        );
+        asm(
+    "NbStepGreaterThanNbVal_4321    :"
+        "lda _dda3NbStep:"
+        "sta _dda3CurrentError:"
+        "lda #<(_dda3Step2):"
+        "sta _dda3StepFunction:"
+        "lda #>(_dda3Step2):"
+        "sta _dda3StepFunction+1:"
+    "jmp dda3InitDone_4321:"
+        );
+        asm(
+    "NbStepEqualsNbVal_4321    :"
+        "lda _dda3EndValue:"
+        "sta _dda3CurrentError:"
+        "lda #<(_dda3Step0):"
+        "sta _dda3StepFunction:"
+        "lda #>(_dda3Step0):"
+        "sta _dda3StepFunction+1:"
+    "dda3InitDone_4321:"
+    // ".):"
+);
 
         for (idxLin=0; idxLin< SCREEN_HEIGHT/2; idxLin+=2) {
 
@@ -1362,24 +1439,24 @@ void project2ScreenASM () {
         }
 
 
-        dda1CurrentValue         = (dda1StartValue       = tabMiddleX[idxCol]);
-        dda1EndValue         = tabHighX[idxCol];
-        dda2CurrentValue         = (dda2StartValue       = tabMiddleY[idxCol]);
-        dda2EndValue         = tabHighY[idxCol];
-        dda3CurrentValue         = (dda3StartValue       = tabMiddleX[idxCol+1]);
-        dda3EndValue         = tabHighX[idxCol+1];
-        dda4CurrentValue         = (dda4StartValue       = tabMiddleY[idxCol+1]);
-        dda4EndValue         = tabHighY[idxCol+1];
-        dda2NbVal                = dda2EndValue-dda2StartValue;
-        dda4NbVal                = dda4EndValue-dda4StartValue;
-
-        // asm ("ldy _idxCol:"
-        //     " lda _tabMiddleX, y: sta _dda1StartValue: sta _dda1CurrentValue: lda _tabHighX, y: sta _dda1EndValue:"
-            // " lda _tabMiddleY, y: sta _dda2StartValue: sta _dda2CurrentValue: lda _tabHighY, y: sta _dda2EndValue: sec : sbc _dda2StartValue: sta _dda2NbVal:"
-        //     "iny:"
-        //     " lda _tabMiddleX, y: sta _dda3StartValue: sta _dda3CurrentValue: lda _tabHighX, y: sta _dda3EndValue:"
-        //     " lda _tabMiddleY, y: sta _dda4StartValue: sta _dda4CurrentValue: lda _tabHighY, y: sta _dda4EndValue: sec : sbc _dda4StartValue: sta _dda4NbVal:"
-            // );
+        // dda1CurrentValue         = (dda1StartValue       = tabMiddleX[idxCol]);
+        // dda1EndValue         = tabHighX[idxCol];
+        // dda2CurrentValue         = (dda2StartValue       = tabMiddleY[idxCol]);
+        // dda2EndValue         = tabHighY[idxCol];
+        // dda3CurrentValue         = (dda3StartValue       = tabMiddleX[idxCol+1]);
+        // dda3EndValue         = tabHighX[idxCol+1];
+        // dda4CurrentValue         = (dda4StartValue       = tabMiddleY[idxCol+1]);
+        // dda4EndValue         = tabHighY[idxCol+1];
+        // dda2NbVal                = dda2EndValue-dda2StartValue;
+        // dda4NbVal                = dda4EndValue-dda4StartValue;
+        dda1CurrentValue = 0;
+        asm ("ldy _idxCol:"
+            " lda _tabMiddleX, y: sta _dda1StartValue: sta _dda1CurrentValue: lda _tabHighX, y: sta _dda1EndValue:"
+            " lda _tabMiddleY, y: sta _dda2StartValue: sta _dda2CurrentValue: lda _tabHighY, y: sta _dda2EndValue: sec : sbc _dda2StartValue: sta _dda2NbVal:"
+            "iny:"
+            " lda _tabMiddleX, y: sta _dda3StartValue: sta _dda3CurrentValue: lda _tabHighX, y: sta _dda3EndValue:"
+            " lda _tabMiddleY, y: sta _dda4StartValue: sta _dda4CurrentValue: lda _tabHighY, y: sta _dda4EndValue: sec : sbc _dda4StartValue: sta _dda4NbVal:"
+            );
 
         // dda1NbStep           = SCREEN_HEIGHT/2;
         // dda2CurrentError     = (dda2NbStep           = SCREEN_HEIGHT/2);
@@ -1412,47 +1489,122 @@ void project2ScreenASM () {
             ":endif:.):"
         );
 
-        if          (dda1NbVal > dda1NbStep) {
-            dda1CurrentError     = dda1NbVal;
-            dda1StepFunction     = &dda1Step1;
-        } else if   (dda1NbVal < dda1NbStep) {
-            dda1CurrentError     = dda1NbStep;
-            dda1StepFunction     = &dda1Step2;
-        } else {
-            dda1CurrentError     = dda1EndValue;
-            dda1StepFunction     = &dda1Step0;
-        }
+        // if          (dda1NbVal > dda1NbStep) {
+        //     dda1CurrentError     = dda1NbVal;
+        //     dda1StepFunction     = &dda1Step1;
+        // } else if   (dda1NbVal < dda1NbStep) {
+        //     dda1CurrentError     = dda1NbStep;
+        //     dda1StepFunction     = &dda1Step2;
+        // } else {
+        //     dda1CurrentError     = dda1EndValue;
+        //     dda1StepFunction     = &dda1Step0;
+        // }
 
 
-        if (dda3EndValue > dda3StartValue) {
-            dda3NbVal                = dda3EndValue-dda3StartValue;
-            dda3Increment            = 1;
-        } else {
-            dda3NbVal                = dda3StartValue-dda3EndValue;
-            dda3Increment            = -1;
-        }
-        // asm (
-        //     ":.(:"
-        //     "lda _dda3StartValue:"
-        //     "cmp _dda3EndValue:"
-        //     "bcs else:"
-        //     "lda _dda3EndValue: sec: sbc _dda3StartValue: sta _dda3NbVal:"
-        //     "lda #1: sta _dda3Increment:"
-        //     "jmp endif:else:"
-        //     "lda _dda3StartValue: sec: sbc _dda3EndValue: sta _dda3NbVal:"
-        //     "lda #$FF: sta _dda3Increment:"
-        //     ":endif:.):"
-        // );
-        if          (dda3NbVal > dda3NbStep) {
-            dda3CurrentError     = dda3NbVal;
-            dda3StepFunction     = &dda3Step1;
-        } else if   (dda3NbVal < dda3NbStep) {
-            dda3CurrentError     = dda3NbStep;
-            dda3StepFunction     = &dda3Step2;
-        } else {
-            dda3CurrentError     = dda3EndValue;
-            dda3StepFunction     = &dda3Step0;
-        }
+asm (
+    // ".("
+    "lda _dda1NbStep:"
+    "cmp _dda1NbVal:"
+    "beq NbStepEqualsNbVal_5678:"
+    "bcs NbStepGreaterThanNbVal_5678:"
+        "lda _dda1NbVal:"
+        "sta _dda1CurrentError:"
+        "lda #<(_dda1Step1):"
+        "sta _dda1StepFunction:"
+        "lda #>(_dda1Step1):"
+        "sta _dda1StepFunction+1:"
+    "jmp dda1InitDone_5678:"
+        );
+        asm(
+    "NbStepGreaterThanNbVal_5678    :"
+        "lda _dda1NbStep:"
+        "sta _dda1CurrentError:"
+        "lda #<(_dda1Step2):"
+        "sta _dda1StepFunction:"
+        "lda #>(_dda1Step2):"
+        "sta _dda1StepFunction+1:"
+    "jmp dda1InitDone_5678:"
+        );
+        asm(
+    "NbStepEqualsNbVal_5678    :"
+        "lda _dda1EndValue:"
+        "sta _dda1CurrentError:"
+        "lda #<(_dda1Step0):"
+        "sta _dda1StepFunction:"
+        "lda #>(_dda1Step0):"
+        "sta _dda1StepFunction+1:"
+    "dda1InitDone_5678:"
+    // ".):"
+);
+
+        dda3Increment = 0;
+        // if (dda3EndValue > dda3StartValue) {
+        //     dda3NbVal                = dda3EndValue-dda3StartValue;
+        //     dda3Increment            = 1;
+        // } else {
+        //     dda3NbVal                = dda3StartValue-dda3EndValue;
+        //     dda3Increment            = -1;
+        // }
+        asm (
+            ":.(:"
+            "lda _dda3StartValue:"
+            "cmp _dda3EndValue:"
+            "bcs else:"
+            "lda _dda3EndValue: sec: sbc _dda3StartValue: sta _dda3NbVal:"
+            "lda #1: sta _dda3Increment:"
+            "jmp endif:"
+            "else:"
+            "lda _dda3StartValue: sec: sbc _dda3EndValue: sta _dda3NbVal:"
+            "lda #$FF: sta _dda3Increment:"
+            "endif:.):"
+        );
+
+
+        // if          (dda3NbVal > dda3NbStep) {
+        //     dda3CurrentError     = dda3NbVal;
+        //     dda3StepFunction     = &dda3Step1;
+        // } else if   (dda3NbVal < dda3NbStep) {
+        //     dda3CurrentError     = dda3NbStep;
+        //     dda3StepFunction     = &dda3Step2;
+        // } else {
+        //     dda3CurrentError     = dda3EndValue;
+        //     dda3StepFunction     = &dda3Step0;
+        // }
+asm (
+    // ".("
+    "lda _dda3NbStep:"
+    "cmp _dda3NbVal:"
+    "beq NbStepEqualsNbVal_8765:"
+    "bcs NbStepGreaterThanNbVal_8765:"
+        "lda _dda3NbVal:"
+        "sta _dda3CurrentError:"
+        "lda #<(_dda3Step1):"
+        "sta _dda3StepFunction:"
+        "lda #>(_dda3Step1):"
+        "sta _dda3StepFunction+1:"
+    "jmp dda3InitDone_8765:"
+        );
+        asm(
+    "NbStepGreaterThanNbVal_8765    :"
+        "lda _dda3NbStep:"
+        "sta _dda3CurrentError:"
+        "lda #<(_dda3Step2):"
+        "sta _dda3StepFunction:"
+        "lda #>(_dda3Step2):"
+        "sta _dda3StepFunction+1:"
+    "jmp dda3InitDone_8765:"
+        );
+        asm(
+    "NbStepEqualsNbVal_8765    :"
+        "lda _dda3EndValue:"
+        "sta _dda3CurrentError:"
+        "lda #<(_dda3Step0):"
+        "sta _dda3StepFunction:"
+        "lda #>(_dda3Step0):"
+        "sta _dda3StepFunction+1:"
+    "dda3InitDone_8765:"
+    // ".):"
+);
 
 
         for (idxLin=SCREEN_HEIGHT/2; idxLin< SCREEN_HEIGHT; idxLin+=2) {

@@ -67,18 +67,21 @@ _dda4CurrentError   .dsb 1
 
 
 ; void ddaStep0(){
-;     ddaCurrentValue         += 1;
+;     ddaCurrentValue         += dda1Increment;
 ; }
 _dda1Step0
 .(
-    inc         _dda1CurrentValue
+    lda         _dda1CurrentValue
+    clc
+    adc         _dda1Increment
+    sta         _dda1CurrentValue
 .)
     rts
 
 ; void ddaStep1(){
 ;     while ((ddaCurrentError<<1) >= ddaNbStep) {
 ;         ddaCurrentError         -= ddaNbStep;
-;         ddaCurrentValue         += 1;
+;         ddaCurrentValue         += dda1Increment;
 ;     }
 ;     ddaCurrentError     += ddaNbVal;
 ; }
@@ -95,7 +98,10 @@ loop
             sec ;; FIXME : this sec is useless
             sbc         _dda1NbStep
             sta         _dda1CurrentError
-            inc         _dda1CurrentValue
+            lda         _dda1CurrentValue
+            clc
+            adc         _dda1Increment
+            sta         _dda1CurrentValue
     jmp         loop
 end_loop
     lda         _dda1CurrentError
@@ -110,7 +116,7 @@ end_loop
 ;     ddaCurrentError         -= ddaNbVal;
 ;     if ((ddaCurrentError<<1) < ddaNbStep) {
 ;         ddaCurrentError     += ddaNbStep;
-;         ddaCurrentValue     += 1;
+;         ddaCurrentValue     += ddaIncrement;
 ;     }
 ; }
 _dda1Step2
@@ -131,8 +137,11 @@ updateError
             clc
             adc         _dda1NbStep
             sta         _dda1CurrentError
-;         ddaCurrentValue     += 1;
-            inc         _dda1CurrentValue
+;         ddaCurrentValue     += _dda1Increment;
+            lda         _dda1CurrentValue
+            clc
+            adc         _dda1Increment
+            sta         _dda1CurrentValue
 ;     }
 
 .)
@@ -141,11 +150,14 @@ updateError
 
 
 ; void ddaStep0(){
-;     ddaCurrentValue         += 1;
+;     ddaCurrentValue         += ddaIncrement;
 ; }
 _dda3Step0
 .(
-    inc         _dda3CurrentValue
+    lda         _dda3CurrentValue
+    clc
+    adc         _dda3Increment
+    sta         _dda3CurrentValue
 .)
     rts
 
@@ -169,7 +181,10 @@ loop
             sec ;; FIXME : this sec is useless
             sbc         _dda3NbStep
             sta         _dda3CurrentError
-            inc         _dda3CurrentValue
+            lda         _dda3CurrentValue
+            clc
+            adc         _dda3Increment
+            sta         _dda3CurrentValue
     jmp         loop
 end_loop
     lda         _dda3CurrentError
