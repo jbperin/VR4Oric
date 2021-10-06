@@ -1141,25 +1141,25 @@ void project2ScreenASM () {
         ); // FIXME: replace 32 by SCREEN_HEIGHT/2
 
 
-        if (dda1EndValue > dda1StartValue) {
-            dda1NbVal        = dda1EndValue-dda1StartValue;
-            dda1Increment    = 1;
-        } else {
-            dda1NbVal        = dda1StartValue-dda1EndValue;
-            dda1Increment    = -1;
-        }
-        // asm (
-        //     ":.(:"
-        //     "lda _dda1StartValue:"
-        //     "cmp _dda1EndValue:"
-        //     "bcs else:"
-        //     "lda _dda1EndValue: sec: sbc _dda1StartValue: sta _dda1NbVal:"
-        //     "lda #1: sta _dda1Increment:"
-        //     "jmp endif:else:"
-        //     "lda _dda1StartValue: sec: sbc _dda1EndValue: sta _dda1NbVal:"
-        //     "lda #$FF: sta _dda1Increment:"
-        //     ":endif:.):"
-        // );
+        // if (dda1EndValue > dda1StartValue) {
+        //     dda1NbVal        = dda1EndValue-dda1StartValue;
+        //     dda1Increment    = 1;
+        // } else {
+        //     dda1NbVal        = dda1StartValue-dda1EndValue;
+        //     dda1Increment    = -1;
+        // }
+        asm (
+            ":.(:"
+            "lda _dda1StartValue:"
+            "cmp _dda1EndValue:"
+            "bcs else:"
+            "lda _dda1EndValue: sec: sbc _dda1StartValue: sta _dda1NbVal:"
+            "lda #1: sta _dda1Increment:"
+            "jmp endif:else:"
+            "lda _dda1StartValue: sec: sbc _dda1EndValue: sta _dda1NbVal:"
+            "lda #$FF: sta _dda1Increment:"
+            ":endif:.):"
+        );
         if          (dda1NbVal > dda1NbStep) {
             dda1CurrentError     = dda1NbVal;
             dda1StepFunction     = &dda1Step1;
@@ -1180,7 +1180,7 @@ void project2ScreenASM () {
             dda3Increment            = -1;
         }
         // asm (
-        //     ":.(:"
+        //     ":breakhere:.(:"
         //     "lda _dda3StartValue:"
         //     "cmp _dda3EndValue:"
         //     "bcs else:"
@@ -1191,7 +1191,7 @@ void project2ScreenASM () {
         //     "lda #$FF: sta _dda3Increment:"
         //     ":endif:.):"
         // );
-        if          (dda3NbVal > dda3NbStep) {
+        if (dda3NbVal > dda3NbStep) {
             dda3CurrentError     = dda3NbVal;
             dda3StepFunction     = &dda3Step1;
         } else if   (dda3NbVal < dda3NbStep) {
@@ -1392,25 +1392,25 @@ void project2ScreenASM () {
             "sta _dda4NbStep: sta _dda4CurrentError:"
         ); // FIXME: replace 32 by SCREEN_HEIGHT/2
 
-        if (dda1EndValue > dda1StartValue) {
-            dda1NbVal                = dda1EndValue-dda1StartValue;
-            dda1Increment            = 1;
-        } else {
-            dda1NbVal                = dda1StartValue-dda1EndValue;
-            dda1Increment            = -1;
-        }
-        // asm (
-        //     ":.(:"
-        //     "lda _dda1StartValue:"
-        //     "cmp _dda1EndValue:"
-        //     "bcs else:"
-        //     "lda _dda1EndValue: sec: sbc _dda1StartValue: sta _dda1NbVal:"
-        //     "lda #1: sta _dda1Increment:"
-        //     "jmp endif:else:"
-        //     "lda _dda1StartValue: sec: sbc _dda1EndValue: sta _dda1NbVal:"
-        //     "lda #$FF: sta _dda1Increment:"
-        //     ":endif:.):"
-        // );
+        // if (dda1EndValue > dda1StartValue) {
+        //     dda1NbVal                = dda1EndValue-dda1StartValue;
+        //     dda1Increment            = 1;
+        // } else {
+        //     dda1NbVal                = dda1StartValue-dda1EndValue;
+        //     dda1Increment            = -1;
+        // }
+        asm (
+            ":.(:"
+            "lda _dda1StartValue:"
+            "cmp _dda1EndValue:"
+            "bcs else:"
+            "lda _dda1EndValue: sec: sbc _dda1StartValue: sta _dda1NbVal:"
+            "lda #1: sta _dda1Increment:"
+            "jmp endif:else:"
+            "lda _dda1StartValue: sec: sbc _dda1EndValue: sta _dda1NbVal:"
+            "lda #$FF: sta _dda1Increment:"
+            ":endif:.):"
+        );
 
         if          (dda1NbVal > dda1NbStep) {
             dda1CurrentError     = dda1NbVal;
