@@ -1148,6 +1148,18 @@ void project2ScreenASM () {
             dda1NbVal        = dda1StartValue-dda1EndValue;
             dda1Increment    = -1;
         }
+        // asm (
+        //     ":.(:"
+        //     "lda _dda1StartValue:"
+        //     "cmp _dda1EndValue:"
+        //     "bcs else:"
+        //     "lda _dda1EndValue: sec: sbc _dda1StartValue: sta _dda1NbVal:"
+        //     "lda #1: sta _dda1Increment:"
+        //     "jmp endif:else:"
+        //     "lda _dda1StartValue: sec: sbc _dda1EndValue: sta _dda1NbVal:"
+        //     "lda #$FF: sta _dda1Increment:"
+        //     ":endif:.):"
+        // );
         if          (dda1NbVal > dda1NbStep) {
             dda1CurrentError     = dda1NbVal;
             dda1StepFunction     = &dda1Step1;
@@ -1167,6 +1179,18 @@ void project2ScreenASM () {
             dda3NbVal                = dda3StartValue-dda3EndValue;
             dda3Increment            = -1;
         }
+        // asm (
+        //     ":.(:"
+        //     "lda _dda3StartValue:"
+        //     "cmp _dda3EndValue:"
+        //     "bcs else:"
+        //     "lda _dda3EndValue: sec: sbc _dda3StartValue: sta _dda3NbVal:"
+        //     "lda #1: sta _dda3Increment:"
+        //     "jmp endif:else:"
+        //     "lda _dda3StartValue: sec: sbc _dda3EndValue: sta _dda3NbVal:"
+        //     "lda #$FF: sta _dda3Increment:"
+        //     ":endif:.):"
+        // );
         if          (dda3NbVal > dda3NbStep) {
             dda3CurrentError     = dda3NbVal;
             dda3StepFunction     = &dda3Step1;
@@ -1351,11 +1375,11 @@ void project2ScreenASM () {
 
         // asm ("ldy _idxCol:"
         //     " lda _tabMiddleX, y: sta _dda1StartValue: sta _dda1CurrentValue: lda _tabHighX, y: sta _dda1EndValue:"
-        //     " lda _tabMiddleY, y: sta _dda2StartValue: sta _dda2CurrentValue: lda _tabHighY, y: sta _dda2EndValue: sec : sbc _dda2StartValue: sta _dda2NbVal:"
+            // " lda _tabMiddleY, y: sta _dda2StartValue: sta _dda2CurrentValue: lda _tabHighY, y: sta _dda2EndValue: sec : sbc _dda2StartValue: sta _dda2NbVal:"
         //     "iny:"
         //     " lda _tabMiddleX, y: sta _dda3StartValue: sta _dda3CurrentValue: lda _tabHighX, y: sta _dda3EndValue:"
         //     " lda _tabMiddleY, y: sta _dda4StartValue: sta _dda4CurrentValue: lda _tabHighY, y: sta _dda4EndValue: sec : sbc _dda4StartValue: sta _dda4NbVal:"
-        //     );
+            // );
 
         // dda1NbStep           = SCREEN_HEIGHT/2;
         // dda2CurrentError     = (dda2NbStep           = SCREEN_HEIGHT/2);
@@ -1375,6 +1399,18 @@ void project2ScreenASM () {
             dda1NbVal                = dda1StartValue-dda1EndValue;
             dda1Increment            = -1;
         }
+        // asm (
+        //     ":.(:"
+        //     "lda _dda1StartValue:"
+        //     "cmp _dda1EndValue:"
+        //     "bcs else:"
+        //     "lda _dda1EndValue: sec: sbc _dda1StartValue: sta _dda1NbVal:"
+        //     "lda #1: sta _dda1Increment:"
+        //     "jmp endif:else:"
+        //     "lda _dda1StartValue: sec: sbc _dda1EndValue: sta _dda1NbVal:"
+        //     "lda #$FF: sta _dda1Increment:"
+        //     ":endif:.):"
+        // );
 
         if          (dda1NbVal > dda1NbStep) {
             dda1CurrentError     = dda1NbVal;
@@ -1395,7 +1431,18 @@ void project2ScreenASM () {
             dda3NbVal                = dda3StartValue-dda3EndValue;
             dda3Increment            = -1;
         }
-
+        // asm (
+        //     ":.(:"
+        //     "lda _dda3StartValue:"
+        //     "cmp _dda3EndValue:"
+        //     "bcs else:"
+        //     "lda _dda3EndValue: sec: sbc _dda3StartValue: sta _dda3NbVal:"
+        //     "lda #1: sta _dda3Increment:"
+        //     "jmp endif:else:"
+        //     "lda _dda3StartValue: sec: sbc _dda3EndValue: sta _dda3NbVal:"
+        //     "lda #$FF: sta _dda3Increment:"
+        //     ":endif:.):"
+        // );
         if          (dda3NbVal > dda3NbStep) {
             dda3CurrentError     = dda3NbVal;
             dda3StepFunction     = &dda3Step1;

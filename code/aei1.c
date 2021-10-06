@@ -30,7 +30,7 @@ void dda1Step1(){
     asm (
         ":.(:loop:"
         ":lda _dda1CurrentError:bmi end_loop: asl: cmp _dda1NbStep: bcc end_loop:"
-        ":lda _dda1CurrentError: sec: sbc _dda1NbStep: sta _dda1CurrentError: inc _dda1CurrentValue:"
+        ":lda _dda1CurrentError: sec: sbc _dda1NbStep: sta _dda1CurrentError: lda _dda1CurrentValue: clc: adc _dda1Increment: sta _dda1CurrentValue:"
         ":jmp loop:"
         ":end_loop:.):"
         ":lda _dda1CurrentError: clc: adc _dda1NbVal: sta _dda1CurrentError"
@@ -45,7 +45,7 @@ void dda1Step2(){
     // }
     asm(
         "lda _dda1CurrentError: sec: sbc _dda1NbVal: sta _dda1CurrentError:"
-        ":.(:bmi updateError: asl: cmp _dda1NbStep: bcs  done :updateError: lda _dda1CurrentError: clc: adc _dda1NbStep: sta _dda1CurrentError: inc _dda1CurrentValue: done:.):"
+        ":.(:bmi updateError: asl: cmp _dda1NbStep: bcs  done :updateError: lda _dda1CurrentError: clc: adc _dda1NbStep: sta _dda1CurrentError: lda _dda1CurrentValue: clc: adc _dda1Increment: sta _dda1CurrentValue: done:.):"
     );
 
 }
