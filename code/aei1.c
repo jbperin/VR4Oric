@@ -16,7 +16,7 @@ extern signed char     dda1Increment;
 void dda1Step0(){
 
     // dda1CurrentValue         += dda1Increment;
-    asm ("inc _dda1CurrentValue");
+    asm ("lda _dda1CurrentValue: clc: adc _dda1Increment: sta _dda1CurrentValue");
 }
 
 void dda1Step1(){

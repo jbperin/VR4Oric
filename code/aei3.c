@@ -17,7 +17,7 @@ extern signed char     dda3Increment;
 void dda3Step0(){
 
     // dda3CurrentValue         += dda3Increment;
-    asm ("inc _dda3CurrentValue");
+    asm ("lda _dda3CurrentValue: clc: adc _dda3Increment: sta _dda3CurrentValue");
  
 }
 
