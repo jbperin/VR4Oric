@@ -1558,5 +1558,6 @@ void project2ScreenASM () {
             );
        }
         theBaseAdr += 1;
+        // asm("lda _theBaseAdr: clc: adc #1:.(: bcc skip:    inc _theBaseAdr+1: skip: .):");
     }
 }
