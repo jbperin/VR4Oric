@@ -1344,42 +1344,24 @@ asm (
 // 1.3.1.1 TOP LEFT PIXEL COORDINATE  
             // theX    = dda1CurrentValue + rollCoord;
             // theY    = dda2CurrentValue;
-            asm (
-                "lda _dda1CurrentValue: clc: adc _rollCoord: sta _theX:"
-                "lda _dda2CurrentValue: sta _theY:"
-            );
-
 // 1.3.1.2 TOP LEFT PIXEL COLOR   
             // theColorLeft = texture_PANO[theX*IMAGE_HEIGHT+theY];
             asm (
-                "ldy _theX:"
-                "lda _adrTextureLow,y:"
-                "sta tmp0:"
-                "lda _adrTextureHigh,y:"
-                "sta tmp0+1:"
-                "ldy _theY:"
-                "lda (tmp0),y:"
+                "lda _dda1CurrentValue: clc: adc _rollCoord: tay:"
+                "lda _adrTextureLow,y:sta tmp0:lda _adrTextureHigh,y:sta tmp0+1:"
+                "ldy _dda2CurrentValue: lda (tmp0),y:"
                 "sta _theColorLeft:"
             );
 
 // 1.3.1.3 TOP RIGHT PIXEL COORDINATE
             // theX   = dda3CurrentValue + rollCoord;
             // theY   = dda4CurrentValue;
-            asm (
-                "lda _dda3CurrentValue: clc: adc _rollCoord: sta _theX:"
-                "lda _dda4CurrentValue: sta _theY:"
-            );
-
 // 1.3.1.4 TOP RIGHT PIXEL COLOR
             // theColorRight = texture_PANO[theX*IMAGE_HEIGHT+theY];
             asm (
-                "ldy _theX:"
-                "lda _adrTextureLow,y:"
-                "sta tmp0:"
-                "lda _adrTextureHigh,y:"
-                "sta tmp0+1:"
-                "ldy _theY:"
-                "lda (tmp0),y:"
+                "lda _dda3CurrentValue: clc: adc _rollCoord: tay:"
+                "ldy _theX:lda _adrTextureLow,y:sta tmp0:lda _adrTextureHigh,y:sta tmp0+1:"
+                "ldy _dda4CurrentValue: lda (tmp0),y:"
                 "sta _theColorRight:"
             );
 
