@@ -1154,6 +1154,13 @@ void main()
 void project2ScreenASM () {
     theBaseAdr      = (unsigned char *)(DEFAULT_BASE_ADRESS);
 
+    asm ("lda #32:"
+        "sta _dda1NbStep:"
+        "sta _dda2NbStep:"
+        "sta _dda3NbStep:"
+        "sta _dda4NbStep:"
+    ); // FIXME: replace 32 by SCREEN_HEIGHT/2
+
 
 // 1 LOOP OVER COLUMNS
     for (idxCol=VIEWPORT_START_COLUMN; idxCol< SCREEN_WIDTH; idxCol+=2) {
@@ -1191,10 +1198,8 @@ void project2ScreenASM () {
         // dda1NbStep           = SCREEN_HEIGHT/2;
 
         asm ("lda #32:"
-            "sta _dda1NbStep:"
-            "sta _dda2NbStep: sta _dda2CurrentError:"
-            "sta _dda3NbStep:"
-            "sta _dda4NbStep: sta _dda4CurrentError:"
+            "sta _dda2CurrentError:"
+            "sta _dda4CurrentError:"
         ); // FIXME: replace 32 by SCREEN_HEIGHT/2
 
 
@@ -1207,15 +1212,15 @@ void project2ScreenASM () {
         // }
 // 1.2.2 INIT DDA 1 SPECIFIC        
         asm (
-            ":break1:.(:"
-            "lda _dda1StartValue:"
-            "cmp _dda1EndValue:"
-            "bcs else:"
-            "lda _dda1EndValue: sec: sbc _dda1StartValue: sta _dda1NbVal:"
-            "lda #1: sta _dda1Increment:"
+            ":.(:"
+            "lda _dda1StartValue:cmp _dda1EndValue:bcs else:"
+                "lda _dda1EndValue: "
+                "sec: sbc _dda1StartValue: sta _dda1NbVal:"
+                "lda #1: sta _dda1Increment:"
             "jmp endif:else:"
-            "lda _dda1StartValue: sec: sbc _dda1EndValue: sta _dda1NbVal:"
-            "lda #$FF: sta _dda1Increment:"
+                // "lda _dda1StartValue: sec: "
+                "sbc _dda1EndValue: sta _dda1NbVal:"
+                "lda #$FF: sta _dda1Increment:"
             ":endif:.):"
         );
 
@@ -1277,19 +1282,18 @@ asm (
         //     dda3NbVal                = dda3StartValue-dda3EndValue;
         //     dda3Increment            = -1;
         // }
-        dda3Increment    = 0;
-        asm (
-            ":break2:.(:"
-            "lda _dda3StartValue:"
-            "cmp _dda3EndValue:"
-            "bcs else3:"
-            "lda _dda3EndValue: sec: sbc _dda3StartValue: sta _dda3NbVal:"
-            "lda #1: sta _dda3Increment:"
-            "jmp endif3:else3:"
-            "lda _dda3StartValue: sec: sbc _dda3EndValue: sta _dda3NbVal:"
-            "lda #$FF: sta _dda3Increment:"
-            ":endif3:.):"
-        );
+
+        {asm (
+            ":.(:"
+            "lda _dda3StartValue: cmp _dda3EndValue: bcs else:"
+                "lda _dda3EndValue: sec: sbc _dda3StartValue: sta _dda3NbVal:"
+                "lda #1: sta _dda3Increment:"
+            "jmp endif:else:"
+                // "lda _dda3StartValue: sec: "
+                "sbc _dda3EndValue: sta _dda3NbVal:"
+                "lda #$FF: sta _dda3Increment:"
+            ":endif:.):"
+        );}
         // if (dda3NbVal > dda3NbStep) {
         //     dda3CurrentError     = dda3NbVal;
         //     dda3StepFunction     = &dda3Step1;
@@ -1523,10 +1527,8 @@ asm (
         // dda3NbStep           = SCREEN_HEIGHT/2;
         // dda4CurrentError     = (dda4NbStep           = SCREEN_HEIGHT/2);
         asm ("lda #32:"
-            "sta _dda1NbStep:"
-            "sta _dda2NbStep: sta _dda2CurrentError:"
-            "sta _dda3NbStep:"
-            "sta _dda4NbStep: sta _dda4CurrentError:"
+            "sta _dda2CurrentError:"
+            "sta _dda4CurrentError:"
         ); // FIXME: replace 32 by SCREEN_HEIGHT/2
 
 // 1.4.2 INIT DDA 1 SPECIFIC
