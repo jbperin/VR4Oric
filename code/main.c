@@ -1756,7 +1756,7 @@ asm (
                 ":.(:bmi updateError: asl: cmp _dda4NbStep: bcs  done :updateError: lda _dda4CurrentError: clc: adc _dda4NbStep: sta _dda4CurrentError: inc _dda4CurrentValue: done:.):"
             );
        }
-        theBaseAdr += 1;
-        // asm("lda _theBaseAdr: clc: adc #1:.(: bcc skip:    inc _theBaseAdr+1: skip: .):");
+        // theBaseAdr += 1;
+        {asm("lda _theBaseAdr: clc: adc #1: sta _theBaseAdr :.(: bcc skip:    inc _theBaseAdr+1: skip: .):");}
     }
 }
