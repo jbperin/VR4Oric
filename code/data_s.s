@@ -20,6 +20,16 @@ _borderTables .dsb 1014 ;; 13*78
 
 _wrtAdr .dsb 2
 _myTmp .dsb 2
+_theBaseAdr .dsb 2
+_theColorLeft        .dsb 1
+_theColorRight      .dsb 1
+_idxCol .dsb 1
+_idxLin .dsb 1
+
+
+_theX .dsb 1
+_theY .dsb 1
+
 
 _dda1NbStep         .dsb 1
 _dda1StartValue     .dsb 1
@@ -226,4 +236,207 @@ updateError
 
 .)
     rts
+
+
+breakhere:
+_project2ScreenPureASM:.(
+
+
+    ;; theBaseAdr      = (unsigned char *)(DEFAULT_BASE_ADRESS);
+    lda #<DEFAULT_BASE_ADRESS
+    sta _theBaseAdr
+    lda #<DEFAULT_BASE_ADRESS
+    sta _theBaseAdr+1
+
+
+;; 1 LOOP OVER COLUMNS
+    lda  #VIEWPORT_START_COLUMN
+    sta  _idxCol
+    ;; for (idxCol=VIEWPORT_START_COLUMN; idxCol< SCREEN_WIDTH; idxCol+=2) {
+loopOnIdxCol_01
+
+;; 1.1 INIT COLUMN
+        ;; wrtAdr = theBaseAdr;
+        lda _theBaseAdr: sta _wrtAdr: lda _theBaseAdr+1: sta _wrtAdr+1:
+
+;; 1.2 INIT HIGH LINES
+;; 1.2.1 INIT DDA COMMON
+        ldy _idxCol:
+        lda _tabLowX, y: sta _dda1StartValue: sta _dda1CurrentValue: lda _tabMiddleX, y: sta _dda1EndValue:
+        lda _tabLowY, y: sta _dda2StartValue: sta _dda2CurrentValue: lda _tabMiddleY, y: sta _dda2EndValue: sec : sbc _dda2StartValue: sta _dda2NbVal:
+        iny:
+        lda _tabLowX, y: sta _dda3StartValue: sta _dda3CurrentValue: lda _tabMiddleX, y: sta _dda3EndValue:
+        lda _tabLowY, y: sta _dda4StartValue: sta _dda4CurrentValue: lda _tabMiddleY, y: sta _dda4EndValue: sec : sbc _dda4StartValue: sta _dda4NbVal:
+
+        lda #(SCREEN_HEIGHT/2)
+        sta _dda1NbStep
+        sta _dda2NbStep: sta _dda2CurrentError
+        sta _dda3NbStep
+        sta _dda4NbStep: sta _dda4CurrentError
+
+;; 1.2.2 INIT DDA 1 SPECIFIC   
+        :.(:
+        lda _dda1StartValue:
+        cmp _dda1EndValue:
+        bcs else:
+        lda _dda1EndValue: sec: sbc _dda1StartValue: sta _dda1NbVal:
+        lda #1: sta _dda1Increment:
+        jmp endif:else:
+        lda _dda1StartValue: sec: sbc _dda1EndValue: sta _dda1NbVal:
+        lda #$FF: sta _dda1Increment:
+        :endif:.):
+
+
+        lda _dda1NbStep:
+        cmp _dda1NbVal:
+        beq NbStepEqualsNbVal_1234_00:
+        bcs NbStepGreaterThanNbVal_1234_00:
+            lda _dda1NbVal:
+            sta _dda1CurrentError:
+            lda #<(_dda1Step1):
+            sta _dda1StepFunction:
+            lda #>(_dda1Step1):
+            sta _dda1StepFunction+1:
+        jmp dda1InitDone_1234_00:
+        NbStepGreaterThanNbVal_1234_00    :
+            lda _dda1NbStep:
+            sta _dda1CurrentError:
+            lda #<(_dda1Step2):
+            sta _dda1StepFunction:
+            lda #>(_dda1Step2):
+            sta _dda1StepFunction+1:
+        jmp dda1InitDone_1234_00:
+        NbStepEqualsNbVal_1234_00    :
+            lda _dda1EndValue:
+            sta _dda1CurrentError:
+            lda #<(_dda1Step0):
+            sta _dda1StepFunction:
+            lda #>(_dda1Step0):
+            sta _dda1StepFunction+1:
+dda1InitDone_1234_00 :
+
+;; 1.2.3 INIT DDA 3 SPECIFIC 
+        :.(:
+        lda _dda3StartValue:
+        cmp _dda3EndValue:
+        bcs else3:
+        lda _dda3EndValue: sec: sbc _dda3StartValue: sta _dda3NbVal:
+        lda #1: sta _dda3Increment:
+        jmp endif3:else3:
+        lda _dda3StartValue: sec: sbc _dda3EndValue: sta _dda3NbVal:
+        lda #$FF: sta _dda3Increment:
+        :endif3:.):
+
+        lda _dda3NbStep:
+        cmp _dda3NbVal:
+        beq NbStepEqualsNbVal_4321_00:
+        bcs NbStepGreaterThanNbVal_4321_00:
+            lda _dda3NbVal:
+            sta _dda3CurrentError:
+            lda #<(_dda3Step1):
+            sta _dda3StepFunction:
+            lda #>(_dda3Step1):
+            sta _dda3StepFunction+1:
+        jmp dda3InitDone_4321_00:
+            
+        NbStepGreaterThanNbVal_4321_00    :
+            lda _dda3NbStep:
+            sta _dda3CurrentError:
+            lda #<(_dda3Step2):
+            sta _dda3StepFunction:
+            lda #>(_dda3Step2):
+            sta _dda3StepFunction+1:
+        jmp dda3InitDone_4321_00:
+            
+
+        NbStepEqualsNbVal_4321_00    :
+            lda _dda3EndValue:
+            sta _dda3CurrentError:
+            lda #<(_dda3Step0):
+            sta _dda3StepFunction:
+            lda #>(_dda3Step0):
+            sta _dda3StepFunction+1:
+dda3InitDone_4321_00:
+
+
+        ;; ==================
+
+;; 1.3 LOOP OVER HIGH LINES 
+        lda #(SCREEN_HEIGHT/2)
+        sta _idxLin
+        ;; for (idxLin=0; idxLin< SCREEN_HEIGHT/2; idxLin+=2)
+loopOnIdxLin_01
+
+;; 1.3.1 TOP PIXEL 
+;; 1.3.1.1 TOP LEFT PIXEL COORDINATE 
+;; 1.3.1.2 TOP LEFT PIXEL COLOR
+;; 1.3.1.3 TOP RIGHT PIXEL COORDINATE
+;; 1.3.1.4 TOP RIGHT PIXEL COLOR
+;; 1.3.1.5  WRITE TOP PIXEL ON SCREEN
+;; 1.3.2 DDAs STEP
+;; 1.3.3 BOTTOM PIXEL 
+;; 1.3.3.1 BOTTOM LEFT PIXEL COORDINATE 
+;; 1.3.3.2 BOTTOM LEFT PIXEL COLOR
+;; 1.3.3.3 BOTTOM RIGHT PIXEL COORDINATE
+;; 1.3.3.4 BOTTOM RIGHT PIXEL COLOR
+;; 1.3.3.5 WRITE BOTTOM PIXEL ON SCREEN
+;; 1.3.4 DDAs STEP
+
+
+        dec _idxLin
+        beq endloopOnIdxLin_01
+        jmp loopOnIdxLin_01
+endloopOnIdxLin_01        
+        ;; }
+
+;; 1.4 INIT LOW LINES 
+;; 1.4.1 INIT DDA COMMON
+;; 1.4.2 INIT DDA 1 SPECIFIC
+;; 1.4.3  INIT DDA 3 SPECIFIC
+
+
+;; 1.5 LOOP OVER LOW LINES
+        ;; ==================
+        lda #(SCREEN_HEIGHT/2)
+        sta _idxLin
+        ;; for (idxLin=SCREEN_HEIGHT/2; idxLin< SCREEN_HEIGHT; idxLin+=2) {
+loopOnIdxLin_02
+
+
+;; 1.5.1 TOP PIXEL 
+;; 1.5.1.1 TOP LEFT PIXEL COORDINATE 
+;; 1.5.1.2 TOP LEFT PIXEL COLOR            
+;; 1.5.1.3 TOP RIGHT PIXEL COORDINATE 
+;; 1.5.1.4 TOP RIGHT PIXEL COLOR
+;; 1.5.1.5  WRITE TOP PIXEL ON SCREEN
+;; 1.5.2 DDAs STEP
+;; 1.5.3 BOTTOM PIXEL 
+;; 1.5.3.1 BOTTOM LEFT PIXEL COORDINATE 
+;; 1.5.3.2 BOTTOM LEFT PIXEL COLOR
+;; 1.5.3.3 BOTTOM RIGHT PIXEL COORDINATE
+;; 1.5.3.4 BOTTOM RIGHT PIXEL COLOR
+;; 1.5.3.5 WRITE BOTTOM PIXEL ON SCREEN
+;; 1.5.4 DDAs STEP
+
+        dec _idxLin
+        beq endloopOnIdxLin_02
+        jmp loopOnIdxLin_02
+endloopOnIdxLin_02
+        ;; }
+
+;; 1.6 NEXT COL
+    lda _theBaseAdr: clc: adc #1: sta _theBaseAdr :.(: bcc skip:    inc _theBaseAdr+1: skip: .)
+
+    inc _idxCol
+    inc _idxCol
+    lda _idxCol
+    cmp #SCREEN_WIDTH
+    beq endLoopOnIdxCol_01
+    jmp loopOnIdxCol_01
+endLoopOnIdxCol_01
+    ;; } end for
+project2ScreenPureASM_done
+.)
+    rts
+
 #endif // __USE_C_DDA__
