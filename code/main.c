@@ -1438,23 +1438,15 @@ asm (
 
             // theX   = dda3CurrentValue + rollCoord;
             // theY   = dda4CurrentValue;
-            asm (
-                "lda _dda3CurrentValue: clc: adc _rollCoord: sta _theX:"
-                "lda _dda4CurrentValue: sta _theY:"
-            );
 
 
 // 1.3.3.4 BOTTOM RIGHT PIXEL COLOR
 
             // theColorRight = texture_PANO[theX*IMAGE_HEIGHT+theY];
             asm (
-                "ldy _theX:"
-                "lda _adrTextureLow,y:"
-                "sta tmp0:"
-                "lda _adrTextureHigh,y:"
-                "sta tmp0+1:"
-                "ldy _theY:"
-                "lda (tmp0),y:"
+                "lda _dda3CurrentValue: clc: adc _rollCoord: tay:"
+                "lda _adrTextureLow,y: sta tmp0: lda _adrTextureHigh,y: sta tmp0+1:"
+                "ldy _dda4CurrentValue: lda (tmp0),y:"
                 "sta _theColorRight:"
             );
             
@@ -1623,32 +1615,20 @@ asm (
     "cmp _dda3NbVal:"
     "beq NbStepEqualsNbVal_8765:"
     "bcs NbStepGreaterThanNbVal_8765:"
-        "lda _dda3NbVal:"
-        "sta _dda3CurrentError:"
-        "lda #<(_dda3Step1):"
-        "sta _dda3StepFunction:"
-        "lda #>(_dda3Step1):"
-        "sta _dda3StepFunction+1:"
+        "lda _dda3NbVal: sta _dda3CurrentError:"
+        "lda #<(_dda3Step1): sta _dda3StepFunction: lda #>(_dda3Step1): sta _dda3StepFunction+1:"
     "jmp dda3InitDone_8765:"
         );
         asm(
     "NbStepGreaterThanNbVal_8765    :"
-        "lda _dda3NbStep:"
-        "sta _dda3CurrentError:"
-        "lda #<(_dda3Step2):"
-        "sta _dda3StepFunction:"
-        "lda #>(_dda3Step2):"
-        "sta _dda3StepFunction+1:"
+        "lda _dda3NbStep: sta _dda3CurrentError:"
+        "lda #<(_dda3Step2): sta _dda3StepFunction: lda #>(_dda3Step2): sta _dda3StepFunction+1:"
     "jmp dda3InitDone_8765:"
         );
         asm(
     "NbStepEqualsNbVal_8765    :"
-        "lda _dda3EndValue:"
-        "sta _dda3CurrentError:"
-        "lda #<(_dda3Step0):"
-        "sta _dda3StepFunction:"
-        "lda #>(_dda3Step0):"
-        "sta _dda3StepFunction+1:"
+        "lda _dda3EndValue: sta _dda3CurrentError:"
+        "lda #<(_dda3Step0): sta _dda3StepFunction: lda #>(_dda3Step0): sta _dda3StepFunction+1:"
     "dda3InitDone_8765:"
     // ".):"
 );
