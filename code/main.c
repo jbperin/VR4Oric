@@ -1289,7 +1289,6 @@ asm (
                 "lda _dda3EndValue: sec: sbc _dda3StartValue: sta _dda3NbVal:"
                 "lda #1: sta _dda3Increment:"
             "jmp endif:else:"
-                // "lda _dda3StartValue: sec: "
                 "sbc _dda3EndValue: sta _dda3NbVal:"
                 "lda #$FF: sta _dda3Increment:"
             ":endif:.):"
@@ -1311,32 +1310,20 @@ asm (
     "cmp _dda3NbVal:"
     "beq NbStepEqualsNbVal_4321:"
     "bcs NbStepGreaterThanNbVal_4321:"
-        "lda _dda3NbVal:"
-        "sta _dda3CurrentError:"
-        "lda #<(_dda3Step1):"
-        "sta _dda3StepFunction:"
-        "lda #>(_dda3Step1):"
-        "sta _dda3StepFunction+1:"
+        "lda _dda3NbVal:sta _dda3CurrentError:"
+        "lda #<(_dda3Step1):sta _dda3StepFunction:lda #>(_dda3Step1):sta _dda3StepFunction+1:"
     "jmp dda3InitDone_4321:"
         );
         asm(
     "NbStepGreaterThanNbVal_4321    :"
-        "lda _dda3NbStep:"
-        "sta _dda3CurrentError:"
-        "lda #<(_dda3Step2):"
-        "sta _dda3StepFunction:"
-        "lda #>(_dda3Step2):"
-        "sta _dda3StepFunction+1:"
+        "lda _dda3NbStep:sta _dda3CurrentError:"
+        "lda #<(_dda3Step2):sta _dda3StepFunction:lda #>(_dda3Step2):sta _dda3StepFunction+1:"
     "jmp dda3InitDone_4321:"
         );
         asm(
     "NbStepEqualsNbVal_4321    :"
-        "lda _dda3EndValue:"
-        "sta _dda3CurrentError:"
-        "lda #<(_dda3Step0):"
-        "sta _dda3StepFunction:"
-        "lda #>(_dda3Step0):"
-        "sta _dda3StepFunction+1:"
+        "lda _dda3EndValue:sta _dda3CurrentError:"
+        "lda #<(_dda3Step0):sta _dda3StepFunction:lda #>(_dda3Step0):sta _dda3StepFunction+1:"
     "dda3InitDone_4321:"
     // ".):"
 );
@@ -1415,7 +1402,7 @@ asm (
 // 1.3.3.1 BOTTOM LEFT PIXEL COORDINATE 
             // theX    = dda1CurrentValue + rollCoord;
             // theY    = dda2CurrentValue;
-            asm (
+            {asm (
                 "lda _dda1CurrentValue: clc: adc _rollCoord: sta _theX:"
                 "lda _dda2CurrentValue: sta _theY:"
             );
@@ -1431,7 +1418,7 @@ asm (
                 "ldy _theY:"
                 "lda (tmp0),y:"
                 "sta _theColorLeft:"
-            );
+            );}
 
 
 // 1.3.3.3 BOTTOM RIGHT PIXEL COORDINATE
@@ -1458,9 +1445,10 @@ asm (
             // *wrtAdr = tabLeftBlue[theColorLeft]  | tabRightBlue[theColorRight];
             // wrtAdr += NEXT_SCANLINE_INCREMENT;
             asm (
-                "ldy _theColorLeft: lda _tabLeftRed,y: ldy _theColorRight: ora _tabRightRed,y: ldy #120: sta (_wrtAdr),y:"
-                "ldy _theColorLeft: lda _tabLeftGreen,y: ldy _theColorRight: ora _tabRightGreen,y: ldy #160: sta (_wrtAdr),y:"
-                "ldy _theColorLeft: lda _tabLeftBlue,y: ldy _theColorRight: ora _tabRightBlue,y: ldy #200: sta (_wrtAdr),y:"
+                "ldy _theColorLeft:ldx _theColorRight:"
+                "lda _tabLeftRed,y:   ora _tabRightRed,x: ldy #120: sta (_wrtAdr),y:"
+                "ldy _theColorLeft: lda _tabLeftGreen,y: ora _tabRightGreen,x: ldy #160: sta (_wrtAdr),y:"
+                "ldy _theColorLeft: lda _tabLeftBlue,y:  ora _tabRightBlue,x: ldy #200: sta (_wrtAdr),y:"
                 "lda _wrtAdr: clc: adc #240: sta _wrtAdr: .(: bcc skip:    inc _wrtAdr+1: skip: .):"
             );
 
