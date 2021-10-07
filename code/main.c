@@ -1154,7 +1154,8 @@ void main()
 void project2ScreenASM () {
     theBaseAdr      = (unsigned char *)(DEFAULT_BASE_ADRESS);
 
-    asm ("lda #32:"
+    asm (
+        "lda #32:"
         "sta _dda1NbStep:"
         "sta _dda2NbStep:"
         "sta _dda3NbStep:"
@@ -1183,7 +1184,8 @@ void project2ScreenASM () {
 // 1.2 INIT HIGH LINES 
 // 1.2.1 INIT DDA COMMON
 
-        asm ("ldy _idxCol:"
+        asm (
+            "ldy _idxCol:"
             " lda _tabLowX, y: sta _dda1StartValue: sta _dda1CurrentValue: lda _tabMiddleX, y: sta _dda1EndValue:"
             " lda _tabLowY, y: sta _dda2StartValue: sta _dda2CurrentValue: lda _tabMiddleY, y: sta _dda2EndValue: sec : sbc _dda2StartValue: sta _dda2NbVal:"
             "iny:"
@@ -1197,7 +1199,8 @@ void project2ScreenASM () {
         // dda2CurrentError     = (dda2NbStep           = SCREEN_HEIGHT/2);
         // dda1NbStep           = SCREEN_HEIGHT/2;
 
-        asm ("lda #32:"
+        asm (
+            "lda #32:"
             "sta _dda2CurrentError:"
             "sta _dda4CurrentError:"
         ); // FIXME: replace 32 by SCREEN_HEIGHT/2
@@ -1218,7 +1221,6 @@ void project2ScreenASM () {
                 "sec: sbc _dda1StartValue: sta _dda1NbVal:"
                 "lda #1: sta _dda1Increment:"
             "jmp endif:else:"
-                // "lda _dda1StartValue: sec: "
                 "sbc _dda1EndValue: sta _dda1NbVal:"
                 "lda #$FF: sta _dda1Increment:"
             ":endif:.):"
@@ -1494,7 +1496,8 @@ asm (
         // dda2NbVal                = dda2EndValue-dda2StartValue;
         // dda4NbVal                = dda4EndValue-dda4StartValue;
 
-        {asm ("ldy _idxCol:"
+        {asm (
+            "ldy _idxCol:"
             " lda _tabMiddleX, y: sta _dda1StartValue: sta _dda1CurrentValue: lda _tabHighX, y: sta _dda1EndValue:"
             " lda _tabMiddleY, y: sta _dda2StartValue: sta _dda2CurrentValue: lda _tabHighY, y: sta _dda2EndValue: sec : sbc _dda2StartValue: sta _dda2NbVal:"
             "iny:"
@@ -1506,7 +1509,8 @@ asm (
         // dda2CurrentError     = (dda2NbStep           = SCREEN_HEIGHT/2);
         // dda3NbStep           = SCREEN_HEIGHT/2;
         // dda4CurrentError     = (dda4NbStep           = SCREEN_HEIGHT/2);
-        asm ("lda #32:"
+        asm (
+            "lda #32:"
             "sta _dda2CurrentError:"
             "sta _dda4CurrentError:"
         ); // FIXME: replace 32 by SCREEN_HEIGHT/2
@@ -1525,7 +1529,6 @@ asm (
                 "lda _dda1EndValue: sec: sbc _dda1StartValue: sta _dda1NbVal:"
                 "lda #1: sta _dda1Increment:"
             "jmp endif:else:"
-                // "lda _dda1StartValue: sec:"
                 "sbc _dda1EndValue: sta _dda1NbVal:"
                 "lda #$FF: sta _dda1Increment:"
             ":endif:.):"

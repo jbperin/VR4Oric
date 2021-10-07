@@ -248,6 +248,12 @@ _project2ScreenPureASM:.(
     lda #<DEFAULT_BASE_ADRESS
     sta _theBaseAdr+1
 
+    lda #32:
+    sta _dda1NbStep:
+    sta _dda2NbStep:
+    sta _dda3NbStep:
+    sta _dda4NbStep:
+
 
 ;; 1 LOOP OVER COLUMNS
     lda  #VIEWPORT_START_COLUMN
@@ -269,21 +275,18 @@ loopOnIdxCol_01
         lda _tabLowY, y: sta _dda4StartValue: sta _dda4CurrentValue: lda _tabMiddleY, y: sta _dda4EndValue: sec : sbc _dda4StartValue: sta _dda4NbVal:
 
         lda #(SCREEN_HEIGHT/2)
-        sta _dda1NbStep
-        sta _dda2NbStep: sta _dda2CurrentError
-        sta _dda3NbStep
-        sta _dda4NbStep: sta _dda4CurrentError
+        sta _dda2CurrentError
+        sta _dda4CurrentError
 
 ;; 1.2.2 INIT DDA 1 SPECIFIC   
         :.(:
-        lda _dda1StartValue:
-        cmp _dda1EndValue:
-        bcs else:
-        lda _dda1EndValue: sec: sbc _dda1StartValue: sta _dda1NbVal:
-        lda #1: sta _dda1Increment:
+        lda _dda1StartValue:cmp _dda1EndValue:bcs else:
+            lda _dda1EndValue: 
+            sec: sbc _dda1StartValue: sta _dda1NbVal:
+            lda #1: sta _dda1Increment:
         jmp endif:else:
-        lda _dda1StartValue: sec: sbc _dda1EndValue: sta _dda1NbVal:
-        lda #$FF: sta _dda1Increment:
+            sbc _dda1EndValue: sta _dda1NbVal:
+            lda #$FF: sta _dda1Increment:
         :endif:.):
 
 
@@ -317,15 +320,13 @@ dda1InitDone_1234_00 :
 
 ;; 1.2.3 INIT DDA 3 SPECIFIC 
         :.(:
-        lda _dda3StartValue:
-        cmp _dda3EndValue:
-        bcs else3:
-        lda _dda3EndValue: sec: sbc _dda3StartValue: sta _dda3NbVal:
-        lda #1: sta _dda3Increment:
-        jmp endif3:else3:
-        lda _dda3StartValue: sec: sbc _dda3EndValue: sta _dda3NbVal:
-        lda #$FF: sta _dda3Increment:
-        :endif3:.):
+        lda _dda3StartValue: cmp _dda3EndValue: bcs else:
+            lda _dda3EndValue: sec: sbc _dda3StartValue: sta _dda3NbVal:
+            lda #1: sta _dda3Increment:
+        jmp endif:else:
+            sbc _dda3EndValue: sta _dda3NbVal:
+            lda #$FF: sta _dda3Increment:
+        :endif:.):
 
         lda _dda3NbStep:
         cmp _dda3NbVal:
@@ -374,6 +375,11 @@ loopOnIdxLin_01
 ;; 1.3.1.4 TOP RIGHT PIXEL COLOR
 ;; 1.3.1.5  WRITE TOP PIXEL ON SCREEN
 ;; 1.3.2 DDAs STEP
+            lda _dda2CurrentError: sec: sbc _dda2NbVal: sta _dda2CurrentError:
+            :.(:bmi updateError: asl: cmp _dda2NbStep: bcs  done :updateError: lda _dda2CurrentError: clc: adc _dda2NbStep: sta _dda2CurrentError: inc _dda2CurrentValue: done:.):
+            lda _dda4CurrentError: sec: sbc _dda4NbVal: sta _dda4CurrentError:
+            :.(:bmi updateError: asl: cmp _dda4NbStep: bcs  done :updateError: lda _dda4CurrentError: clc: adc _dda4NbStep: sta _dda4CurrentError: inc _dda4CurrentValue: done:.):
+
 ;; 1.3.3 BOTTOM PIXEL 
 ;; 1.3.3.1 BOTTOM LEFT PIXEL COORDINATE 
 ;; 1.3.3.2 BOTTOM LEFT PIXEL COLOR
@@ -381,6 +387,11 @@ loopOnIdxLin_01
 ;; 1.3.3.4 BOTTOM RIGHT PIXEL COLOR
 ;; 1.3.3.5 WRITE BOTTOM PIXEL ON SCREEN
 ;; 1.3.4 DDAs STEP
+            lda _dda2CurrentError: sec: sbc _dda2NbVal: sta _dda2CurrentError:
+            :.(:bmi updateError: asl: cmp _dda2NbStep: bcs  done :updateError: lda _dda2CurrentError: clc: adc _dda2NbStep: sta _dda2CurrentError: inc _dda2CurrentValue: done:.):
+            lda _dda4CurrentError: sec: sbc _dda4NbVal: sta _dda4CurrentError:
+            :.(:bmi updateError: asl: cmp _dda4NbStep: bcs  done :updateError: lda _dda4CurrentError: clc: adc _dda4NbStep: sta _dda4CurrentError: inc _dda4CurrentValue: done:.):
+
 
 
         dec _idxLin
@@ -391,9 +402,69 @@ endloopOnIdxLin_01
 
 ;; 1.4 INIT LOW LINES 
 ;; 1.4.1 INIT DDA COMMON
+    ldy _idxCol:
+    lda _tabMiddleX, y: sta _dda1StartValue: sta _dda1CurrentValue: lda _tabHighX, y: sta _dda1EndValue:
+    lda _tabMiddleY, y: sta _dda2StartValue: sta _dda2CurrentValue: lda _tabHighY, y: sta _dda2EndValue: sec : sbc _dda2StartValue: sta _dda2NbVal:
+    iny:
+    lda _tabMiddleX, y: sta _dda3StartValue: sta _dda3CurrentValue: lda _tabHighX, y: sta _dda3EndValue:
+    lda _tabMiddleY, y: sta _dda4StartValue: sta _dda4CurrentValue: lda _tabHighY, y: sta _dda4EndValue: sec : sbc _dda4StartValue: sta _dda4NbVal:
+    lda #32:
+    sta _dda2CurrentError:
+    sta _dda4CurrentError:
+
 ;; 1.4.2 INIT DDA 1 SPECIFIC
+
+    :.(:
+    lda _dda1StartValue: cmp _dda1EndValue: bcs else:
+        lda _dda1EndValue: sec: sbc _dda1StartValue: sta _dda1NbVal:
+        lda #1: sta _dda1Increment:
+    jmp endif:else:
+        sbc _dda1EndValue: sta _dda1NbVal:
+        lda #$FF: sta _dda1Increment:
+    :endif:.):
+
+    lda _dda1NbStep:
+    cmp _dda1NbVal:
+    beq NbStepEqualsNbVal_5678_00 :
+    bcs NbStepGreaterThanNbVal_5678_00 :
+        lda _dda1NbVal: sta _dda1CurrentError :
+        lda #<(_dda1Step1): sta _dda1StepFunction: lda #>(_dda1Step1):sta _dda1StepFunction+1:
+    jmp dda1InitDone_5678_00 :
+    NbStepGreaterThanNbVal_5678_00    :
+        lda _dda1NbStep: sta _dda1CurrentError:
+        lda #<(_dda1Step2): sta _dda1StepFunction: lda #>(_dda1Step2): sta _dda1StepFunction+1:
+    jmp dda1InitDone_5678_00 :
+    NbStepEqualsNbVal_5678_00    :
+        lda _dda1EndValue: sta _dda1CurrentError:
+        lda #<(_dda1Step0):sta _dda1StepFunction:lda #>(_dda1Step0):sta _dda1StepFunction+1:
+dda1InitDone_5678_00 :
+
 ;; 1.4.3  INIT DDA 3 SPECIFIC
 
+    :.(:
+    lda _dda3StartValue: cmp _dda3EndValue:bcs else:
+        lda _dda3EndValue: sec: sbc _dda3StartValue: sta _dda3NbVal:
+        lda #1: sta _dda3Increment:
+    jmp endif: else:
+        sbc _dda3EndValue: sta _dda3NbVal:
+        lda #$FF: sta _dda3Increment:
+    endif:.):
+
+    lda _dda3NbStep:
+    cmp _dda3NbVal:
+    beq NbStepEqualsNbVal_8765_00:
+    bcs NbStepGreaterThanNbVal_8765_00:
+        lda _dda3NbVal: sta _dda3CurrentError:
+        lda #<(_dda3Step1): sta _dda3StepFunction: lda #>(_dda3Step1): sta _dda3StepFunction+1:
+    jmp dda3InitDone_8765_00:
+    NbStepGreaterThanNbVal_8765_00    :
+        lda _dda3NbStep: sta _dda3CurrentError:
+        lda #<(_dda3Step2): sta _dda3StepFunction: lda #>(_dda3Step2): sta _dda3StepFunction+1:
+    jmp dda3InitDone_8765_00:
+    NbStepEqualsNbVal_8765_00    :
+        lda _dda3EndValue: sta _dda3CurrentError:
+        lda #<(_dda3Step0): sta _dda3StepFunction: lda #>(_dda3Step0): sta _dda3StepFunction+1:
+dda3InitDone_8765_00:
 
 ;; 1.5 LOOP OVER LOW LINES
         ;; ==================
@@ -410,6 +481,10 @@ loopOnIdxLin_02
 ;; 1.5.1.4 TOP RIGHT PIXEL COLOR
 ;; 1.5.1.5  WRITE TOP PIXEL ON SCREEN
 ;; 1.5.2 DDAs STEP
+            lda _dda2CurrentError: sec: sbc _dda2NbVal: sta _dda2CurrentError:
+            :.(:bmi updateError: asl: cmp _dda2NbStep: bcs  done :updateError: lda _dda2CurrentError: clc: adc _dda2NbStep: sta _dda2CurrentError: inc _dda2CurrentValue: done:.):
+            lda _dda4CurrentError: sec: sbc _dda4NbVal: sta _dda4CurrentError:
+            :.(:bmi updateError: asl: cmp _dda4NbStep: bcs  done :updateError: lda _dda4CurrentError: clc: adc _dda4NbStep: sta _dda4CurrentError: inc _dda4CurrentValue: done:.):
 ;; 1.5.3 BOTTOM PIXEL 
 ;; 1.5.3.1 BOTTOM LEFT PIXEL COORDINATE 
 ;; 1.5.3.2 BOTTOM LEFT PIXEL COLOR
@@ -417,6 +492,10 @@ loopOnIdxLin_02
 ;; 1.5.3.4 BOTTOM RIGHT PIXEL COLOR
 ;; 1.5.3.5 WRITE BOTTOM PIXEL ON SCREEN
 ;; 1.5.4 DDAs STEP
+            lda _dda2CurrentError: sec: sbc _dda2NbVal: sta _dda2CurrentError:
+            :.(:bmi updateError: asl: cmp _dda2NbStep: bcs  done :updateError: lda _dda2CurrentError: clc: adc _dda2NbStep: sta _dda2CurrentError: inc _dda2CurrentValue: done:.):
+            lda _dda4CurrentError: sec: sbc _dda4NbVal: sta _dda4CurrentError:
+            :.(:bmi updateError: asl: cmp _dda4NbStep: bcs  done :updateError: lda _dda4CurrentError: clc: adc _dda4NbStep: sta _dda4CurrentError: inc _dda4CurrentValue: done:.):
 
         dec _idxLin
         beq endloopOnIdxLin_02
