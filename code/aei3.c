@@ -12,13 +12,13 @@ void            (*dda3StepFunction)();
 extern signed char     dda3Increment;
 
 
-#ifdef __USE_C_DDA__
+// #ifdef __USE_C_DDA__
 
 void dda3Step0(){
 
     // dda3CurrentValue         += dda3Increment;
-    asm ("lda _dda3CurrentValue: clc: adc _dda3Increment: sta _dda3CurrentValue");
- 
+    // asm ("lda _dda3CurrentValue: clc: adc _dda3Increment: sta _dda3CurrentValue");
+    dda3Step0ASM();
 }
 
 void dda3Step1(){
@@ -28,14 +28,15 @@ void dda3Step1(){
     //     dda3CurrentValue         += dda3Increment;
     // }
     // dda3CurrentError     += dda3NbVal;
-    asm (
-        ":.(:loop:"
-        ":lda _dda3CurrentError:bmi end_loop: asl: cmp _dda3NbStep: bcc end_loop:"
-        ":lda _dda3CurrentError: sec: sbc _dda3NbStep: sta _dda3CurrentError: lda _dda3CurrentValue: clc: adc _dda3Increment: sta _dda3CurrentValue:"
-        ":jmp loop:"
-        ":end_loop:.):"
-        ":lda _dda3CurrentError: clc: adc _dda3NbVal: sta _dda3CurrentError"
-    );
+    // asm (
+    //     ":.(:loop:"
+    //     ":lda _dda3CurrentError:bmi end_loop: asl: cmp _dda3NbStep: bcc end_loop:"
+    //     ":lda _dda3CurrentError: sec: sbc _dda3NbStep: sta _dda3CurrentError: lda _dda3CurrentValue: clc: adc _dda3Increment: sta _dda3CurrentValue:"
+    //     ":jmp loop:"
+    //     ":end_loop:.):"
+    //     ":lda _dda3CurrentError: clc: adc _dda3NbVal: sta _dda3CurrentError"
+    // );
+    dda3Step1ASM();
 }
 void dda3Step2(){
 
@@ -44,11 +45,11 @@ void dda3Step2(){
     //     dda3CurrentError     += dda3NbStep;
     //     dda3CurrentValue     += dda3Increment;
     // }
-    asm(
-        "lda _dda3CurrentError: sec: sbc _dda3NbVal: sta _dda3CurrentError:"
-        ":.(:bmi updateError: asl: cmp _dda3NbStep: bcs  done :updateError: lda _dda3CurrentError: clc: adc _dda3NbStep: sta _dda3CurrentError: lda _dda3CurrentValue:clc: adc _dda3Increment: sta _dda3CurrentValue: done:.):"
-    );
-
+    // asm(
+    //     "lda _dda3CurrentError: sec: sbc _dda3NbVal: sta _dda3CurrentError:"
+    //     ":.(:bmi updateError: asl: cmp _dda3NbStep: bcs  done :updateError: lda _dda3CurrentError: clc: adc _dda3NbStep: sta _dda3CurrentError: lda _dda3CurrentValue:clc: adc _dda3Increment: sta _dda3CurrentValue: done:.):"
+    // );
+    dda3Step2ASM();
 }
 
 // void dda3Init(){
@@ -76,7 +77,7 @@ void dda3Step2(){
 //     }
 
 // }
-#endif // __USE_C_DDA__
+// #endif // __USE_C_DDA__
 
 // void main () {
 //     printf ("coucou\n");

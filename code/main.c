@@ -1449,14 +1449,14 @@ asm (
         // dda4EndValue         = tabHighY[idxCol+1];
         // dda2NbVal                = dda2EndValue-dda2StartValue;
         // dda4NbVal                = dda4EndValue-dda4StartValue;
-        dda1CurrentValue = 0;
-        asm ("ldy _idxCol:"
+
+        {asm ("ldy _idxCol:"
             " lda _tabMiddleX, y: sta _dda1StartValue: sta _dda1CurrentValue: lda _tabHighX, y: sta _dda1EndValue:"
             " lda _tabMiddleY, y: sta _dda2StartValue: sta _dda2CurrentValue: lda _tabHighY, y: sta _dda2EndValue: sec : sbc _dda2StartValue: sta _dda2NbVal:"
             "iny:"
             " lda _tabMiddleX, y: sta _dda3StartValue: sta _dda3CurrentValue: lda _tabHighX, y: sta _dda3EndValue:"
             " lda _tabMiddleY, y: sta _dda4StartValue: sta _dda4CurrentValue: lda _tabHighY, y: sta _dda4EndValue: sec : sbc _dda4StartValue: sta _dda4NbVal:"
-            );
+            );}
 
         // dda1NbStep           = SCREEN_HEIGHT/2;
         // dda2CurrentError     = (dda2NbStep           = SCREEN_HEIGHT/2);

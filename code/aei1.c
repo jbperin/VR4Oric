@@ -12,11 +12,12 @@ void            (*dda1StepFunction)();
 extern signed char     dda1Increment;
 
 
-#ifdef __USE_C_DDA__
+// #ifdef __USE_C_DDA__
 void dda1Step0(){
 
     // dda1CurrentValue         += dda1Increment;
-    asm ("lda _dda1CurrentValue: clc: adc _dda1Increment: sta _dda1CurrentValue");
+    // asm ("lda _dda1CurrentValue: clc: adc _dda1Increment: sta _dda1CurrentValue");
+    dda1Step0ASM();
 }
 
 void dda1Step1(){
@@ -27,14 +28,15 @@ void dda1Step1(){
     // }
     // dda1CurrentError     += dda1NbVal;
 
-    asm (
-        ":.(:loop:"
-        ":lda _dda1CurrentError:bmi end_loop: asl: cmp _dda1NbStep: bcc end_loop:"
-        ":lda _dda1CurrentError: sec: sbc _dda1NbStep: sta _dda1CurrentError: lda _dda1CurrentValue: clc: adc _dda1Increment: sta _dda1CurrentValue:"
-        ":jmp loop:"
-        ":end_loop:.):"
-        ":lda _dda1CurrentError: clc: adc _dda1NbVal: sta _dda1CurrentError"
-    );  
+    // asm (
+    //     ":.(:loop:"
+    //     ":lda _dda1CurrentError:bmi end_loop: asl: cmp _dda1NbStep: bcc end_loop:"
+    //     ":lda _dda1CurrentError: sec: sbc _dda1NbStep: sta _dda1CurrentError: lda _dda1CurrentValue: clc: adc _dda1Increment: sta _dda1CurrentValue:"
+    //     ":jmp loop:"
+    //     ":end_loop:.):"
+    //     ":lda _dda1CurrentError: clc: adc _dda1NbVal: sta _dda1CurrentError"
+    // );  
+    dda1Step1ASM();
 }
 void dda1Step2(){
 
@@ -43,11 +45,11 @@ void dda1Step2(){
     //     dda1CurrentError     += dda1NbStep;
     //     dda1CurrentValue     += dda1Increment;
     // }
-    asm(
-        "lda _dda1CurrentError: sec: sbc _dda1NbVal: sta _dda1CurrentError:"
-        ":.(:bmi updateError: asl: cmp _dda1NbStep: bcs  done :updateError: lda _dda1CurrentError: clc: adc _dda1NbStep: sta _dda1CurrentError: lda _dda1CurrentValue: clc: adc _dda1Increment: sta _dda1CurrentValue: done:.):"
-    );
-
+    // asm(
+    //     "lda _dda1CurrentError: sec: sbc _dda1NbVal: sta _dda1CurrentError:"
+    //     ":.(:bmi updateError: asl: cmp _dda1NbStep: bcs  done :updateError: lda _dda1CurrentError: clc: adc _dda1NbStep: sta _dda1CurrentError: lda _dda1CurrentValue: clc: adc _dda1Increment: sta _dda1CurrentValue: done:.):"
+    // );
+    dda1Step2ASM();
 }
 
 // void dda1Init(){
@@ -75,7 +77,7 @@ void dda1Step2(){
 //     }
 
 // }
-#endif // __USE_C_DDA__
+// #endif // __USE_C_DDA__
 
 // void main () {
 //     printf ("coucou\n");

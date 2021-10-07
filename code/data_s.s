@@ -69,7 +69,7 @@ _dda4CurrentError   .dsb 1
 ; void ddaStep0(){
 ;     ddaCurrentValue         += dda1Increment;
 ; }
-_dda1Step0
+_dda1Step0ASM
 .(
     lda         _dda1CurrentValue
     clc
@@ -85,7 +85,7 @@ _dda1Step0
 ;     }
 ;     ddaCurrentError     += ddaNbVal;
 ; }
-_dda1Step1
+_dda1Step1ASM
 .(
 ;     while ((ddaCurrentError<<1) >= ddaNbStep) {
 loop
@@ -106,7 +106,7 @@ loop
 end_loop
     lda         _dda1CurrentError
     clc
-    adc         _dda2NbVal
+    adc         _dda1NbVal
     sta         _dda1CurrentError
 .)
     rts
@@ -119,11 +119,11 @@ end_loop
 ;         ddaCurrentValue     += ddaIncrement;
 ;     }
 ; }
-_dda1Step2
+_dda1Step2ASM
 .(
     lda         _dda1CurrentError
     sec
-    sbc         _dda2NbVal
+    sbc         _dda1NbVal
     sta         _dda1CurrentError
 ;     if ((ddaCurrentError<<1) < ddaNbStep) {
     bmi         updateError
@@ -152,7 +152,7 @@ updateError
 ; void ddaStep0(){
 ;     ddaCurrentValue         += ddaIncrement;
 ; }
-_dda3Step0
+_dda3Step0ASM
 .(
     lda         _dda3CurrentValue
     clc
@@ -168,7 +168,7 @@ _dda3Step0
 ;     }
 ;     ddaCurrentError     += ddaNbVal;
 ; }
-_dda3Step1
+_dda3Step1ASM
 .(
 ;     while ((ddaCurrentError<<1) >= ddaNbStep) {
 loop
@@ -202,7 +202,7 @@ end_loop
 ;         ddaCurrentValue     += 1;
 ;     }
 ; }
-_dda3Step2
+_dda3Step2ASM
 .(
     lda         _dda3CurrentError
     sec
@@ -220,8 +220,8 @@ updateError
             clc
             adc         _dda3NbStep
             sta         _dda3CurrentError
-;         ddaCurrentValue     += 1;
-            inc         _dda3CurrentValue
+;         ddaCurrentValue     += dda3Increment;
+            lda _dda3CurrentValue:clc: adc _dda3Increment: sta _dda3CurrentValue
 ;     }
 
 .)
