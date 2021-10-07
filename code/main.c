@@ -1541,14 +1541,13 @@ asm (
         // }
         asm (
             ":.(:"
-            "lda _dda1StartValue:"
-            "cmp _dda1EndValue:"
-            "bcs else:"
-            "lda _dda1EndValue: sec: sbc _dda1StartValue: sta _dda1NbVal:"
-            "lda #1: sta _dda1Increment:"
+            "lda _dda1StartValue: cmp _dda1EndValue: bcs else:"
+                "lda _dda1EndValue: sec: sbc _dda1StartValue: sta _dda1NbVal:"
+                "lda #1: sta _dda1Increment:"
             "jmp endif:else:"
-            "lda _dda1StartValue: sec: sbc _dda1EndValue: sta _dda1NbVal:"
-            "lda #$FF: sta _dda1Increment:"
+                // "lda _dda1StartValue: sec:"
+                "sbc _dda1EndValue: sta _dda1NbVal:"
+                "lda #$FF: sta _dda1Increment:"
             ":endif:.):"
         );
 
@@ -1570,38 +1569,25 @@ asm (
     "cmp _dda1NbVal:"
     "beq NbStepEqualsNbVal_5678:"
     "bcs NbStepGreaterThanNbVal_5678:"
-        "lda _dda1NbVal:"
-        "sta _dda1CurrentError:"
-        "lda #<(_dda1Step1):"
-        "sta _dda1StepFunction:"
-        "lda #>(_dda1Step1):"
-        "sta _dda1StepFunction+1:"
+        "lda _dda1NbVal: sta _dda1CurrentError:"
+        "lda #<(_dda1Step1): sta _dda1StepFunction: lda #>(_dda1Step1):sta _dda1StepFunction+1:"
     "jmp dda1InitDone_5678:"
         );
         asm(
     "NbStepGreaterThanNbVal_5678    :"
-        "lda _dda1NbStep:"
-        "sta _dda1CurrentError:"
-        "lda #<(_dda1Step2):"
-        "sta _dda1StepFunction:"
-        "lda #>(_dda1Step2):"
-        "sta _dda1StepFunction+1:"
+        "lda _dda1NbStep: sta _dda1CurrentError:"
+        "lda #<(_dda1Step2): sta _dda1StepFunction: lda #>(_dda1Step2): sta _dda1StepFunction+1:"
     "jmp dda1InitDone_5678:"
         );
         asm(
     "NbStepEqualsNbVal_5678    :"
-        "lda _dda1EndValue:"
-        "sta _dda1CurrentError:"
-        "lda #<(_dda1Step0):"
-        "sta _dda1StepFunction:"
-        "lda #>(_dda1Step0):"
-        "sta _dda1StepFunction+1:"
+        "lda _dda1EndValue: sta _dda1CurrentError:"
+        "lda #<(_dda1Step0):sta _dda1StepFunction:lda #>(_dda1Step0):sta _dda1StepFunction+1:"
     "dda1InitDone_5678:"
     // ".):"
 );
 
 // 1.4.3  INIT DDA 3 SPECIFIC
-        dda3Increment = 0;
         // if (dda3EndValue > dda3StartValue) {
         //     dda3NbVal                = dda3EndValue-dda3StartValue;
         //     dda3Increment            = 1;
@@ -1611,15 +1597,12 @@ asm (
         // }
         {asm (
             ":.(:"
-            "lda _dda3StartValue:"
-            "cmp _dda3EndValue:"
-            "bcs else:"
-            "lda _dda3EndValue: sec: sbc _dda3StartValue: sta _dda3NbVal:"
-            "lda #1: sta _dda3Increment:"
-            "jmp endif:"
-            "else:"
-            "lda _dda3StartValue: sec: sbc _dda3EndValue: sta _dda3NbVal:"
-            "lda #$FF: sta _dda3Increment:"
+            "lda _dda3StartValue: cmp _dda3EndValue:bcs else:"
+                "lda _dda3EndValue: sec: sbc _dda3StartValue: sta _dda3NbVal:"
+                "lda #1: sta _dda3Increment:"
+            "jmp endif: else:"
+                "sbc _dda3EndValue: sta _dda3NbVal:"
+                "lda #$FF: sta _dda3Increment:"
             "endif:.):"
         );}
 
@@ -1678,39 +1661,24 @@ asm (
 // 1.5.1.1 TOP LEFT PIXEL COORDINATE  
             // theX   = dda1CurrentValue + rollCoord;
             // theY   = dda2CurrentValue;
-            asm (
-                "lda _dda1CurrentValue: clc: adc _rollCoord: sta _theX:"
-                "lda _dda2CurrentValue: sta _theY:"
-            );
 // 1.5.1.2 TOP LEFT PIXEL COLOR               
             // theColorLeft = texture_PANO[theX*IMAGE_HEIGHT+theY];
             asm (
-                "ldy _theX:"
-                "lda _adrTextureLow,y:"
-                "sta tmp0:"
-                "lda _adrTextureHigh,y:"
-                "sta tmp0+1:"
-                "ldy _theY:"
-                "lda (tmp0),y:"
+                "lda _dda1CurrentValue: clc: adc _rollCoord: tay:"
+                "lda _adrTextureLow,y:sta tmp0:lda _adrTextureHigh,y:sta tmp0+1:"
+                "ldy _dda2CurrentValue: lda (tmp0),y:"
                 "sta _theColorLeft:"
             );
 
 // 1.5.1.3 TOP RIGHT PIXEL COORDINATE 
             // theX   = dda3CurrentValue + rollCoord;
             // theY   = dda4CurrentValue;
-            asm (
-                "lda _dda3CurrentValue: clc: adc _rollCoord: sta _theX:"
-                "lda _dda4CurrentValue: sta _theY:"
-            );
 // 1.5.1.4 TOP RIGHT PIXEL COLOR            
             // theColorRight = texture_PANO[theX*IMAGE_HEIGHT+theY];
             asm (
-                "ldy _theX:"
-                "lda _adrTextureLow,y:"
-                "sta tmp0:"
-                "lda _adrTextureHigh,y:"
-                "sta tmp0+1:"
-                "ldy _theY:"
+                "lda _dda3CurrentValue: clc: adc _rollCoord: tay:"
+                "lda _adrTextureLow,y:sta tmp0:lda _adrTextureHigh,y:sta tmp0+1:"
+                "ldy _dda4CurrentValue:"
                 "lda (tmp0),y:"
                 "sta _theColorRight:"
             );
@@ -1723,11 +1691,12 @@ asm (
             // *wrtAdr = tabLeftBlue[theColorLeft]   | tabRightBlue[theColorRight];
             // wrtAdr += NEXT_SCANLINE_INCREMENT;
             asm (
-                "ldy _theColorLeft: lda _tabLeftRed,y: ldy _theColorRight: ora _tabRightRed,y: ldy #0: sta (_wrtAdr),y:"
-                "ldy _theColorLeft: lda _tabLeftGreen,y: ldy _theColorRight: ora _tabRightGreen,y: ldy #40: sta (_wrtAdr),y:"
-                "ldy _theColorLeft: lda _tabLeftBlue,y: ldy _theColorRight: ora _tabRightBlue,y: ldy #80: sta (_wrtAdr),y:"
-                // "lda _wrtAdr: clc: adc #120: sta _wrtAdr: .(: bcc skip:    inc _wrtAdr+1: skip: .):"
+                "ldy _theColorLeft:ldx _theColorRight:"
+                "lda _tabLeftRed,y:   ora _tabRightRed,x: ldy #0: sta (_wrtAdr),y:"
+                "ldy _theColorLeft: lda _tabLeftGreen,y: ora _tabRightGreen,x: ldy #40: sta (_wrtAdr),y:"
+                "ldy _theColorLeft: lda _tabLeftBlue,y:  ora _tabRightBlue,x: ldy #80: sta (_wrtAdr),y:"
             );
+
 
 // 1.5.2 DDAs STEP
             (*dda1StepFunction)();
@@ -1760,40 +1729,24 @@ asm (
 // 1.5.3.1 BOTTOM LEFT PIXEL COORDINATE 
             // theX   = dda1CurrentValue + rollCoord;
             // theY   = dda2CurrentValue;
-            asm (
-                "lda _dda1CurrentValue: clc: adc _rollCoord: sta _theX:"
-                "lda _dda2CurrentValue: sta _theY:"
-            );
 // 1.5.3.2 BOTTOM LEFT PIXEL COLOR
             // theColorLeft = texture_PANO[theX*IMAGE_HEIGHT+theY];
             asm (
-                "ldy _theX:"
-                "lda _adrTextureLow,y:"
-                "sta tmp0:"
-                "lda _adrTextureHigh,y:"
-                "sta tmp0+1:"
-                "ldy _theY:"
-                "lda (tmp0),y:"
+                "lda _dda1CurrentValue: clc: adc _rollCoord: tay:"
+                "lda _adrTextureLow,y:sta tmp0:lda _adrTextureHigh,y:sta tmp0+1:"
+                "ldy _dda2CurrentValue: lda (tmp0),y:"
                 "sta _theColorLeft:"
             );
 
 // 1.5.3.3 BOTTOM RIGHT PIXEL COORDINATE
             // theX   = dda3CurrentValue + rollCoord;
             // theY   = dda4CurrentValue;
-            asm (
-                "lda _dda3CurrentValue: clc: adc _rollCoord: sta _theX:"
-                "lda _dda4CurrentValue: sta _theY:"
-            );
 // 1.5.3.4 BOTTOM RIGHT PIXEL COLOR
             // theColorRight = texture_PANO[theX*IMAGE_HEIGHT+theY];
             asm (
-                "ldy _theX:"
-                "lda _adrTextureLow,y:"
-                "sta tmp0:"
-                "lda _adrTextureHigh,y:"
-                "sta tmp0+1:"
-                "ldy _theY:"
-                "lda (tmp0),y:"
+                "lda _dda3CurrentValue: clc: adc _rollCoord: tay:"
+                "lda _adrTextureLow,y:sta tmp0:lda _adrTextureHigh,y:sta tmp0+1:"
+                "ldy _dda4CurrentValue: lda (tmp0),y:"
                 "sta _theColorRight:"
             );
  
@@ -1805,9 +1758,10 @@ asm (
             // *wrtAdr = tabLeftBlue[theColorLeft]   | tabRightBlue[theColorRight];
             // wrtAdr += NEXT_SCANLINE_INCREMENT;
             asm (
-                "ldy _theColorLeft: lda _tabLeftRed,y: ldy _theColorRight: ora _tabRightRed,y: ldy #120: sta (_wrtAdr),y:"
-                "ldy _theColorLeft: lda _tabLeftGreen,y: ldy _theColorRight: ora _tabRightGreen,y: ldy #160: sta (_wrtAdr),y:"
-                "ldy _theColorLeft: lda _tabLeftBlue,y: ldy _theColorRight: ora _tabRightBlue,y: ldy #200: sta (_wrtAdr),y:"
+                "ldy _theColorLeft:ldx _theColorRight:"
+                "lda _tabLeftRed,y:   ora _tabRightRed,x: ldy #120: sta (_wrtAdr),y:"
+                "ldy _theColorLeft: lda _tabLeftGreen,y: ora _tabRightGreen,x: ldy #160: sta (_wrtAdr),y:"
+                "ldy _theColorLeft: lda _tabLeftBlue,y:  ora _tabRightBlue,x: ldy #200: sta (_wrtAdr),y:"
                 "lda _wrtAdr: clc: adc #240: sta _wrtAdr: .(: bcc skip:    inc _wrtAdr+1: skip: .):"
             );
 
@@ -1826,7 +1780,7 @@ asm (
 
             (*dda3StepFunction)();
 
-// 1.6 NEXT COL
+
             // dda4CurrentError         -= dda4NbVal; 
             // if ((dda4CurrentError<<1) < dda4NbStep) {
             //     dda4CurrentError     += dda4NbStep;
@@ -1837,6 +1791,7 @@ asm (
                 ":.(:bmi updateError: asl: cmp _dda4NbStep: bcs  done :updateError: lda _dda4CurrentError: clc: adc _dda4NbStep: sta _dda4CurrentError: inc _dda4CurrentValue: done:.):"
             );
        }
+// 1.6 NEXT COL
         // theBaseAdr += 1;
         {asm("lda _theBaseAdr: clc: adc #1: sta _theBaseAdr :.(: bcc skip:    inc _theBaseAdr+1: skip: .):");}
     }
