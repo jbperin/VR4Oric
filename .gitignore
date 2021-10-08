@@ -1,3 +1,6 @@
 build/*
 map.htm
 code/BUILD/*
+code/gccMain.exe
+.vscode
+code/floppy_description.h
