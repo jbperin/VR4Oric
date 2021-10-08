@@ -243,9 +243,9 @@ _project2ScreenPureASM:.(
 
 
     ;; theBaseAdr      = (unsigned char *)(DEFAULT_BASE_ADRESS);
-    lda #<DEFAULT_BASE_ADRESS
+    lda #<(DEFAULT_BASE_ADRESS)
     sta _theBaseAdr
-    lda #<DEFAULT_BASE_ADRESS
+    lda #>(DEFAULT_BASE_ADRESS)
     sta _theBaseAdr+1
 
     lda #32:
@@ -363,7 +363,7 @@ dda3InitDone_4321_00:
         ;; ==================
 
 ;; 1.3 LOOP OVER HIGH LINES 
-        lda #(SCREEN_HEIGHT/2)
+        lda #((SCREEN_HEIGHT/4)-1)
         sta _idxLin
         ;; for (idxLin=0; idxLin< SCREEN_HEIGHT/2; idxLin+=2)
 loopOnIdxLin_01
@@ -371,10 +371,26 @@ loopOnIdxLin_01
 ;; 1.3.1 TOP PIXEL 
 ;; 1.3.1.1 TOP LEFT PIXEL COORDINATE 
 ;; 1.3.1.2 TOP LEFT PIXEL COLOR
+            lda _dda1CurrentValue: clc: adc _rollCoord: tay:
+            lda _adrTextureLow,y:sta _myTmp:lda _adrTextureHigh,y:sta _myTmp+1:
+            ldy _dda2CurrentValue: lda (_myTmp),y:
+            sta _theColorLeft:
 ;; 1.3.1.3 TOP RIGHT PIXEL COORDINATE
 ;; 1.3.1.4 TOP RIGHT PIXEL COLOR
+            lda _dda3CurrentValue: clc: adc _rollCoord: tay:
+            lda _adrTextureLow,y:sta _myTmp:lda _adrTextureHigh,y:sta _myTmp+1:
+            ldy _dda4CurrentValue: lda (_myTmp),y:
+            sta _theColorRight:
 ;; 1.3.1.5  WRITE TOP PIXEL ON SCREEN
+            ldy _theColorLeft:ldx _theColorRight:
+            lda _tabLeftRed,y:   ora _tabRightRed,x: ldy #0: sta (_wrtAdr),y:
+            ldy _theColorLeft: lda _tabLeftGreen,y: ora _tabRightGreen,x: ldy #40: sta (_wrtAdr),y:
+            ldy _theColorLeft: lda _tabLeftBlue,y:  ora _tabRightBlue,x: ldy #80: sta (_wrtAdr),y:
 ;; 1.3.2 DDAs STEP
+            lda _dda1StepFunction : sta _myTmp : lda _dda1StepFunction+1 : sta _myTmp+1 :
+            .( : lda _myTmp : sta call+1: lda _myTmp+1 : sta call+2 : ldy #0 :call : jsr 0000 : .) :
+            lda _dda3StepFunction : sta _myTmp : lda _dda3StepFunction+1 : sta _myTmp+1 :
+        	.( : lda _myTmp : sta call+1: lda _myTmp+1 : sta call+2 : ldy #0 :call : jsr 0000 : .) :            lda _dda4CurrentError: sec: sbc _dda4NbVal: sta _dda4CurrentError:
             lda _dda2CurrentError: sec: sbc _dda2NbVal: sta _dda2CurrentError:
             :.(:bmi updateError: asl: cmp _dda2NbStep: bcs  done :updateError: lda _dda2CurrentError: clc: adc _dda2NbStep: sta _dda2CurrentError: inc _dda2CurrentValue: done:.):
             lda _dda4CurrentError: sec: sbc _dda4NbVal: sta _dda4CurrentError:
@@ -383,19 +399,50 @@ loopOnIdxLin_01
 ;; 1.3.3 BOTTOM PIXEL 
 ;; 1.3.3.1 BOTTOM LEFT PIXEL COORDINATE 
 ;; 1.3.3.2 BOTTOM LEFT PIXEL COLOR
+            lda _dda1CurrentValue: clc: adc _rollCoord: tay:
+            lda _adrTextureLow,y:sta _myTmp:lda _adrTextureHigh,y:sta _myTmp+1:
+            ldy _dda2CurrentValue: lda (_myTmp),y:
+            sta _theColorLeft:
+
 ;; 1.3.3.3 BOTTOM RIGHT PIXEL COORDINATE
 ;; 1.3.3.4 BOTTOM RIGHT PIXEL COLOR
+            ;; lda _dda3CurrentValue: clc: adc _rollCoord: sta _theX:
+            ;; lda _dda4CurrentValue: sta _theY:
+            ;; ldy _theX:
+            ;; lda _adrTextureLow,y:
+            ;; sta _myTmp:
+            ;; lda _adrTextureHigh,y:
+            ;; sta _myTmp+1:
+            ;; ldy _theY:
+            ;; lda (_myTmp),y:
+            ;; sta _theColorRight:
+
+            lda _dda3CurrentValue: clc: adc _rollCoord: tay:
+            lda _adrTextureLow,y:sta _myTmp:lda _adrTextureHigh,y:sta _myTmp+1:
+            ldy _dda4CurrentValue: lda (_myTmp),y:
+            sta _theColorRight:
 ;; 1.3.3.5 WRITE BOTTOM PIXEL ON SCREEN
+            ;; ldy _theColorLeft: lda _tabLeftRed,y: ldy _theColorRight: ora _tabRightRed,y: ldy #120: sta (_wrtAdr),y:
+            ;; ldy _theColorLeft: lda _tabLeftGreen,y: ldy _theColorRight: ora _tabRightGreen,y: ldy #160: sta (_wrtAdr),y:
+            ;; ldy _theColorLeft: lda _tabLeftBlue,y: ldy _theColorRight: ora _tabRightBlue,y: ldy #200: sta (_wrtAdr),y:
+            ldy _theColorLeft:ldx _theColorRight:
+            lda _tabLeftRed,y:   ora _tabRightRed,x: ldy #120: sta (_wrtAdr),y:
+            ldy _theColorLeft: lda _tabLeftGreen,y: ora _tabRightGreen,x: ldy #160: sta (_wrtAdr),y:
+            ldy _theColorLeft: lda _tabLeftBlue,y:  ora _tabRightBlue,x: ldy #200: sta (_wrtAdr),y:
+            lda _wrtAdr: clc: adc #240: sta _wrtAdr: .(: bcc skip:    inc _wrtAdr+1: skip: .):
 ;; 1.3.4 DDAs STEP
+            lda _dda1StepFunction : sta _myTmp : lda _dda1StepFunction+1 : sta _myTmp+1 :
+            .( : lda _myTmp : sta call+1: lda _myTmp+1 : sta call+2 : ldy #0 :call : jsr 0000 : .) :
+            lda _dda3StepFunction : sta _myTmp : lda _dda3StepFunction+1 : sta _myTmp+1 :
+        	.( : lda _myTmp : sta call+1: lda _myTmp+1 : sta call+2 : ldy #0 :call : jsr 0000 : .) :            lda _dda4CurrentError: sec: sbc _dda4NbVal: sta _dda4CurrentError:
             lda _dda2CurrentError: sec: sbc _dda2NbVal: sta _dda2CurrentError:
             :.(:bmi updateError: asl: cmp _dda2NbStep: bcs  done :updateError: lda _dda2CurrentError: clc: adc _dda2NbStep: sta _dda2CurrentError: inc _dda2CurrentValue: done:.):
             lda _dda4CurrentError: sec: sbc _dda4NbVal: sta _dda4CurrentError:
             :.(:bmi updateError: asl: cmp _dda4NbStep: bcs  done :updateError: lda _dda4CurrentError: clc: adc _dda4NbStep: sta _dda4CurrentError: inc _dda4CurrentValue: done:.):
 
 
-
         dec _idxLin
-        beq endloopOnIdxLin_01
+        bmi endloopOnIdxLin_01
         jmp loopOnIdxLin_01
 endloopOnIdxLin_01        
         ;; }
@@ -468,7 +515,7 @@ dda3InitDone_8765_00:
 
 ;; 1.5 LOOP OVER LOW LINES
         ;; ==================
-        lda #(SCREEN_HEIGHT/2)
+        lda #((SCREEN_HEIGHT/4)-1)
         sta _idxLin
         ;; for (idxLin=SCREEN_HEIGHT/2; idxLin< SCREEN_HEIGHT; idxLin+=2) {
 loopOnIdxLin_02
@@ -477,10 +524,26 @@ loopOnIdxLin_02
 ;; 1.5.1 TOP PIXEL 
 ;; 1.5.1.1 TOP LEFT PIXEL COORDINATE 
 ;; 1.5.1.2 TOP LEFT PIXEL COLOR            
+            lda _dda1CurrentValue: clc: adc _rollCoord: tay:
+            lda _adrTextureLow,y:sta _myTmp:lda _adrTextureHigh,y:sta _myTmp+1:
+            ldy _dda2CurrentValue: lda (_myTmp),y:
+            sta _theColorLeft:
 ;; 1.5.1.3 TOP RIGHT PIXEL COORDINATE 
 ;; 1.5.1.4 TOP RIGHT PIXEL COLOR
+            lda _dda3CurrentValue: clc: adc _rollCoord: tay:
+            lda _adrTextureLow,y:sta _myTmp:lda _adrTextureHigh,y:sta _myTmp+1:
+            ldy _dda4CurrentValue: lda (_myTmp),y:
+            sta _theColorRight:
 ;; 1.5.1.5  WRITE TOP PIXEL ON SCREEN
+            ldy _theColorLeft:ldx _theColorRight:
+            lda _tabLeftRed,y:   ora _tabRightRed,x: ldy #0: sta (_wrtAdr),y:
+            ldy _theColorLeft: lda _tabLeftGreen,y: ora _tabRightGreen,x: ldy #40: sta (_wrtAdr),y:
+            ldy _theColorLeft: lda _tabLeftBlue,y:  ora _tabRightBlue,x: ldy #80: sta (_wrtAdr),y:
 ;; 1.5.2 DDAs STEP
+            lda _dda1StepFunction : sta _myTmp : lda _dda1StepFunction+1 : sta _myTmp+1 :
+            .( : lda _myTmp : sta call+1: lda _myTmp+1 : sta call+2 : ldy #0 :call : jsr 0000 : .) :
+            lda _dda3StepFunction : sta _myTmp : lda _dda3StepFunction+1 : sta _myTmp+1 :
+        	.( : lda _myTmp : sta call+1: lda _myTmp+1 : sta call+2 : ldy #0 :call : jsr 0000 : .) :            lda _dda4CurrentError: sec: sbc _dda4NbVal: sta _dda4CurrentError:
             lda _dda2CurrentError: sec: sbc _dda2NbVal: sta _dda2CurrentError:
             :.(:bmi updateError: asl: cmp _dda2NbStep: bcs  done :updateError: lda _dda2CurrentError: clc: adc _dda2NbStep: sta _dda2CurrentError: inc _dda2CurrentValue: done:.):
             lda _dda4CurrentError: sec: sbc _dda4NbVal: sta _dda4CurrentError:
@@ -488,17 +551,34 @@ loopOnIdxLin_02
 ;; 1.5.3 BOTTOM PIXEL 
 ;; 1.5.3.1 BOTTOM LEFT PIXEL COORDINATE 
 ;; 1.5.3.2 BOTTOM LEFT PIXEL COLOR
+            lda _dda1CurrentValue: clc: adc _rollCoord: tay:
+            lda _adrTextureLow,y:sta _myTmp:lda _adrTextureHigh,y:sta _myTmp+1:
+            ldy _dda2CurrentValue: lda (_myTmp),y:
+            sta _theColorLeft:
 ;; 1.5.3.3 BOTTOM RIGHT PIXEL COORDINATE
 ;; 1.5.3.4 BOTTOM RIGHT PIXEL COLOR
+            lda _dda3CurrentValue: clc: adc _rollCoord: tay:
+            lda _adrTextureLow,y:sta _myTmp:lda _adrTextureHigh,y:sta _myTmp+1:
+            ldy _dda4CurrentValue: lda (_myTmp),y:
+            sta _theColorRight:
 ;; 1.5.3.5 WRITE BOTTOM PIXEL ON SCREEN
+            ldy _theColorLeft:ldx _theColorRight:
+            lda _tabLeftRed,y:   ora _tabRightRed,x: ldy #120: sta (_wrtAdr),y:
+            ldy _theColorLeft: lda _tabLeftGreen,y: ora _tabRightGreen,x: ldy #160: sta (_wrtAdr),y:
+            ldy _theColorLeft: lda _tabLeftBlue,y:  ora _tabRightBlue,x: ldy #200: sta (_wrtAdr),y:
+            lda _wrtAdr: clc: adc #240: sta _wrtAdr: .(: bcc skip:    inc _wrtAdr+1: skip: .):
 ;; 1.5.4 DDAs STEP
+            lda _dda1StepFunction : sta _myTmp : lda _dda1StepFunction+1 : sta _myTmp+1 :
+            .( : lda _myTmp : sta call+1: lda _myTmp+1 : sta call+2 : ldy #0 :call : jsr 0000 : .) :
+            lda _dda3StepFunction : sta _myTmp : lda _dda3StepFunction+1 : sta _myTmp+1 :
+        	.( : lda _myTmp : sta call+1: lda _myTmp+1 : sta call+2 : ldy #0 :call : jsr 0000 : .) :            lda _dda4CurrentError: sec: sbc _dda4NbVal: sta _dda4CurrentError:
             lda _dda2CurrentError: sec: sbc _dda2NbVal: sta _dda2CurrentError:
             :.(:bmi updateError: asl: cmp _dda2NbStep: bcs  done :updateError: lda _dda2CurrentError: clc: adc _dda2NbStep: sta _dda2CurrentError: inc _dda2CurrentValue: done:.):
             lda _dda4CurrentError: sec: sbc _dda4NbVal: sta _dda4CurrentError:
             :.(:bmi updateError: asl: cmp _dda4NbStep: bcs  done :updateError: lda _dda4CurrentError: clc: adc _dda4NbStep: sta _dda4CurrentError: inc _dda4CurrentValue: done:.):
 
         dec _idxLin
-        beq endloopOnIdxLin_02
+        bmi endloopOnIdxLin_02
         jmp loopOnIdxLin_02
 endloopOnIdxLin_02
         ;; }
@@ -509,7 +589,7 @@ endloopOnIdxLin_02
     inc _idxCol
     inc _idxCol
     lda _idxCol
-    cmp #SCREEN_WIDTH
+    cmp #(SCREEN_WIDTH)
     beq endLoopOnIdxCol_01
     jmp loopOnIdxCol_01
 endLoopOnIdxCol_01
