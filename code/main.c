@@ -697,7 +697,7 @@ void main()
             // clearViewport();
             // rollCoord       = (abs(rotZ)>4*ANGLE_INCREMENT);
             selectTables();
-            // project2ScreenPureASM();
+            project2ScreenPureASM();
             project2ScreenASM ();
             // project2ScreenOPTIM ();
             // project2Screen ();
@@ -1340,50 +1340,50 @@ asm (
 // 1.3.1.1 TOP LEFT PIXEL COORDINATE  
             // theX    = dda1CurrentValue + rollCoord;
             // theY    = dda2CurrentValue;
-            {asm (
-                "lda _dda1CurrentValue: clc: adc _rollCoord: sta _theX:"
-                "lda _dda2CurrentValue: sta _theY:"
-            );}
+            // {asm (
+            //     "lda _dda1CurrentValue: clc: adc _rollCoord: sta _theX:"
+            //     "lda _dda2CurrentValue: sta _theY:"
+            // );}
 
 // 1.3.1.2 TOP LEFT PIXEL COLOR   
             // theColorLeft = texture_PANO[theX*IMAGE_HEIGHT+theY];
-            { asm (
-                "ldy _theX:"
-                "lda _adrTextureLow,y:"
-                "sta _myTmp:"
-                "lda _adrTextureHigh,y:"
-                "sta _myTmp+1:"
-                "ldy _theY:"
-                "lda (_myTmp),y:"
-                "sta _theColorLeft:"
-            );}
-            // {asm (
-            //     "lda _dda1CurrentValue: clc: adc _rollCoord: tay:"
-            //     "lda _adrTextureLow,y:sta _myTmp:lda _adrTextureHigh,y:sta _myTmp+1:"
-            //     "ldy _dda2CurrentValue: lda (_myTmp),y:"
+            // { asm (
+            //     "ldy _theX:"
+            //     "lda _adrTextureLow,y:"
+            //     "sta _myTmp:"
+            //     "lda _adrTextureHigh,y:"
+            //     "sta _myTmp+1:"
+            //     "ldy _theY:"
+            //     "lda (_myTmp),y:"
             //     "sta _theColorLeft:"
             // );}
+            {asm (
+                "lda _dda1CurrentValue: clc: adc _rollCoord: tay:"
+                "lda _adrTextureLow,y:sta _myTmp:lda _adrTextureHigh,y:sta _myTmp+1:"
+                "ldy _dda2CurrentValue: lda (_myTmp),y:"
+                "sta _theColorLeft:"
+            );}
 
 // 1.3.1.3 TOP RIGHT PIXEL COORDINATE
             // theX   = dda3CurrentValue + rollCoord;
             // theY   = dda4CurrentValue;
-            {asm (
-                "lda _dda3CurrentValue: clc: adc _rollCoord: sta _theX:"
-                "lda _dda4CurrentValue: sta _theY:"
-            );}
+            // {asm (
+            //     "lda _dda3CurrentValue: clc: adc _rollCoord: sta _theX:"
+            //     "lda _dda4CurrentValue: sta _theY:"
+            // );}
 
 // 1.3.1.4 TOP RIGHT PIXEL COLOR
             // theColorRight = texture_PANO[theX*IMAGE_HEIGHT+theY];
-            {asm (
-                "ldy _theX:"
-                "lda _adrTextureLow,y:"
-                "sta _myTmp:"
-                "lda _adrTextureHigh,y:"
-                "sta _myTmp+1:"
-                "ldy _theY:"
-                "lda (_myTmp),y:"
-                "sta _theColorRight:"
-            );}
+            // {asm (
+            //     "ldy _theX:"
+            //     "lda _adrTextureLow,y:"
+            //     "sta _myTmp:"
+            //     "lda _adrTextureHigh,y:"
+            //     "sta _myTmp+1:"
+            //     "ldy _theY:"
+            //     "lda (_myTmp),y:"
+            //     "sta _theColorRight:"
+            // );}
             {asm (
                 "lda _dda3CurrentValue: clc: adc _rollCoord: tay:"
                 "ldy _theX:lda _adrTextureLow,y:sta _myTmp:lda _adrTextureHigh,y:sta _myTmp+1:"
@@ -1399,13 +1399,13 @@ asm (
             // *wrtAdr = tabLeftBlue[theColorLeft]  | tabRightBlue[theColorRight];
             // wrtAdr += NEXT_SCANLINE_INCREMENT;
             {asm (
-                "ldy _theColorLeft: lda _tabLeftRed,y: ldy _theColorRight: ora _tabRightRed,y: ldy #0: sta (_wrtAdr),y:"
-                "ldy _theColorLeft: lda _tabLeftGreen,y: ldy _theColorRight: ora _tabRightGreen,y: ldy #40: sta (_wrtAdr),y:"
-                "ldy _theColorLeft: lda _tabLeftBlue,y: ldy _theColorRight: ora _tabRightBlue,y: ldy #80: sta (_wrtAdr),y:"
-                // "ldy _theColorLeft:ldx _theColorRight:"
-                // "lda _tabLeftRed,y:   ora _tabRightRed,x: ldy #0: sta (_wrtAdr),y:"
-                // "ldy _theColorLeft: lda _tabLeftGreen,y: ora _tabRightGreen,x: ldy #40: sta (_wrtAdr),y:"
-                // "ldy _theColorLeft: lda _tabLeftBlue,y:  ora _tabRightBlue,x: ldy #80: sta (_wrtAdr),y:"
+                // "ldy _theColorLeft: lda _tabLeftRed,y: ldy _theColorRight: ora _tabRightRed,y: ldy #0: sta (_wrtAdr),y:"
+                // "ldy _theColorLeft: lda _tabLeftGreen,y: ldy _theColorRight: ora _tabRightGreen,y: ldy #40: sta (_wrtAdr),y:"
+                // "ldy _theColorLeft: lda _tabLeftBlue,y: ldy _theColorRight: ora _tabRightBlue,y: ldy #80: sta (_wrtAdr),y:"
+                "ldy _theColorLeft:ldx _theColorRight:"
+                "lda _tabLeftRed,y:   ora _tabRightRed,x: ldy #0: sta (_wrtAdr),y:"
+                "ldy _theColorLeft: lda _tabLeftGreen,y: ora _tabRightGreen,x: ldy #40: sta (_wrtAdr),y:"
+                "ldy _theColorLeft: lda _tabLeftBlue,y:  ora _tabRightBlue,x: ldy #80: sta (_wrtAdr),y:"
             );}
 
 
@@ -1456,6 +1456,12 @@ asm (
                 "lda (_myTmp),y:"
                 "sta _theColorLeft:"
             );}
+            // {asm (
+            //     "lda _dda1CurrentValue: clc: adc _rollCoord: tay:"
+            //     "lda _adrTextureLow,y:sta _myTmp:lda _adrTextureHigh,y:sta _myTmp+1:"
+            //     "ldy _dda2CurrentValue: lda (_myTmp),y:"
+            //     "sta _theColorLeft:"
+            // );}
 
 
 // 1.3.3.3 BOTTOM RIGHT PIXEL COORDINATE
@@ -1480,6 +1486,12 @@ asm (
                 "lda (_myTmp),y:"
                 "sta _theColorRight:"
             );}
+            // {asm (
+            //     "lda _dda3CurrentValue: clc: adc _rollCoord: tay:"
+            //     "ldy _theX:lda _adrTextureLow,y:sta _myTmp:lda _adrTextureHigh,y:sta _myTmp+1:"
+            //     "ldy _dda4CurrentValue: lda (_myTmp),y:"
+            //     "sta _theColorRight:"
+            // );}
             
 // 1.3.3.5 WRITE BOTTOM PIXEL ON SCREEN
             // *wrtAdr = tabLeftRed[theColorLeft]  | tabRightRed[theColorRight];
@@ -1489,13 +1501,13 @@ asm (
             // *wrtAdr = tabLeftBlue[theColorLeft]  | tabRightBlue[theColorRight];
             // wrtAdr += NEXT_SCANLINE_INCREMENT;
             {asm (
-                "ldy _theColorLeft: lda _tabLeftRed,y: ldy _theColorRight: ora _tabRightRed,y: ldy #120: sta (_wrtAdr),y:"
-                "ldy _theColorLeft: lda _tabLeftGreen,y: ldy _theColorRight: ora _tabRightGreen,y: ldy #160: sta (_wrtAdr),y:"
-                "ldy _theColorLeft: lda _tabLeftBlue,y: ldy _theColorRight: ora _tabRightBlue,y: ldy #200: sta (_wrtAdr),y:"
-                // "ldy _theColorLeft:ldx _theColorRight:"
-                // "lda _tabLeftRed,y:   ora _tabRightRed,x: ldy #120: sta (_wrtAdr),y:"
-                // "ldy _theColorLeft: lda _tabLeftGreen,y: ora _tabRightGreen,x: ldy #160: sta (_wrtAdr),y:"
-                // "ldy _theColorLeft: lda _tabLeftBlue,y:  ora _tabRightBlue,x: ldy #200: sta (_wrtAdr),y:"
+                // "ldy _theColorLeft: lda _tabLeftRed,y: ldy _theColorRight: ora _tabRightRed,y: ldy #120: sta (_wrtAdr),y:"
+                // "ldy _theColorLeft: lda _tabLeftGreen,y: ldy _theColorRight: ora _tabRightGreen,y: ldy #160: sta (_wrtAdr),y:"
+                // "ldy _theColorLeft: lda _tabLeftBlue,y: ldy _theColorRight: ora _tabRightBlue,y: ldy #200: sta (_wrtAdr),y:"
+                "ldy _theColorLeft:ldx _theColorRight:"
+                "lda _tabLeftRed,y:   ora _tabRightRed,x: ldy #120: sta (_wrtAdr),y:"
+                "ldy _theColorLeft: lda _tabLeftGreen,y: ora _tabRightGreen,x: ldy #160: sta (_wrtAdr),y:"
+                "ldy _theColorLeft: lda _tabLeftBlue,y:  ora _tabRightBlue,x: ldy #200: sta (_wrtAdr),y:"
                 "lda _wrtAdr: clc: adc #240: sta _wrtAdr: .(: bcc skip:    inc _wrtAdr+1: skip: .):"
             );}
 
@@ -1677,55 +1689,55 @@ asm (
 // 1.5.1.1 TOP LEFT PIXEL COORDINATE  
             // theX   = dda1CurrentValue + rollCoord;
             // theY   = dda2CurrentValue;
-            {asm (
-                "lda _dda1CurrentValue: clc: adc _rollCoord: sta _theX:"
-                "lda _dda2CurrentValue: sta _theY:"
-            );}
+            // {asm (
+            //     "lda _dda1CurrentValue: clc: adc _rollCoord: sta _theX:"
+            //     "lda _dda2CurrentValue: sta _theY:"
+            // );}
 // 1.5.1.2 TOP LEFT PIXEL COLOR               
             // theColorLeft = texture_PANO[theX*IMAGE_HEIGHT+theY];
-            {asm (
-                "ldy _theX:"
-                "lda _adrTextureLow,y:"
-                "sta _myTmp:"
-                "lda _adrTextureHigh,y:"
-                "sta _myTmp+1:"
-                "ldy _theY:"
-                "lda (_myTmp),y:"
-                "sta _theColorLeft:"
-            );}
             // {asm (
-            //     "lda _dda1CurrentValue: clc: adc _rollCoord: tay:"
-            //     "lda _adrTextureLow,y:sta _myTmp:lda _adrTextureHigh,y:sta _myTmp+1:"
-            //     "ldy _dda2CurrentValue: lda (_myTmp),y:"
+            //     "ldy _theX:"
+            //     "lda _adrTextureLow,y:"
+            //     "sta _myTmp:"
+            //     "lda _adrTextureHigh,y:"
+            //     "sta _myTmp+1:"
+            //     "ldy _theY:"
+            //     "lda (_myTmp),y:"
             //     "sta _theColorLeft:"
             // );}
+            {asm (
+                "lda _dda1CurrentValue: clc: adc _rollCoord: tay:"
+                "lda _adrTextureLow,y:sta _myTmp:lda _adrTextureHigh,y:sta _myTmp+1:"
+                "ldy _dda2CurrentValue: lda (_myTmp),y:"
+                "sta _theColorLeft:"
+            );}
 
 // 1.5.1.3 TOP RIGHT PIXEL COORDINATE 
             // theX   = dda3CurrentValue + rollCoord;
             // theY   = dda4CurrentValue;
-            {asm (
-                "lda _dda3CurrentValue: clc: adc _rollCoord: sta _theX:"
-                "lda _dda4CurrentValue: sta _theY:"
-            );}
+            // {asm (
+            //     "lda _dda3CurrentValue: clc: adc _rollCoord: sta _theX:"
+            //     "lda _dda4CurrentValue: sta _theY:"
+            // );}
 // 1.5.1.4 TOP RIGHT PIXEL COLOR            
             // theColorRight = texture_PANO[theX*IMAGE_HEIGHT+theY];
-            {asm (
-                "ldy _theX:"
-                "lda _adrTextureLow,y:"
-                "sta _myTmp:"
-                "lda _adrTextureHigh,y:"
-                "sta _myTmp+1:"
-                "ldy _theY:"
-                "lda (_myTmp),y:"
-                "sta _theColorRight:"
-            );}
             // {asm (
-            //     "lda _dda3CurrentValue: clc: adc _rollCoord: tay:"
-            //     "lda _adrTextureLow,y:sta _myTmp:lda _adrTextureHigh,y:sta _myTmp+1:"
-            //     "ldy _dda4CurrentValue:"
+            //     "ldy _theX:"
+            //     "lda _adrTextureLow,y:"
+            //     "sta _myTmp:"
+            //     "lda _adrTextureHigh,y:"
+            //     "sta _myTmp+1:"
+            //     "ldy _theY:"
             //     "lda (_myTmp),y:"
             //     "sta _theColorRight:"
             // );}
+            {asm (
+                "lda _dda3CurrentValue: clc: adc _rollCoord: tay:"
+                "lda _adrTextureLow,y:sta _myTmp:lda _adrTextureHigh,y:sta _myTmp+1:"
+                "ldy _dda4CurrentValue:"
+                "lda (_myTmp),y:"
+                "sta _theColorRight:"
+            );}
  
 // 1.5.1.5  WRITE TOP PIXEL ON SCREEN
             // *wrtAdr = tabLeftRed[theColorLeft]    | tabRightRed[theColorRight];
@@ -1735,13 +1747,13 @@ asm (
             // *wrtAdr = tabLeftBlue[theColorLeft]   | tabRightBlue[theColorRight];
             // wrtAdr += NEXT_SCANLINE_INCREMENT;
             {asm (
-                "ldy _theColorLeft: lda _tabLeftRed,y: ldy _theColorRight: ora _tabRightRed,y: ldy #0: sta (_wrtAdr),y:"
-                "ldy _theColorLeft: lda _tabLeftGreen,y: ldy _theColorRight: ora _tabRightGreen,y: ldy #40: sta (_wrtAdr),y:"
-                "ldy _theColorLeft: lda _tabLeftBlue,y: ldy _theColorRight: ora _tabRightBlue,y: ldy #80: sta (_wrtAdr),y:"
-                // "ldy _theColorLeft:ldx _theColorRight:"
-                // "lda _tabLeftRed,y:   ora _tabRightRed,x: ldy #0: sta (_wrtAdr),y:"
-                // "ldy _theColorLeft: lda _tabLeftGreen,y: ora _tabRightGreen,x: ldy #40: sta (_wrtAdr),y:"
-                // "ldy _theColorLeft: lda _tabLeftBlue,y:  ora _tabRightBlue,x: ldy #80: sta (_wrtAdr),y:"
+                // "ldy _theColorLeft: lda _tabLeftRed,y: ldy _theColorRight: ora _tabRightRed,y: ldy #0: sta (_wrtAdr),y:"
+                // "ldy _theColorLeft: lda _tabLeftGreen,y: ldy _theColorRight: ora _tabRightGreen,y: ldy #40: sta (_wrtAdr),y:"
+                // "ldy _theColorLeft: lda _tabLeftBlue,y: ldy _theColorRight: ora _tabRightBlue,y: ldy #80: sta (_wrtAdr),y:"
+                "ldy _theColorLeft:ldx _theColorRight:"
+                "lda _tabLeftRed,y:   ora _tabRightRed,x: ldy #0: sta (_wrtAdr),y:"
+                "ldy _theColorLeft: lda _tabLeftGreen,y: ora _tabRightGreen,x: ldy #40: sta (_wrtAdr),y:"
+                "ldy _theColorLeft: lda _tabLeftBlue,y:  ora _tabRightBlue,x: ldy #80: sta (_wrtAdr),y:"
             );}
 
 
