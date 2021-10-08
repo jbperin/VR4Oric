@@ -247,11 +247,11 @@ void project2ScreenASM ();
 //             asm (
 //                 "ldy _theX:"
 //                 "lda _adrTextureLow,y:"
-//                 "sta tmp0:"
+//                 "sta _myTmp:"
 //                 "lda _adrTextureHigh,y:"
-//                 "sta tmp0+1:"
+//                 "sta _myTmp+1:"
 //                 "ldy _theY:"
-//                 "lda (tmp0),y:"
+//                 "lda (_myTmp),y:"
 //                 "sta _theColorLeft:"
 //             );
 
@@ -265,11 +265,11 @@ void project2ScreenASM ();
 //             asm (
 //                 "ldy _theX:"
 //                 "lda _adrTextureLow,y:"
-//                 "sta tmp0:"
+//                 "sta _myTmp:"
 //                 "lda _adrTextureHigh,y:"
-//                 "sta tmp0+1:"
+//                 "sta _myTmp+1:"
 //                 "ldy _theY:"
-//                 "lda (tmp0),y:"
+//                 "lda (_myTmp),y:"
 //                 "sta _theColorRight:"
 //             );
 
@@ -310,11 +310,11 @@ void project2ScreenASM ();
 //             // asm (
 //             //     "ldy _theX:"
 //             //     "lda _adrTextureLow,y:"
-//             //     "sta tmp0:"
+//             //     "sta _myTmp:"
 //             //     "lda _adrTextureHigh,y:"
-//             //     "sta tmp0+1:"
+//             //     "sta _myTmp+1:"
 //             //     "ldy _theY:"
-//             //     "lda (tmp0),y:"
+//             //     "lda (_myTmp),y:"
 //             //     "sta _theColorLeft:"
 //             // );
 
@@ -328,11 +328,11 @@ void project2ScreenASM ();
 //             // asm (
 //             //     "ldy _theX:"
 //             //     "lda _adrTextureLow,y:"
-//             //     "sta tmp0:"
+//             //     "sta _myTmp:"
 //             //     "lda _adrTextureHigh,y:"
-//             //     "sta tmp0+1:"
+//             //     "sta _myTmp+1:"
 //             //     "ldy _theY:"
-//             //     "lda (tmp0),y:"
+//             //     "lda (_myTmp),y:"
 //             //     "sta _theColorRight:"
 //             // );
 
@@ -811,11 +811,11 @@ void main()
 //             asm (
 //                 "ldy _theX:"
 //                 "lda _adrTextureLow,y:"
-//                 "sta tmp0:"
+//                 "sta _myTmp:"
 //                 "lda _adrTextureHigh,y:"
-//                 "sta tmp0+1:"
+//                 "sta _myTmp+1:"
 //                 "ldy _theY:"
-//                 "lda (tmp0),y:"
+//                 "lda (_myTmp),y:"
 //                 "sta _theColorLeft:"
 //             );
 
@@ -830,11 +830,11 @@ void main()
 //             asm (
 //                 "ldy _theX:"
 //                 "lda _adrTextureLow,y:"
-//                 "sta tmp0:"
+//                 "sta _myTmp:"
 //                 "lda _adrTextureHigh,y:"
-//                 "sta tmp0+1:"
+//                 "sta _myTmp+1:"
 //                 "ldy _theY:"
-//                 "lda (tmp0),y:"
+//                 "lda (_myTmp),y:"
 //                 "sta _theColorRight:"
 //             );
 
@@ -877,11 +877,11 @@ void main()
 //             asm (
 //                 "ldy _theX:"
 //                 "lda _adrTextureLow,y:"
-//                 "sta tmp0:"
+//                 "sta _myTmp:"
 //                 "lda _adrTextureHigh,y:"
-//                 "sta tmp0+1:"
+//                 "sta _myTmp+1:"
 //                 "ldy _theY:"
-//                 "lda (tmp0),y:"
+//                 "lda (_myTmp),y:"
 //                 "sta _theColorLeft:"
 //             );
 
@@ -896,11 +896,11 @@ void main()
 //             asm (
 //                 "ldy _theX:"
 //                 "lda _adrTextureLow,y:"
-//                 "sta tmp0:"
+//                 "sta _myTmp:"
 //                 "lda _adrTextureHigh,y:"
-//                 "sta tmp0+1:"
+//                 "sta _myTmp+1:"
 //                 "ldy _theY:"
-//                 "lda (tmp0),y:"
+//                 "lda (_myTmp),y:"
 //                 "sta _theColorRight:"
 //             );
 
@@ -1040,11 +1040,11 @@ void main()
 //             asm (
 //                 "ldy _theX:"
 //                 "lda _adrTextureLow,y:"
-//                 "sta tmp0:"
+//                 "sta _myTmp:"
 //                 "lda _adrTextureHigh,y:"
-//                 "sta tmp0+1:"
+//                 "sta _myTmp+1:"
 //                 "ldy _theY:"
-//                 "lda (tmp0),y:"
+//                 "lda (_myTmp),y:"
 //                 "sta _theColorLeft:"
 //             );
 
@@ -1059,11 +1059,11 @@ void main()
 //             asm (
 //                 "ldy _theX:"
 //                 "lda _adrTextureLow,y:"
-//                 "sta tmp0:"
+//                 "sta _myTmp:"
 //                 "lda _adrTextureHigh,y:"
-//                 "sta tmp0+1:"
+//                 "sta _myTmp+1:"
 //                 "ldy _theY:"
-//                 "lda (tmp0),y:"
+//                 "lda (_myTmp),y:"
 //                 "sta _theColorRight:"
 //             );
 
@@ -1097,11 +1097,11 @@ void main()
 //             asm (
 //                 "ldy _theX:"
 //                 "lda _adrTextureLow,y:"
-//                 "sta tmp0:"
+//                 "sta _myTmp:"
 //                 "lda _adrTextureHigh,y:"
-//                 "sta tmp0+1:"
+//                 "sta _myTmp+1:"
 //                 "ldy _theY:"
-//                 "lda (tmp0),y:"
+//                 "lda (_myTmp),y:"
 //                 "sta _theColorLeft:"
 //             );
 
@@ -1116,11 +1116,11 @@ void main()
 //             asm (
 //                 "ldy _theX:"
 //                 "lda _adrTextureLow,y:"
-//                 "sta tmp0:"
+//                 "sta _myTmp:"
 //                 "lda _adrTextureHigh,y:"
-//                 "sta tmp0+1:"
+//                 "sta _myTmp+1:"
 //                 "ldy _theY:"
-//                 "lda (tmp0),y:"
+//                 "lda (_myTmp),y:"
 //                 "sta _theColorRight:"
 //             );
 
@@ -1341,8 +1341,8 @@ asm (
             // theColorLeft = texture_PANO[theX*IMAGE_HEIGHT+theY];
             asm (
                 "lda _dda1CurrentValue: clc: adc _rollCoord: tay:"
-                "lda _adrTextureLow,y:sta tmp0:lda _adrTextureHigh,y:sta tmp0+1:"
-                "ldy _dda2CurrentValue: lda (tmp0),y:"
+                "lda _adrTextureLow,y:sta _myTmp:lda _adrTextureHigh,y:sta _myTmp+1:"
+                "ldy _dda2CurrentValue: lda (_myTmp),y:"
                 "sta _theColorLeft:"
             );
 
@@ -1353,8 +1353,8 @@ asm (
             // theColorRight = texture_PANO[theX*IMAGE_HEIGHT+theY];
             asm (
                 "lda _dda3CurrentValue: clc: adc _rollCoord: tay:"
-                "ldy _theX:lda _adrTextureLow,y:sta tmp0:lda _adrTextureHigh,y:sta tmp0+1:"
-                "ldy _dda4CurrentValue: lda (tmp0),y:"
+                "ldy _theX:lda _adrTextureLow,y:sta _myTmp:lda _adrTextureHigh,y:sta _myTmp+1:"
+                "ldy _dda4CurrentValue: lda (_myTmp),y:"
                 "sta _theColorRight:"
             );
 
@@ -1414,11 +1414,11 @@ asm (
             asm (
                 "ldy _theX:"
                 "lda _adrTextureLow,y:"
-                "sta tmp0:"
+                "sta _myTmp:"
                 "lda _adrTextureHigh,y:"
-                "sta tmp0+1:"
+                "sta _myTmp+1:"
                 "ldy _theY:"
-                "lda (tmp0),y:"
+                "lda (_myTmp),y:"
                 "sta _theColorLeft:"
             );}
 
@@ -1427,15 +1427,22 @@ asm (
 
             // theX   = dda3CurrentValue + rollCoord;
             // theY   = dda4CurrentValue;
-
+            asm (
+                "lda _dda3CurrentValue: clc: adc _rollCoord: sta _theX:"
+                "lda _dda4CurrentValue: sta _theY:"
+            );
 
 // 1.3.3.4 BOTTOM RIGHT PIXEL COLOR
 
             // theColorRight = texture_PANO[theX*IMAGE_HEIGHT+theY];
             asm (
-                "lda _dda3CurrentValue: clc: adc _rollCoord: tay:"
-                "lda _adrTextureLow,y: sta tmp0: lda _adrTextureHigh,y: sta tmp0+1:"
-                "ldy _dda4CurrentValue: lda (tmp0),y:"
+                "ldy _theX:"
+                "lda _adrTextureLow,y:"
+                "sta _myTmp:"
+                "lda _adrTextureHigh,y:"
+                "sta _myTmp+1:"
+                "ldy _theY:"
+                "lda (_myTmp),y:"
                 "sta _theColorRight:"
             );
             
@@ -1636,8 +1643,8 @@ asm (
             // theColorLeft = texture_PANO[theX*IMAGE_HEIGHT+theY];
             asm (
                 "lda _dda1CurrentValue: clc: adc _rollCoord: tay:"
-                "lda _adrTextureLow,y:sta tmp0:lda _adrTextureHigh,y:sta tmp0+1:"
-                "ldy _dda2CurrentValue: lda (tmp0),y:"
+                "lda _adrTextureLow,y:sta _myTmp:lda _adrTextureHigh,y:sta _myTmp+1:"
+                "ldy _dda2CurrentValue: lda (_myTmp),y:"
                 "sta _theColorLeft:"
             );
 
@@ -1648,9 +1655,9 @@ asm (
             // theColorRight = texture_PANO[theX*IMAGE_HEIGHT+theY];
             asm (
                 "lda _dda3CurrentValue: clc: adc _rollCoord: tay:"
-                "lda _adrTextureLow,y:sta tmp0:lda _adrTextureHigh,y:sta tmp0+1:"
+                "lda _adrTextureLow,y:sta _myTmp:lda _adrTextureHigh,y:sta _myTmp+1:"
                 "ldy _dda4CurrentValue:"
-                "lda (tmp0),y:"
+                "lda (_myTmp),y:"
                 "sta _theColorRight:"
             );
  
@@ -1704,8 +1711,8 @@ asm (
             // theColorLeft = texture_PANO[theX*IMAGE_HEIGHT+theY];
             asm (
                 "lda _dda1CurrentValue: clc: adc _rollCoord: tay:"
-                "lda _adrTextureLow,y:sta tmp0:lda _adrTextureHigh,y:sta tmp0+1:"
-                "ldy _dda2CurrentValue: lda (tmp0),y:"
+                "lda _adrTextureLow,y:sta _myTmp:lda _adrTextureHigh,y:sta _myTmp+1:"
+                "ldy _dda2CurrentValue: lda (_myTmp),y:"
                 "sta _theColorLeft:"
             );
 
@@ -1716,8 +1723,8 @@ asm (
             // theColorRight = texture_PANO[theX*IMAGE_HEIGHT+theY];
             asm (
                 "lda _dda3CurrentValue: clc: adc _rollCoord: tay:"
-                "lda _adrTextureLow,y:sta tmp0:lda _adrTextureHigh,y:sta tmp0+1:"
-                "ldy _dda4CurrentValue: lda (tmp0),y:"
+                "lda _adrTextureLow,y:sta _myTmp:lda _adrTextureHigh,y:sta _myTmp+1:"
+                "ldy _dda4CurrentValue: lda (_myTmp),y:"
                 "sta _theColorRight:"
             );
  
