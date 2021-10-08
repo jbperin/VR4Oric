@@ -12,7 +12,7 @@ void            (*dda3StepFunction)();
 extern signed char     dda3Increment;
 
 
-// #ifdef __USE_C_DDA__
+#ifdef __USE_C_DDA__
 
 void dda3Step0(){
 
@@ -77,7 +77,7 @@ void dda3Init(){
     }
 
 }
-// #endif // __USE_C_DDA__
+#endif // __USE_C_DDA__
 
 // void main () {
 //     printf ("coucou\n");

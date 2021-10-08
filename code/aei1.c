@@ -12,7 +12,7 @@ void            (*dda1StepFunction)();
 extern signed char     dda1Increment;
 
 
-// #ifdef __USE_C_DDA__
+#ifdef __USE_C_DDA__
 void dda1Step0(){
 
     dda1CurrentValue         += dda1Increment;
@@ -77,7 +77,7 @@ void dda1Init(){
     }
 
 }
-// #endif // __USE_C_DDA__
+#endif // __USE_C_DDA__
 
 // void main () {
 //     printf ("coucou\n");

@@ -296,25 +296,25 @@ loopOnIdxCol_01
         bcs NbStepGreaterThanNbVal_1234_00:
             lda _dda1NbVal:
             sta _dda1CurrentError:
-            lda #<(_dda1Step1):
+            lda #<(_dda1Step1ASM):
             sta _dda1StepFunction:
-            lda #>(_dda1Step1):
+            lda #>(_dda1Step1ASM):
             sta _dda1StepFunction+1:
         jmp dda1InitDone_1234_00:
         NbStepGreaterThanNbVal_1234_00    :
             lda _dda1NbStep:
             sta _dda1CurrentError:
-            lda #<(_dda1Step2):
+            lda #<(_dda1Step2ASM):
             sta _dda1StepFunction:
-            lda #>(_dda1Step2):
+            lda #>(_dda1Step2ASM):
             sta _dda1StepFunction+1:
         jmp dda1InitDone_1234_00:
         NbStepEqualsNbVal_1234_00    :
             lda _dda1EndValue:
             sta _dda1CurrentError:
-            lda #<(_dda1Step0):
+            lda #<(_dda1Step0ASM):
             sta _dda1StepFunction:
-            lda #>(_dda1Step0):
+            lda #>(_dda1Step0ASM):
             sta _dda1StepFunction+1:
 dda1InitDone_1234_00 :
 
@@ -334,18 +334,18 @@ dda1InitDone_1234_00 :
         bcs NbStepGreaterThanNbVal_4321_00:
             lda _dda3NbVal:
             sta _dda3CurrentError:
-            lda #<(_dda3Step1):
+            lda #<(_dda3Step1ASM):
             sta _dda3StepFunction:
-            lda #>(_dda3Step1):
+            lda #>(_dda3Step1ASM):
             sta _dda3StepFunction+1:
         jmp dda3InitDone_4321_00:
             
         NbStepGreaterThanNbVal_4321_00    :
             lda _dda3NbStep:
             sta _dda3CurrentError:
-            lda #<(_dda3Step2):
+            lda #<(_dda3Step2ASM):
             sta _dda3StepFunction:
-            lda #>(_dda3Step2):
+            lda #>(_dda3Step2ASM):
             sta _dda3StepFunction+1:
         jmp dda3InitDone_4321_00:
             
@@ -353,9 +353,9 @@ dda1InitDone_1234_00 :
         NbStepEqualsNbVal_4321_00    :
             lda _dda3EndValue:
             sta _dda3CurrentError:
-            lda #<(_dda3Step0):
+            lda #<(_dda3Step0ASM):
             sta _dda3StepFunction:
-            lda #>(_dda3Step0):
+            lda #>(_dda3Step0ASM):
             sta _dda3StepFunction+1:
 dda3InitDone_4321_00:
 
@@ -428,15 +428,15 @@ endloopOnIdxLin_01
     beq NbStepEqualsNbVal_5678_00 :
     bcs NbStepGreaterThanNbVal_5678_00 :
         lda _dda1NbVal: sta _dda1CurrentError :
-        lda #<(_dda1Step1): sta _dda1StepFunction: lda #>(_dda1Step1):sta _dda1StepFunction+1:
+        lda #<(_dda1Step1ASM): sta _dda1StepFunction: lda #>(_dda1Step1ASM):sta _dda1StepFunction+1:
     jmp dda1InitDone_5678_00 :
     NbStepGreaterThanNbVal_5678_00    :
         lda _dda1NbStep: sta _dda1CurrentError:
-        lda #<(_dda1Step2): sta _dda1StepFunction: lda #>(_dda1Step2): sta _dda1StepFunction+1:
+        lda #<(_dda1Step2ASM): sta _dda1StepFunction: lda #>(_dda1Step2ASM): sta _dda1StepFunction+1:
     jmp dda1InitDone_5678_00 :
     NbStepEqualsNbVal_5678_00    :
         lda _dda1EndValue: sta _dda1CurrentError:
-        lda #<(_dda1Step0):sta _dda1StepFunction:lda #>(_dda1Step0):sta _dda1StepFunction+1:
+        lda #<(_dda1Step0ASM):sta _dda1StepFunction:lda #>(_dda1Step0ASM):sta _dda1StepFunction+1:
 dda1InitDone_5678_00 :
 
 ;; 1.4.3  INIT DDA 3 SPECIFIC
@@ -455,15 +455,15 @@ dda1InitDone_5678_00 :
     beq NbStepEqualsNbVal_8765_00:
     bcs NbStepGreaterThanNbVal_8765_00:
         lda _dda3NbVal: sta _dda3CurrentError:
-        lda #<(_dda3Step1): sta _dda3StepFunction: lda #>(_dda3Step1): sta _dda3StepFunction+1:
+        lda #<(_dda3Step1ASM): sta _dda3StepFunction: lda #>(_dda3Step1ASM): sta _dda3StepFunction+1:
     jmp dda3InitDone_8765_00:
     NbStepGreaterThanNbVal_8765_00    :
         lda _dda3NbStep: sta _dda3CurrentError:
-        lda #<(_dda3Step2): sta _dda3StepFunction: lda #>(_dda3Step2): sta _dda3StepFunction+1:
+        lda #<(_dda3Step2ASM): sta _dda3StepFunction: lda #>(_dda3Step2ASM): sta _dda3StepFunction+1:
     jmp dda3InitDone_8765_00:
     NbStepEqualsNbVal_8765_00    :
         lda _dda3EndValue: sta _dda3CurrentError:
-        lda #<(_dda3Step0): sta _dda3StepFunction: lda #>(_dda3Step0): sta _dda3StepFunction+1:
+        lda #<(_dda3Step0ASM): sta _dda3StepFunction: lda #>(_dda3Step0ASM): sta _dda3StepFunction+1:
 dda3InitDone_8765_00:
 
 ;; 1.5 LOOP OVER LOW LINES
