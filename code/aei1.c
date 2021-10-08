@@ -15,18 +15,18 @@ extern signed char     dda1Increment;
 // #ifdef __USE_C_DDA__
 void dda1Step0(){
 
-    // dda1CurrentValue         += dda1Increment;
+    dda1CurrentValue         += dda1Increment;
     // asm ("lda _dda1CurrentValue: clc: adc _dda1Increment: sta _dda1CurrentValue");
-    dda1Step0ASM();
+    // dda1Step0ASM();
 }
 
 void dda1Step1(){
 
-    // while ((dda1CurrentError<<1) >= dda1NbStep) {
-    //     dda1CurrentError         -= dda1NbStep;
-    //     dda1CurrentValue         += dda1Increment;
-    // }
-    // dda1CurrentError     += dda1NbVal;
+    while ((dda1CurrentError<<1) >= dda1NbStep) {
+        dda1CurrentError         -= dda1NbStep;
+        dda1CurrentValue         += dda1Increment;
+    }
+    dda1CurrentError     += dda1NbVal;
 
     // asm (
     //     ":.(:loop:"
@@ -36,47 +36,47 @@ void dda1Step1(){
     //     ":end_loop:.):"
     //     ":lda _dda1CurrentError: clc: adc _dda1NbVal: sta _dda1CurrentError"
     // );  
-    dda1Step1ASM();
+    // dda1Step1ASM();
 }
 void dda1Step2(){
 
-    // dda1CurrentError         -= dda1NbVal; // dda1EndValue-dda1StartValue;
-    // if ((dda1CurrentError<<1) < dda1NbStep) {
-    //     dda1CurrentError     += dda1NbStep;
-    //     dda1CurrentValue     += dda1Increment;
-    // }
+    dda1CurrentError         -= dda1NbVal; // dda1EndValue-dda1StartValue;
+    if ((dda1CurrentError<<1) < dda1NbStep) {
+        dda1CurrentError     += dda1NbStep;
+        dda1CurrentValue     += dda1Increment;
+    }
     // asm(
     //     "lda _dda1CurrentError: sec: sbc _dda1NbVal: sta _dda1CurrentError:"
     //     ":.(:bmi updateError: asl: cmp _dda1NbStep: bcs  done :updateError: lda _dda1CurrentError: clc: adc _dda1NbStep: sta _dda1CurrentError: lda _dda1CurrentValue: clc: adc _dda1Increment: sta _dda1CurrentValue: done:.):"
     // );
-    dda1Step2ASM();
+    // dda1Step2ASM();
 }
 
-// void dda1Init(){
+void dda1Init(){
 
-//     dda1CurrentValue         = dda1StartValue;
+    dda1CurrentValue         = dda1StartValue;
 
-//     if (dda1EndValue > dda1StartValue) {
-//         dda1NbVal                = dda1EndValue-dda1StartValue;
-//         dda1Increment            = 1;
-//     } else {
-//         dda1NbVal                = dda1StartValue-dda1EndValue;
-//         dda1Increment            = -1;
-//     }
-//     //dda1EndValue             = dda1StartValue + dda1NbVal;
+    if (dda1EndValue > dda1StartValue) {
+        dda1NbVal                = dda1EndValue-dda1StartValue;
+        dda1Increment            = 1;
+    } else {
+        dda1NbVal                = dda1StartValue-dda1EndValue;
+        dda1Increment            = -1;
+    }
+    //dda1EndValue             = dda1StartValue + dda1NbVal;
 
-//     if          (dda1NbVal > dda1NbStep) {
-//         dda1CurrentError     = dda1NbVal;
-//         dda1StepFunction     = &dda1Step1;
-//     } else if   (dda1NbVal < dda1NbStep) {
-//         dda1CurrentError     = dda1NbStep;
-//         dda1StepFunction     = &dda1Step2;
-//     } else {
-//         dda1CurrentError     = dda1EndValue;
-//         dda1StepFunction     = &dda1Step0;
-//     }
+    if          (dda1NbVal > dda1NbStep) {
+        dda1CurrentError     = dda1NbVal;
+        dda1StepFunction     = &dda1Step1;
+    } else if   (dda1NbVal < dda1NbStep) {
+        dda1CurrentError     = dda1NbStep;
+        dda1StepFunction     = &dda1Step2;
+    } else {
+        dda1CurrentError     = dda1EndValue;
+        dda1StepFunction     = &dda1Step0;
+    }
 
-// }
+}
 // #endif // __USE_C_DDA__
 
 // void main () {

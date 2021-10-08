@@ -11,23 +11,23 @@ void            (*dda4StepFunction)();
 
 #ifdef __USE_C_DDA__
 
-// void dda4Step2(){
+void dda4Step2(){
 
-//     dda4CurrentError         -= dda4NbVal; 
-//     if ((dda4CurrentError<<1) < dda4NbStep) {
-//         dda4CurrentError     += dda4NbStep;
-//         dda4CurrentValue     ++;
-//     }
+    dda4CurrentError         -= dda4NbVal; 
+    if ((dda4CurrentError<<1) < dda4NbStep) {
+        dda4CurrentError     += dda4NbStep;
+        dda4CurrentValue     ++;
+    }
 
-// }
+}
 
-// void dda4Init(){
+void dda4Init(){
 
-//     dda4CurrentValue         = dda4StartValue;
-//     dda4NbVal                = dda4EndValue-dda4StartValue;
-//     dda4CurrentError     = dda4NbStep;
-//     dda4StepFunction     = &dda4Step2;
+    dda4CurrentValue         = dda4StartValue;
+    dda4NbVal                = dda4EndValue-dda4StartValue;
+    dda4CurrentError     = dda4NbStep;
+    dda4StepFunction     = &dda4Step2;
 
-// }
+}
 
 #endif // __USE_C_DDA__

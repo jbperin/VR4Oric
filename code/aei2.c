@@ -13,38 +13,38 @@ void            (*dda2StepFunction)();
 
 #ifdef __USE_C_DDA__
 
-// void dda2Step2(){
+void dda2Step2(){
 
-//     dda2CurrentError         -= dda2NbVal; // dda2EndValue-dda2StartValue;
-//     if ((dda2CurrentError<<1) < dda2NbStep) {
-//         dda2CurrentError     += dda2NbStep;
-//         dda2CurrentValue     ++;
-//     }
+    dda2CurrentError         -= dda2NbVal; // dda2EndValue-dda2StartValue;
+    if ((dda2CurrentError<<1) < dda2NbStep) {
+        dda2CurrentError     += dda2NbStep;
+        dda2CurrentValue     ++;
+    }
 
-// }
+}
 
-// void dda2Init(){
+void dda2Init(){
 
-//     dda2CurrentValue         = dda2StartValue;
+    dda2CurrentValue         = dda2StartValue;
 
-//     // if (dda2EndValue > dda2StartValue) {
-//     dda2NbVal                = dda2EndValue-dda2StartValue;
-//     // } else {
-//     //     dda2NbVal                = dda2StartValue-dda2EndValue;
-//     //     dda2Increment            = -1;
-//     // }
-//     //dda2EndValue             = dda2StartValue + dda2NbVal;
+    // if (dda2EndValue > dda2StartValue) {
+    dda2NbVal                = dda2EndValue-dda2StartValue;
+    // } else {
+    //     dda2NbVal                = dda2StartValue-dda2EndValue;
+    //     dda2Increment            = -1;
+    // }
+    //dda2EndValue             = dda2StartValue + dda2NbVal;
 
-//     // if          (dda2NbVal > dda2NbStep) {
-//     //     dda2CurrentError     = dda2NbVal;
-//     //     dda2StepFunction     = &dda2Step1;
-//     // } else if   (dda2NbVal < dda2NbStep) {
-//         dda2CurrentError     = dda2NbStep;
-//         dda2StepFunction     = &dda2Step2;
-//     // } else {
-//     //     dda2CurrentError     = dda2EndValue;
-//     //     dda2StepFunction     = &dda2Step0;
-//     // }
+    // if          (dda2NbVal > dda2NbStep) {
+    //     dda2CurrentError     = dda2NbVal;
+    //     dda2StepFunction     = &dda2Step1;
+    // } else if   (dda2NbVal < dda2NbStep) {
+        dda2CurrentError     = dda2NbStep;
+        dda2StepFunction     = &dda2Step2;
+    // } else {
+    //     dda2CurrentError     = dda2EndValue;
+    //     dda2StepFunction     = &dda2Step0;
+    // }
 
-// }
+}
 #endif

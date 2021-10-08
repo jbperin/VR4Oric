@@ -16,18 +16,18 @@ extern signed char     dda3Increment;
 
 void dda3Step0(){
 
-    // dda3CurrentValue         += dda3Increment;
+    dda3CurrentValue         += dda3Increment;
     // asm ("lda _dda3CurrentValue: clc: adc _dda3Increment: sta _dda3CurrentValue");
-    dda3Step0ASM();
+    // dda3Step0ASM();
 }
 
 void dda3Step1(){
 
-    // while ((dda3CurrentError<<1) >= dda3NbStep) {
-    //     dda3CurrentError         -= dda3NbStep;
-    //     dda3CurrentValue         += dda3Increment;
-    // }
-    // dda3CurrentError     += dda3NbVal;
+    while ((dda3CurrentError<<1) >= dda3NbStep) {
+        dda3CurrentError         -= dda3NbStep;
+        dda3CurrentValue         += dda3Increment;
+    }
+    dda3CurrentError     += dda3NbVal;
     // asm (
     //     ":.(:loop:"
     //     ":lda _dda3CurrentError:bmi end_loop: asl: cmp _dda3NbStep: bcc end_loop:"
@@ -36,47 +36,47 @@ void dda3Step1(){
     //     ":end_loop:.):"
     //     ":lda _dda3CurrentError: clc: adc _dda3NbVal: sta _dda3CurrentError"
     // );
-    dda3Step1ASM();
+    // dda3Step1ASM();
 }
 void dda3Step2(){
 
-    // dda3CurrentError         -= dda3NbVal; // dda3EndValue-dda3StartValue;
-    // if ((dda3CurrentError<<1) < dda3NbStep) {
-    //     dda3CurrentError     += dda3NbStep;
-    //     dda3CurrentValue     += dda3Increment;
-    // }
+    dda3CurrentError         -= dda3NbVal; // dda3EndValue-dda3StartValue;
+    if ((dda3CurrentError<<1) < dda3NbStep) {
+        dda3CurrentError     += dda3NbStep;
+        dda3CurrentValue     += dda3Increment;
+    }
     // asm(
     //     "lda _dda3CurrentError: sec: sbc _dda3NbVal: sta _dda3CurrentError:"
     //     ":.(:bmi updateError: asl: cmp _dda3NbStep: bcs  done :updateError: lda _dda3CurrentError: clc: adc _dda3NbStep: sta _dda3CurrentError: lda _dda3CurrentValue:clc: adc _dda3Increment: sta _dda3CurrentValue: done:.):"
     // );
-    dda3Step2ASM();
+    // dda3Step2ASM();
 }
 
-// void dda3Init(){
+void dda3Init(){
 
-//     dda3CurrentValue         = dda3StartValue;
+    dda3CurrentValue         = dda3StartValue;
 
-//     if (dda3EndValue > dda3StartValue) {
-//         dda3NbVal                = dda3EndValue-dda3StartValue;
-//         dda3Increment            = 1;
-//     } else {
-//         dda3NbVal                = dda3StartValue-dda3EndValue;
-//         dda3Increment            = -1;
-//     }
-//     //dda3EndValue             = dda3StartValue + dda3NbVal;
+    if (dda3EndValue > dda3StartValue) {
+        dda3NbVal                = dda3EndValue-dda3StartValue;
+        dda3Increment            = 1;
+    } else {
+        dda3NbVal                = dda3StartValue-dda3EndValue;
+        dda3Increment            = -1;
+    }
+    //dda3EndValue             = dda3StartValue + dda3NbVal;
 
-//     if          (dda3NbVal > dda3NbStep) {
-//         dda3CurrentError     = dda3NbVal;
-//         dda3StepFunction     = &dda3Step1;
-//     } else if   (dda3NbVal < dda3NbStep) {
-//         dda3CurrentError     = dda3NbStep;
-//         dda3StepFunction     = &dda3Step2;
-//     } else {
-//         dda3CurrentError     = dda3EndValue;
-//         dda3StepFunction     = &dda3Step0;
-//     }
+    if          (dda3NbVal > dda3NbStep) {
+        dda3CurrentError     = dda3NbVal;
+        dda3StepFunction     = &dda3Step1;
+    } else if   (dda3NbVal < dda3NbStep) {
+        dda3CurrentError     = dda3NbStep;
+        dda3StepFunction     = &dda3Step2;
+    } else {
+        dda3CurrentError     = dda3EndValue;
+        dda3StepFunction     = &dda3Step0;
+    }
 
-// }
+}
 // #endif // __USE_C_DDA__
 
 // void main () {
