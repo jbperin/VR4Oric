@@ -46,8 +46,9 @@ extern unsigned char *wrtAdr;
 extern unsigned char theColorLeft;
 extern unsigned char theColorRight;
 
-char IsHires=1;
+char IsHires=0;
 unsigned char running ;
+unsigned char waiting ;
 unsigned char refreshNeeded = 1;
 
 unsigned char scene_number = 0;
@@ -94,17 +95,43 @@ void prepareRGB(){
 }
 
 
+void SwitchToText()
+{
+    // LoadFileAt(LOADER_FONT_6x8, 0xb500);
+	if (IsHires)
+	{
+		// If not in TEXT; we need to switch from HIRES to TEXT
+        // Clear the entire HIRES area with black ink
+		memset((unsigned char*)0xa000,0,40*200);	
+		// Move the charsets from BOTTOM to TOP
+        memcpy((unsigned char*)0xb400,(unsigned char*)0x9800,0xbb80-0xb400);		
+        // Fill the entire TEXT area with spaces
+		memset((unsigned char*)0xbb80,32,40*25);	
+	}
+    // 50hz Text attribute
+    *((char*)0xbfdf) = 26;														
+    *((char*)0xbbd0) = 0x10;
+    *((char*)0xbbd1) = 0x07;
+    *((char*)0xbf68) = 0x10;
+    *((char*)0xbf69) = 0x07;
+    *((char*)0xbf90) = 0x10;
+    *((char*)0xbf91) = 0x07;
+	IsHires=0;
+}
 void SwitchToHires()
 {
 	if (!IsHires)
 	{
 		// If not in HIRES; we need to switch from TEXT to HIRES
-		memcpy((unsigned char*)0x9800,(unsigned char*)0xb400,0xbb80-0xb400);		// Move the charsets from TOP to BOTTOM
-		memset((unsigned char*)0xa000,0,40*200);									// Clear the entire HIRES area with black ink
-		*((char*)0xbfdf)=30;														// 50hz Graphics attribute
+        // Move the charsets from TOP to BOTTOM
+		memcpy((unsigned char*)0x9800,(unsigned char*)0xb400,0xbb80-0xb400);
+        // Clear the entire HIRES area with black ink
+		memset((unsigned char*)0xa000,0,40*200);
 
 		memset((unsigned char*)0xa000,64,40*200);									// Fill the entire HIRES area with neutral 64 value
 	}
+    // 50hz Graphics attribute
+    *((char*)0xbfdf)=30;
 	IsHires=1;
     // memset((unsigned char*)0xbf40,0x20,40*4);
     prepareRGB();	
@@ -121,6 +148,7 @@ void SwitchToHires()
 
 void keyPressed(unsigned char c){
     theX = c;
+    waiting = 0;
     {asm("lda _theX: breakkey:");}
     if (c == KEY_DOWN ) {
         if (rotX < 2*ANGLE_INCREMENT){
@@ -146,6 +174,11 @@ void keyPressed(unsigned char c){
             apply_diff();
             refreshNeeded   = 1;
         } 
+    } else if (c == KEY_H) {
+        SwitchToText();
+        AdvancedPrint(10, 25, " t1to");
+        running = 0;
+//        refreshNeeded   = 1;
     } else if (c == KEY_RIGHT) {
         if (rotZ > -8*ANGLE_INCREMENT){
             rotZ -= ANGLE_INCREMENT;
@@ -154,7 +187,7 @@ void keyPressed(unsigned char c){
         }
         refreshNeeded   = 1;
     } else if (c == KEY_SPACE) {
-        if ((scene_number == 0) && (rotZ==0x00) && (rotX==0x00)){
+        if ((scene_number == 0) && (has_key != 0) && (rotZ==0x00) && (rotX==0x00)){
             scene_number            = 1;
             LoadFileAt(LOADER_PANO_02,texture_PANO);
             refreshNeeded           = 1;
@@ -176,6 +209,7 @@ void keyPressed(unsigned char c){
 
 void keyReleased(unsigned char c){
 	// printf ("kr: %x, ", c);
+    //waiting = 0;
 }
 
 void lsys(){
@@ -697,46 +731,70 @@ void project2ScreenASM ();
 //         theBaseAdr += 1;
 //     }
 // }
-
+char message[]="coucou\0";
 void main()
 {
     int ii = 0;
+
+    LoadFileAt(LOADER_FONT_6x8, 0xb500);
 
     for (ii=0; ii < 256; ii++) {
         adrTextureHigh[ii] = (unsigned char)((((int)texture_PANO) + 128*ii)>>8);
         adrTextureLow[ii] = (unsigned char)(((((int)texture_PANO) + 128*ii) & 0x00FF));
     }
     LoadFileAt(LOADER_BTABLES, borderTables);
+
+
+
+    {asm(":break01:")}
+
+
+    kernelInit();
+
+
     LoadFileAt(LOADER_PANO_01, texture_PANO);
     LoadFileAt(LOADER_DIFFIMG, diffimg);
     rotX = 0; rotZ = 0xC0;
     scene_number            = 0;
+    
 
+    while (1) {
+        SwitchToText();
+        AdvancedPrint(2, 2, message);
+        AdvancedPrint(2, 26, message);
+        waiting = 1;
+        while (waiting) {
 
-	SwitchToHires();
-	running = 1;
-    kernelInit();
-
-    // OPTIME baseAdrHigh     = (unsigned char *)(HIRES_SCREEN_ADDRESS + multi40[(VIEWPORT_START_LINE<<1) + VIEWPORT_START_LINE] + (VIEWPORT_START_COLUMN>>1));
-    // baseAdrHigh     = (unsigned char *)(DEFAULT_BASE_ADRESS);
-    // baseAdrLow      = (unsigned char *)(HIRES_SCREEN_ADDRESS + multi40[((VIEWPORT_START_LINE+SCREEN_HEIGHT/2)<<1) + (VIEWPORT_START_LINE+SCREEN_HEIGHT/2)] + (VIEWPORT_START_COLUMN>>1));
-
-    while (running) {
-
-        lsys();
-        
-        if (refreshNeeded) {
-            // clearViewport();
-            // rollCoord       = (abs(rotZ)>4*ANGLE_INCREMENT);
-            selectTables();
-            // project2ScreenPureASM();
-            project2ScreenASM ();
-            // project2ScreenOPTIM ();
-            // project2Screen ();
-
-            refreshNeeded = 0;
+            lsys();
         }
-	}
+        refreshNeeded = 1;
+        SwitchToHires();
+        running = 1;
+
+
+        
+        while (running) {
+
+            lsys();
+            
+            if (refreshNeeded) {
+                // clearViewport();
+                // rollCoord       = (abs(rotZ)>4*ANGLE_INCREMENT);
+                selectTables();
+                // project2ScreenPureASM();
+                project2ScreenASM ();
+                // project2ScreenOPTIM ();
+                // project2Screen ();
+                AdvancedPrint(2, 26, " running");
+
+                refreshNeeded = 0;
+            }
+        }
+
+
+    }
+#ifdef __DONT_RUN__
+#endif // __DONT_RUN__    
 }
 
 
