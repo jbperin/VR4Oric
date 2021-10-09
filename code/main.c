@@ -697,8 +697,8 @@ void main()
             // clearViewport();
             // rollCoord       = (abs(rotZ)>4*ANGLE_INCREMENT);
             selectTables();
-            project2ScreenPureASM();
-            // project2ScreenASM ();
+            // project2ScreenPureASM();
+            project2ScreenASM ();
             // project2ScreenOPTIM ();
             // project2Screen ();
 

@@ -237,7 +237,7 @@ updateError
 .)
     rts
 
-
+#ifdef __PURE_ASM_PROJECT__
 breakhere:
 _project2ScreenPureASM:.(
 
@@ -597,5 +597,7 @@ endLoopOnIdxCol_01
 project2ScreenPureASM_done
 .)
     rts
+
+#endif //  __PURE_ASM_PROJECT__
 
 #endif // __USE_C_DDA__
