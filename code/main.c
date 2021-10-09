@@ -8,6 +8,7 @@ extern unsigned char texture_PANO[];
 extern unsigned char borderTables[];
 extern unsigned char adrTextureHigh[];
 extern unsigned char adrTextureLow[];
+extern unsigned char diffimg[]; // 8672
 
 #include "keyboard_c.c"
 #include "aei1.c"
@@ -677,6 +678,7 @@ void main()
     }
     LoadFileAt(LOADER_BTABLES, borderTables);
     LoadFileAt(LOADER_PANO_01, texture_PANO);
+    LoadFileAt(LOADER_DIFFIMG, diffimg);
     rotX = 0; rotZ = 0xC0;
     scene_number            = 0;
 

@@ -78,6 +78,8 @@ AddFile ..\build\files\indoor.vrb
 AddDefine LOADER_PANO_02 {FileIndex}
 AddFile ..\build\files\outdoor.vrb
 AddDefine LOADER_PANO_01 {FileIndex}
+AddFile ..\build\files\diffimg.vrb
+AddDefine LOADER_DIFFIMG {FileIndex}
 AddFile ..\build\files\border_tables.vrb
 AddDefine LOADER_BTABLES {FileIndex}
 

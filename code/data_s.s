@@ -8,7 +8,7 @@ _adrTextureHigh .dsb 256
 _adrTextureLow .dsb 256
 
 _borderTables .dsb 1014 ;; 13*78
-
+_diffimg       .dsb 8672
 .text
 
 ;; #include "image_s.s"
