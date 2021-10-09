@@ -49,7 +49,23 @@ extern unsigned char theColorRight;
 char IsHires=1;
 unsigned char running ;
 unsigned char refreshNeeded = 1;
+
 unsigned char scene_number = 0;
+unsigned char has_key   =   0;
+
+unsigned char diff_index;
+int nbval, diffidx;
+void apply_diff(){
+
+    
+    nbval = diffimg[1]*256 + diffimg[2]; // 508 ; //(int)(((int)diffimg[1])<<8 + diffimg[2]);
+    for (diffidx=0; diffidx< nbval; diffidx++){
+        theX = diffimg[(diffidx*3)+3];
+        theY = diffimg[(diffidx*3)+3+1];
+        {asm(":debappdiff:");}
+        texture_PANO[theX * IMAGE_HEIGHT + theY] = diffimg[(diffidx*3)+3+2];
+    }
+}
 
 // signed char latitude, longitude;
 
@@ -104,6 +120,8 @@ void SwitchToHires()
 
 
 void keyPressed(unsigned char c){
+    theX = c;
+    {asm("lda _theX: breakkey:");}
     if (c == KEY_DOWN ) {
         if (rotX < 2*ANGLE_INCREMENT){
             rotX += ANGLE_INCREMENT;
@@ -121,6 +139,13 @@ void keyPressed(unsigned char c){
             rotZ = -8*ANGLE_INCREMENT;
         }
         refreshNeeded   = 1;
+    } else if (c == KEY_G) {
+        if ((scene_number == 0) ){
+            has_key = 1;
+            diff_index = 0;
+            apply_diff();
+            refreshNeeded   = 1;
+        } 
     } else if (c == KEY_RIGHT) {
         if (rotZ > -8*ANGLE_INCREMENT){
             rotZ -= ANGLE_INCREMENT;
@@ -136,6 +161,11 @@ void keyPressed(unsigned char c){
         } else if ((scene_number == 1) && ((unsigned char)rotZ==0x80) && (rotX==0x00)) { 
             scene_number            = 0;
             LoadFileAt(LOADER_PANO_01,texture_PANO);
+            LoadFileAt(LOADER_DIFFIMG, diffimg);
+            if (has_key != 0) {
+                diff_index = 0;
+                apply_diff();
+            }
             refreshNeeded           = 1;
         }
     } else if (c == KEY_ESCAPE) {
