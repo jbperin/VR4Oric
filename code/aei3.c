@@ -8,7 +8,7 @@ extern unsigned char   dda3CurrentValue;
 extern unsigned char   dda3EndValue;
 extern unsigned char   dda3NbVal;
 extern signed char     dda3CurrentError;
-void            (*dda3StepFunction)(); 
+void                   (*dda3StepFunction)(); 
 extern signed char     dda3Increment;
 
 

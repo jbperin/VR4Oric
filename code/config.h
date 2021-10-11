@@ -9,4 +9,7 @@
 // #define USE_C_COLORLEFTTEXEL
 // #define USE_SLOW_TEXEL
 // #define __USE_C_DDA__
+
+#undef __USE_PURE_ASM_PROJECT__
+
 #endif // CONFIG_H
