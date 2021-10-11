@@ -112,6 +112,8 @@ void SwitchToText()
     *((char*)0xbfdf) = 26;														
     *((char*)0xbbd0) = 0x10;
     *((char*)0xbbd1) = 0x07;
+    *((char*)0xbbf8) = 0x10;
+    *((char*)0xbbf9) = 0x07;
     *((char*)0xbf68) = 0x10;
     *((char*)0xbf69) = 0x07;
     *((char*)0xbf90) = 0x10;
@@ -149,7 +151,7 @@ void SwitchToHires()
 void keyPressed(unsigned char c){
     theX = c;
     waiting = 0;
-    {asm("lda _theX: breakkey:");}
+    // {asm("lda _theX: breakkey:");}
     if (c == KEY_DOWN ) {
         if (rotX < 2*ANGLE_INCREMENT){
             rotX += ANGLE_INCREMENT;
@@ -176,7 +178,9 @@ void keyPressed(unsigned char c){
         } 
     } else if (c == KEY_H) {
         SwitchToText();
-        AdvancedPrint(10, 25, " t1to");
+        AdvancedPrint(2, 2, "Colorfull 360 degrees 3D for Oric");
+        AdvancedPrint(2, 3, "Tech Demo by Jean-Baptiste PERIN");
+        AdvancedPrint(2, 26, "Press a key to game");
         running = 0;
 //        refreshNeeded   = 1;
     } else if (c == KEY_RIGHT) {
@@ -187,7 +191,9 @@ void keyPressed(unsigned char c){
         }
         refreshNeeded   = 1;
     } else if (c == KEY_SPACE) {
-        if ((scene_number == 0) && (has_key != 0) && (rotZ==0x00) && (rotX==0x00)){
+        if ((scene_number == 0) && (has_key == 0) && (rotZ==0x00) && (rotX==0x00)){
+            AdvancedPrint(2, 26, "You need a key yo open this door.");
+        } else if ((scene_number == 0) && (has_key != 0) && (rotZ==0x00) && (rotX==0x00)){
             scene_number            = 1;
             LoadFileAt(LOADER_PANO_02,texture_PANO);
             refreshNeeded           = 1;
@@ -746,7 +752,7 @@ void main()
 
 
 
-    {asm(":break01:")}
+    
 
 
     kernelInit();
@@ -760,8 +766,9 @@ void main()
 
     while (1) {
         SwitchToText();
-        AdvancedPrint(2, 2, message);
-        AdvancedPrint(2, 26, message);
+        AdvancedPrint(2, 2, "Colorfull 360 degrees 3D for Oric");
+        AdvancedPrint(2, 3, "Tech Demo by Jean-Baptiste PERIN");
+        AdvancedPrint(2, 26, "Press a key to game");
         waiting = 1;
         while (waiting) {
 
@@ -785,7 +792,28 @@ void main()
                 project2ScreenASM ();
                 // project2ScreenOPTIM ();
                 // project2Screen ();
-                AdvancedPrint(2, 26, " running");
+
+                AdvancedPrint(2, 26, "                                  ");
+
+                if ((scene_number == 0))
+                {                
+                    if ((rotZ <= 0x60 ) && (rotZ >= 0x50) 
+                        && (rotX >= 0x10) && (rotX <= 0x20)
+                        && (! has_key)) {
+                        AdvancedPrint(2, 26, "You can [G]rab this key");
+                    } else if ((rotZ == 0x00 ) && (rotX == 0x00) ) {
+                        AdvancedPrint(2, 26, "There's a door here ..");
+                    }
+
+                }
+                if ((scene_number == 1)){
+                    {asm(":break01:")}
+                    if ((rotZ == ((signed char)0x80) ) && (rotX == 0x00) ) {
+                        AdvancedPrint(2, 26, "There's a door here ..");
+                    }
+                }
+
+
 
                 refreshNeeded = 0;
             }
