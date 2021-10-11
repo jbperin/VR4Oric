@@ -14,9 +14,6 @@ _theX               .dsb 1
 _theY               .dsb 1
 _myTmp              .dsb 2
 
-
-
-
 .text 
 
 #ifdef __USE_PURE_ASM_PROJECT__

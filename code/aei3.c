@@ -18,7 +18,7 @@ void dda3Step0(){
 
     dda3CurrentValue         += dda3Increment;
     // asm ("lda _dda3CurrentValue: clc: adc _dda3Increment: sta _dda3CurrentValue");
-    // dda3Step0ASM();
+
 }
 
 void dda3Step1(){
@@ -36,7 +36,6 @@ void dda3Step1(){
     //     ":end_loop:.):"
     //     ":lda _dda3CurrentError: clc: adc _dda3NbVal: sta _dda3CurrentError"
     // );
-    // dda3Step1ASM();
 }
 void dda3Step2(){
 
@@ -49,7 +48,6 @@ void dda3Step2(){
     //     "lda _dda3CurrentError: sec: sbc _dda3NbVal: sta _dda3CurrentError:"
     //     ":.(:bmi updateError: asl: cmp _dda3NbStep: bcs  done :updateError: lda _dda3CurrentError: clc: adc _dda3NbStep: sta _dda3CurrentError: lda _dda3CurrentValue:clc: adc _dda3Increment: sta _dda3CurrentValue: done:.):"
     // );
-    // dda3Step2ASM();
 }
 
 void dda3Init(){
@@ -79,19 +77,3 @@ void dda3Init(){
 }
 #endif // __USE_C_DDA__
 
-// void main () {
-//     printf ("coucou\n");
-
-//     dda3StartValue       = 30;
-//     dda3EndValue         = 7;
-
-//     dda3NbStep           = 5;
-
-//     dda3Init();
-//     printf ("%d\n", dda3CurrentValue);
-//     while (dda3CurrentValue != dda3EndValue) {
-//         (*dda3StepFunction)(); 
-//         printf ("%d\n", dda3CurrentValue);
-//     }
-
-// }

@@ -8,8 +8,10 @@
 // #define USE_C_COLORRIGHTTEXEL
 // #define USE_C_COLORLEFTTEXEL
 // #define USE_SLOW_TEXEL
-// #define __USE_C_DDA__
+#define __USE_C_DDA__
 
-#undef __USE_PURE_ASM_PROJECT__
+#undef __USE_C_ASM_RENDER__
+#define __USE_PURE_C_RENDER__
+#undef __USE_PURE_ASM_RENDER__
 
 #endif // CONFIG_H

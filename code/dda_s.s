@@ -1,45 +1,4 @@
 
-.zero
-
-_dda1NbStep         .dsb 1
-_dda1StartValue     .dsb 1
-
-_dda1CurrentValue   .dsb 1
-_dda1EndValue       .dsb 1
-_dda1NbVal          .dsb 1
-_dda1CurrentError   .dsb 1
-;; _dda1StepFunction   .dsb 2 
-_dda1Increment      .dsb 1
-
-_dda2NbStep         .dsb 1
-_dda2StartValue     .dsb 1
-
-_dda2CurrentValue   .dsb 1
-_dda2EndValue       .dsb 1
-_dda2NbVal          .dsb 1
-_dda2CurrentError   .dsb 1
-;; _dda2StepFunction   .dsb 2 
-;; _dda2Increment      .dsb 1
-
-_dda3NbStep         .dsb 1
-_dda3StartValue     .dsb 1
-
-_dda3CurrentValue   .dsb 1
-_dda3EndValue       .dsb 1
-_dda3NbVal          .dsb 1
-_dda3CurrentError   .dsb 1
-;; _dda3StepFunction   .dsb 2 
-_dda3Increment      .dsb 1
-
-_dda4NbStep         .dsb 1
-_dda4StartValue     .dsb 1
-
-_dda4CurrentValue   .dsb 1
-_dda4EndValue       .dsb 1
-_dda4NbVal          .dsb 1
-_dda4CurrentError   .dsb 1
-;; _dda4StepFunction   .dsb 2 
-;; _dda4Increment      .dsb 1
 
 
 ; unsigned char   ddaNbStep;
@@ -92,6 +51,50 @@ _dda4CurrentError   .dsb 1
 ;         ddaCurrentValue     += ddaIncrement;
 ;     }
 ; }
+
+
+.zero
+
+_dda1NbStep         .dsb 1
+_dda1StartValue     .dsb 1
+
+_dda1CurrentValue   .dsb 1
+_dda1EndValue       .dsb 1
+_dda1NbVal          .dsb 1
+_dda1CurrentError   .dsb 1
+;; _dda1StepFunction   .dsb 2 
+_dda1Increment      .dsb 1
+
+_dda2NbStep         .dsb 1
+_dda2StartValue     .dsb 1
+
+_dda2CurrentValue   .dsb 1
+_dda2EndValue       .dsb 1
+_dda2NbVal          .dsb 1
+_dda2CurrentError   .dsb 1
+;; _dda2StepFunction   .dsb 2 
+;; _dda2Increment      .dsb 1
+
+_dda3NbStep         .dsb 1
+_dda3StartValue     .dsb 1
+
+_dda3CurrentValue   .dsb 1
+_dda3EndValue       .dsb 1
+_dda3NbVal          .dsb 1
+_dda3CurrentError   .dsb 1
+;; _dda3StepFunction   .dsb 2 
+_dda3Increment      .dsb 1
+
+_dda4NbStep         .dsb 1
+_dda4StartValue     .dsb 1
+
+_dda4CurrentValue   .dsb 1
+_dda4EndValue       .dsb 1
+_dda4NbVal          .dsb 1
+_dda4CurrentError   .dsb 1
+;; _dda4StepFunction   .dsb 2 
+;; _dda4Increment      .dsb 1
+
 
 .text
 
