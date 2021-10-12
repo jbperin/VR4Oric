@@ -141,7 +141,8 @@ dda3InitDone_4321_00:
         ;; ==================
 
 ;; 1.3 LOOP OVER HIGH LINES 
-        lda #((SCREEN_HEIGHT/4)-1)
+        ;; lda #((SCREEN_HEIGHT/4)-1)
+        lda #(SCREEN_HEIGHT/2)
         sta _idxLin
         ;; for (idxLin=0; idxLin< SCREEN_HEIGHT/2; idxLin+=2)
 loopOnIdxLin_01
@@ -168,7 +169,7 @@ loopOnIdxLin_01
             lda _dda1StepFunction : sta _myTmp : lda _dda1StepFunction+1 : sta _myTmp+1 :
             .( : lda _myTmp : sta call+1: lda _myTmp+1 : sta call+2 : ldy #0 :call : jsr 0000 : .) :
             lda _dda3StepFunction : sta _myTmp : lda _dda3StepFunction+1 : sta _myTmp+1 :
-        	.( : lda _myTmp : sta call+1: lda _myTmp+1 : sta call+2 : ldy #0 :call : jsr 0000 : .) :            lda _dda4CurrentError: sec: sbc _dda4NbVal: sta _dda4CurrentError:
+        	.( : lda _myTmp : sta call+1: lda _myTmp+1 : sta call+2 : ldy #0 :call : jsr 0000 : .) :
             lda _dda2CurrentError: sec: sbc _dda2NbVal: sta _dda2CurrentError:
             :.(:bmi updateError: asl: cmp _dda2NbStep: bcs  done :updateError: lda _dda2CurrentError: clc: adc _dda2NbStep: sta _dda2CurrentError: inc _dda2CurrentValue: done:.):
             lda _dda4CurrentError: sec: sbc _dda4NbVal: sta _dda4CurrentError:
@@ -212,7 +213,7 @@ loopOnIdxLin_01
             lda _dda1StepFunction : sta _myTmp : lda _dda1StepFunction+1 : sta _myTmp+1 :
             .( : lda _myTmp : sta call+1: lda _myTmp+1 : sta call+2 : ldy #0 :call : jsr 0000 : .) :
             lda _dda3StepFunction : sta _myTmp : lda _dda3StepFunction+1 : sta _myTmp+1 :
-        	.( : lda _myTmp : sta call+1: lda _myTmp+1 : sta call+2 : ldy #0 :call : jsr 0000 : .) :            lda _dda4CurrentError: sec: sbc _dda4NbVal: sta _dda4CurrentError:
+        	.( : lda _myTmp : sta call+1: lda _myTmp+1 : sta call+2 : ldy #0 :call : jsr 0000 : .) :
             lda _dda2CurrentError: sec: sbc _dda2NbVal: sta _dda2CurrentError:
             :.(:bmi updateError: asl: cmp _dda2NbStep: bcs  done :updateError: lda _dda2CurrentError: clc: adc _dda2NbStep: sta _dda2CurrentError: inc _dda2CurrentValue: done:.):
             lda _dda4CurrentError: sec: sbc _dda4NbVal: sta _dda4CurrentError:
@@ -220,7 +221,8 @@ loopOnIdxLin_01
 
 
         dec _idxLin
-        bmi endloopOnIdxLin_01
+        dec _idxLin
+        beq endloopOnIdxLin_01
         jmp loopOnIdxLin_01
 endloopOnIdxLin_01        
         ;; }
@@ -293,7 +295,7 @@ dda3InitDone_8765_00:
 
 ;; 1.5 LOOP OVER LOW LINES
         ;; ==================
-        lda #((SCREEN_HEIGHT/4)-1)
+        lda #(SCREEN_HEIGHT/2)
         sta _idxLin
         ;; for (idxLin=SCREEN_HEIGHT/2; idxLin< SCREEN_HEIGHT; idxLin+=2) {
 loopOnIdxLin_02
@@ -320,10 +322,14 @@ loopOnIdxLin_02
 ;; 1.5.2 DDAs STEP
             lda _dda1StepFunction : sta _myTmp : lda _dda1StepFunction+1 : sta _myTmp+1 :
             .( : lda _myTmp : sta call+1: lda _myTmp+1 : sta call+2 : ldy #0 :call : jsr 0000 : .) :
-            lda _dda3StepFunction : sta _myTmp : lda _dda3StepFunction+1 : sta _myTmp+1 :
-        	.( : lda _myTmp : sta call+1: lda _myTmp+1 : sta call+2 : ldy #0 :call : jsr 0000 : .) :            lda _dda4CurrentError: sec: sbc _dda4NbVal: sta _dda4CurrentError:
+            
             lda _dda2CurrentError: sec: sbc _dda2NbVal: sta _dda2CurrentError:
             :.(:bmi updateError: asl: cmp _dda2NbStep: bcs  done :updateError: lda _dda2CurrentError: clc: adc _dda2NbStep: sta _dda2CurrentError: inc _dda2CurrentValue: done:.):
+
+            lda _dda3StepFunction : sta _myTmp : lda _dda3StepFunction+1 : sta _myTmp+1 :
+        	.( : lda _myTmp : sta call+1: lda _myTmp+1 : sta call+2 : ldy #0 :call : jsr 0000 : .) : 
+            ;; lda _dda4CurrentError: sec: sbc _dda4NbVal: sta _dda4CurrentError:
+            
             lda _dda4CurrentError: sec: sbc _dda4NbVal: sta _dda4CurrentError:
             :.(:bmi updateError: asl: cmp _dda4NbStep: bcs  done :updateError: lda _dda4CurrentError: clc: adc _dda4NbStep: sta _dda4CurrentError: inc _dda4CurrentValue: done:.):
 ;; 1.5.3 BOTTOM PIXEL 
@@ -348,15 +354,16 @@ loopOnIdxLin_02
 ;; 1.5.4 DDAs STEP
             lda _dda1StepFunction : sta _myTmp : lda _dda1StepFunction+1 : sta _myTmp+1 :
             .( : lda _myTmp : sta call+1: lda _myTmp+1 : sta call+2 : ldy #0 :call : jsr 0000 : .) :
-            lda _dda3StepFunction : sta _myTmp : lda _dda3StepFunction+1 : sta _myTmp+1 :
-        	.( : lda _myTmp : sta call+1: lda _myTmp+1 : sta call+2 : ldy #0 :call : jsr 0000 : .) :            lda _dda4CurrentError: sec: sbc _dda4NbVal: sta _dda4CurrentError:
             lda _dda2CurrentError: sec: sbc _dda2NbVal: sta _dda2CurrentError:
             :.(:bmi updateError: asl: cmp _dda2NbStep: bcs  done :updateError: lda _dda2CurrentError: clc: adc _dda2NbStep: sta _dda2CurrentError: inc _dda2CurrentValue: done:.):
+            lda _dda3StepFunction : sta _myTmp : lda _dda3StepFunction+1 : sta _myTmp+1 :
+        	.( : lda _myTmp : sta call+1: lda _myTmp+1 : sta call+2 : ldy #0 :call : jsr 0000 : .) :
             lda _dda4CurrentError: sec: sbc _dda4NbVal: sta _dda4CurrentError:
             :.(:bmi updateError: asl: cmp _dda4NbStep: bcs  done :updateError: lda _dda4CurrentError: clc: adc _dda4NbStep: sta _dda4CurrentError: inc _dda4CurrentValue: done:.):
 
         dec _idxLin
-        bmi endloopOnIdxLin_02
+        dec _idxLin
+        beq endloopOnIdxLin_02
         jmp loopOnIdxLin_02
 endloopOnIdxLin_02
         ;; }
