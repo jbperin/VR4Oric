@@ -1,8 +1,4 @@
-// Generated file. Do not modify by hand.
-// To change values, edit config.py and regenerate with:
-// python tools\generateConstants.py > proto\c\constants.h
 
-//((unsigned int)0xA000)
 #define HIRES_SCREEN_ADDRESS            40960
 
 #define NEXT_SCANLINE_INCREMENT         40
