@@ -141,8 +141,7 @@ dda3InitDone_4321_00:
         ;; ==================
 
 ;; 1.3 LOOP OVER HIGH LINES 
-        ;; lda #((SCREEN_HEIGHT/4)-1)
-        lda #(SCREEN_HEIGHT/2)
+        lda #((SCREEN_HEIGHT/4)-1)
         sta _idxLin
         ;; for (idxLin=0; idxLin< SCREEN_HEIGHT/2; idxLin+=2)
 loopOnIdxLin_01
@@ -221,8 +220,7 @@ loopOnIdxLin_01
 
 
         dec _idxLin
-        dec _idxLin
-        beq endloopOnIdxLin_01
+        bmi endloopOnIdxLin_01
         jmp loopOnIdxLin_01
 endloopOnIdxLin_01        
         ;; }
@@ -295,7 +293,7 @@ dda3InitDone_8765_00:
 
 ;; 1.5 LOOP OVER LOW LINES
         ;; ==================
-        lda #(SCREEN_HEIGHT/2)
+        lda #((SCREEN_HEIGHT/4)-1)
         sta _idxLin
         ;; for (idxLin=SCREEN_HEIGHT/2; idxLin< SCREEN_HEIGHT; idxLin+=2) {
 loopOnIdxLin_02
@@ -362,8 +360,7 @@ loopOnIdxLin_02
             :.(:bmi updateError: asl: cmp _dda4NbStep: bcs  done :updateError: lda _dda4CurrentError: clc: adc _dda4NbStep: sta _dda4CurrentError: inc _dda4CurrentValue: done:.):
 
         dec _idxLin
-        dec _idxLin
-        beq endloopOnIdxLin_02
+        bmi endloopOnIdxLin_02
         jmp loopOnIdxLin_02
 endloopOnIdxLin_02
         ;; }
