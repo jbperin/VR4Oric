@@ -16,7 +16,7 @@ _myTmp              .dsb 2
 
 .text 
 
-#ifdef __USE_PURE_ASM_PROJECT__
+#ifdef __USE_PURE_ASM_RENDER__
 _project2ScreenPureASM:.(
 
 
