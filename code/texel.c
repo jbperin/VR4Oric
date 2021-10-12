@@ -4,10 +4,9 @@
 
 #include "tabTexelColor.h"
 
-unsigned char *theAdr;
 
 
-#ifdef USE_SLOW_TEXEL
+#ifdef __USE_SLOW_TEXEL__
 unsigned int multi40[] = {
         0, 40, 80, 120, 160, 200, 240, 280, 320, 360, 400, 440, 480, 520, 560, 600
         , 640, 680, 720, 760, 800, 840, 880, 920, 960, 1000, 1040, 1080, 1120, 1160, 1200, 1240
@@ -50,4 +49,4 @@ void colorSquare(unsigned char line, unsigned char column, unsigned char theColo
         }
     }
 }
-#endif // USE_SLOW_TEXEL
+#endif // __USE_SLOW_TEXEL__

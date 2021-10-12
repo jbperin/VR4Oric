@@ -3,7 +3,7 @@
 ;; Use script clearViewport.py
 ;; [ref config_viewport] 
 #include "config.h"
-#ifndef  USE_C_VIEWPORT
+#ifndef  __USE_CLEAR_VIEWPORT__
 _clearViewport
 .(
 	lda #$40	; pixel eteint
@@ -208,5 +208,5 @@ sta HIRES_SCREEN_ADDRESS + VIEWPORT_START_COLUMN/2 + NEXT_SCANLINE_INCREMENT * (
 clearViewportDone    
 	rts
 .)
-#endif // USE_C_VIEWPORT
+#endif // __USE_CLEAR_VIEWPORT__
 

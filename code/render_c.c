@@ -1,5 +1,15 @@
 #include "config.h"
 
+
+extern unsigned char idxCol, idxLin;
+
+extern unsigned char theX, theY;
+extern unsigned char *theBaseAdr;
+extern unsigned char *wrtAdr;
+extern unsigned char theColorLeft;
+extern unsigned char theColorRight;
+
+
 #ifdef __USE_PURE_C_RENDER__
 void project2Screen () {
 
@@ -194,11 +204,6 @@ void project2Screen () {
 
 
 #ifdef __USE_C_ASM_RENDER__
-
-// ==============================
-// ==============================
-// ==============================
-// ==============================
 
 void project2ScreenCASM () {
     theBaseAdr      = (unsigned char *)(DEFAULT_BASE_ADRESS);

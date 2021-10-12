@@ -7,8 +7,9 @@
 ; Idea: Dbug                                 
 ; Main code: Twiligthe                       
 ; Adaptation & final implementation: Chema   
-;                                            
-; 2010                                        
+; Add Circular buffer handling: JiBe          
+;                                 
+; 2020                                        
 
 #include "via.h"
 
