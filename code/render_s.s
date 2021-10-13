@@ -165,10 +165,8 @@ loopOnIdxLin_01
             ldy _theColorLeft: lda _tabLeftGreen,y: ora _tabRightGreen,x: ldy #40: sta (_wrtAdr),y:
             ldy _theColorLeft: lda _tabLeftBlue,y:  ora _tabRightBlue,x: ldy #80: sta (_wrtAdr),y:
 ;; 1.3.2 DDAs STEP
-            lda _dda1StepFunction : sta _myTmp : lda _dda1StepFunction+1 : sta _myTmp+1 :
-            .( : lda _myTmp : sta call+1: lda _myTmp+1 : sta call+2 : ldy #0 :call : jsr 0000 : .) :
-            lda _dda3StepFunction : sta _myTmp : lda _dda3StepFunction+1 : sta _myTmp+1 :
-        	.( : lda _myTmp : sta call+1: lda _myTmp+1 : sta call+2 : ldy #0 :call : jsr 0000 : .) :
+            .( : lda _dda1StepFunction : sta call+1: lda _dda1StepFunction+1 : sta call+2 : call : jsr 0000 : .) :
+        	.( : lda _dda3StepFunction : sta call+1: lda _dda3StepFunction+1 : sta call+2 : call : jsr 0000 : .) :
             lda _dda2CurrentError: sec: sbc _dda2NbVal: sta _dda2CurrentError:
             :.(:bmi updateError: asl: cmp _dda2NbStep: bcs  done :updateError: lda _dda2CurrentError: clc: adc _dda2NbStep: sta _dda2CurrentError: inc _dda2CurrentValue: done:.):
             lda _dda4CurrentError: sec: sbc _dda4NbVal: sta _dda4CurrentError:
@@ -209,10 +207,8 @@ loopOnIdxLin_01
             ldy _theColorLeft: lda _tabLeftBlue,y:  ora _tabRightBlue,x: ldy #200: sta (_wrtAdr),y:
             lda _wrtAdr: clc: adc #240: sta _wrtAdr: .(: bcc skip:    inc _wrtAdr+1: skip: .):
 ;; 1.3.4 DDAs STEP
-            lda _dda1StepFunction : sta _myTmp : lda _dda1StepFunction+1 : sta _myTmp+1 :
-            .( : lda _myTmp : sta call+1: lda _myTmp+1 : sta call+2 : ldy #0 :call : jsr 0000 : .) :
-            lda _dda3StepFunction : sta _myTmp : lda _dda3StepFunction+1 : sta _myTmp+1 :
-        	.( : lda _myTmp : sta call+1: lda _myTmp+1 : sta call+2 : ldy #0 :call : jsr 0000 : .) :
+            .( : lda _dda1StepFunction : sta call+1: lda _dda1StepFunction+1 : sta call+2 : call : jsr 0000 : .) :
+        	.( : lda _dda3StepFunction : sta call+1: lda _dda3StepFunction+1 : sta call+2 : :call : jsr 0000 : .) :
             lda _dda2CurrentError: sec: sbc _dda2NbVal: sta _dda2CurrentError:
             :.(:bmi updateError: asl: cmp _dda2NbStep: bcs  done :updateError: lda _dda2CurrentError: clc: adc _dda2NbStep: sta _dda2CurrentError: inc _dda2CurrentValue: done:.):
             lda _dda4CurrentError: sec: sbc _dda4NbVal: sta _dda4CurrentError:
@@ -318,15 +314,12 @@ loopOnIdxLin_02
             ldy _theColorLeft: lda _tabLeftGreen,y: ora _tabRightGreen,x: ldy #40: sta (_wrtAdr),y:
             ldy _theColorLeft: lda _tabLeftBlue,y:  ora _tabRightBlue,x: ldy #80: sta (_wrtAdr),y:
 ;; 1.5.2 DDAs STEP
-            lda _dda1StepFunction : sta _myTmp : lda _dda1StepFunction+1 : sta _myTmp+1 :
-            .( : lda _myTmp : sta call+1: lda _myTmp+1 : sta call+2 : ldy #0 :call : jsr 0000 : .) :
+            .( : lda _dda1StepFunction : sta call+1: lda _dda1StepFunction+1 : sta call+2: call : jsr 0000 : .) :
             
             lda _dda2CurrentError: sec: sbc _dda2NbVal: sta _dda2CurrentError:
             :.(:bmi updateError: asl: cmp _dda2NbStep: bcs  done :updateError: lda _dda2CurrentError: clc: adc _dda2NbStep: sta _dda2CurrentError: inc _dda2CurrentValue: done:.):
 
-            lda _dda3StepFunction : sta _myTmp : lda _dda3StepFunction+1 : sta _myTmp+1 :
-        	.( : lda _myTmp : sta call+1: lda _myTmp+1 : sta call+2 : ldy #0 :call : jsr 0000 : .) : 
-            ;; lda _dda4CurrentError: sec: sbc _dda4NbVal: sta _dda4CurrentError:
+        	.( : lda _dda3StepFunction : sta call+1: lda _dda3StepFunction+1 : sta call+2 : call : jsr 0000 : .) : 
             
             lda _dda4CurrentError: sec: sbc _dda4NbVal: sta _dda4CurrentError:
             :.(:bmi updateError: asl: cmp _dda4NbStep: bcs  done :updateError: lda _dda4CurrentError: clc: adc _dda4NbStep: sta _dda4CurrentError: inc _dda4CurrentValue: done:.):
@@ -350,12 +343,10 @@ loopOnIdxLin_02
             ldy _theColorLeft: lda _tabLeftBlue,y:  ora _tabRightBlue,x: ldy #200: sta (_wrtAdr),y:
             lda _wrtAdr: clc: adc #240: sta _wrtAdr: .(: bcc skip:    inc _wrtAdr+1: skip: .):
 ;; 1.5.4 DDAs STEP
-            lda _dda1StepFunction : sta _myTmp : lda _dda1StepFunction+1 : sta _myTmp+1 :
-            .( : lda _myTmp : sta call+1: lda _myTmp+1 : sta call+2 : ldy #0 :call : jsr 0000 : .) :
+            .( : lda _dda1StepFunction : sta call+1: lda _dda1StepFunction+1 : sta call+2 : call : jsr 0000 : .) :
             lda _dda2CurrentError: sec: sbc _dda2NbVal: sta _dda2CurrentError:
             :.(:bmi updateError: asl: cmp _dda2NbStep: bcs  done :updateError: lda _dda2CurrentError: clc: adc _dda2NbStep: sta _dda2CurrentError: inc _dda2CurrentValue: done:.):
-            lda _dda3StepFunction : sta _myTmp : lda _dda3StepFunction+1 : sta _myTmp+1 :
-        	.( : lda _myTmp : sta call+1: lda _myTmp+1 : sta call+2 : ldy #0 :call : jsr 0000 : .) :
+        	.( : lda _dda3StepFunction : sta call+1: lda _dda3StepFunction+1 : sta call+2 :call : jsr 0000 : .) :
             lda _dda4CurrentError: sec: sbc _dda4NbVal: sta _dda4CurrentError:
             :.(:bmi updateError: asl: cmp _dda4NbStep: bcs  done :updateError: lda _dda4CurrentError: clc: adc _dda4NbStep: sta _dda4CurrentError: inc _dda4CurrentValue: done:.):
 
