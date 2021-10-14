@@ -21,70 +21,6 @@ _myTmp              .dsb 2
 
 
 
-;;     ___     ___    _    _ 
-;;    /   \   /   \  /_\  / |
-;;   / /\ /  / /\ / //_\\ | |
-;;  / /_//  / /_// /  _  \| |
-;; /___,'  /___,'  \_/ \_/|_|
-;; dda1Step                          
-;; patch_dda1StepFunction_HighLine_00
-;; jmp dda1Step2ASM_HighLine_00
-;; 
-;; 
-;; dda1Step0ASM_HighLine_00
-;; patch_dda1Step0ASM_HighLine_00
-;;     inc         _dda1CurrentValue
-;; jmp end_dda1Step2ASM_HighLine_00_SwitchCase
-;; 
-;; 
-;; dda1Step1ASM_HighLine_00
-;; 
-;; loop_dda1Step1ASM_HighLine_00
-;;     lda         _dda1CurrentError
-;;     bmi         end_loop_dda1Step1ASM_HighLine_00
-;;     asl         
-;;     cmp         _dda1NbStep
-;;     bcc         end_loop_dda1Step1ASM_HighLine_00
-;;             lda         _dda1CurrentError
-;;             sec ;; FIXME : this sec is useless
-;;             sbc         _dda1NbStep
-;;             sta         _dda1CurrentError
-;;             ;; TODO: OPTIM: replace by patch inc/dec instruction
-;; patch_dda1Step1ASM_HighLine_00
-;;             inc         _dda1CurrentValue
-;;     jmp         loop_dda1Step1ASM_HighLine_00
-;; end_loop_dda1Step1ASM_HighLine_00
-;;     lda         _dda1CurrentError
-;;     clc
-;;     adc         _dda1NbVal
-;;     sta         _dda1CurrentError
-;; jmp end_dda1Step2ASM_HighLine_00_SwitchCase
-;; 
-;; dda1Step2ASM_HighLine_00
-;;     lda         _dda1CurrentError
-;;     sec
-;;     sbc         _dda1NbVal
-;;     sta         _dda1CurrentError
-;;     bmi         updateError_dda1Step2ASM_HighLine_00
-;;     asl
-;;     cmp         _dda1NbStep
-;;     bcc         updateError_dda1Step2ASM_HighLine_00
-;;     jmp         end_dda1Step2ASM_HighLine_00_SwitchCase
-;; updateError_dda1Step2ASM_HighLine_00
-;;             lda         _dda1CurrentError
-;;             clc
-;;             adc         _dda1NbStep
-;;             sta         _dda1CurrentError
-;; patch_dda1Step2ASM_HighLine_00            
-;;             inc         _dda1CurrentValue
-;;             
-;; end_dda1Step2ASM_HighLine_00_SwitchCase
-
-
-
-
-
-
 ;;    ___                 _              _   
 ;;   / _ \ _ __   ___    (_)  ___   ___ | |_ 
 ;;  / /_)/| '__| / _ \   | | / _ \ / __|| __|
@@ -138,12 +74,16 @@ loopOnIdxCol_01
         lda _dda1StartValue:cmp _dda1EndValue:bcs else:
             lda _dda1EndValue: 
             sec: sbc _dda1StartValue: sta _dda1NbVal:
-            lda #1: sta _dda1Increment:
-            lda #$E6: sta    patch_dda1Step0ASM_HighLine_00: sta patch_dda1Step1ASM_HighLine_00: sta patch_dda1Step2ASM_HighLine_00
+            ;; lda #1: sta _dda1Increment:
+            lda #$E6: 
+            sta    patch_dda1Step0ASM_HighLine_00: sta patch_dda1Step1ASM_HighLine_00: sta patch_dda1Step2ASM_HighLine_00
+            sta    patch_dda1Step0ASM_HighLine_01: sta patch_dda1Step1ASM_HighLine_01: sta patch_dda1Step2ASM_HighLine_01
         jmp endif:else:
             sbc _dda1EndValue: sta _dda1NbVal:
-            lda #$FF: sta _dda1Increment:
-            lda #$C6: sta    patch_dda1Step0ASM_HighLine_00: sta patch_dda1Step1ASM_HighLine_00: sta patch_dda1Step2ASM_HighLine_00
+            ;; lda #$FF: sta _dda1Increment:
+            lda #$C6: 
+            sta    patch_dda1Step0ASM_HighLine_00: sta patch_dda1Step1ASM_HighLine_00: sta patch_dda1Step2ASM_HighLine_00
+            sta    patch_dda1Step0ASM_HighLine_01: sta patch_dda1Step1ASM_HighLine_01: sta patch_dda1Step2ASM_HighLine_01
         :endif:.):
 
 
@@ -153,44 +93,62 @@ loopOnIdxCol_01
         bcs NbStepGreaterThanNbVal_1234_00:
             lda _dda1NbVal:
             sta _dda1CurrentError:
-            lda #<(_dda1Step1ASM):
-            sta _dda1StepFunction:
-            lda #>(_dda1Step1ASM):
-            sta _dda1StepFunction+1:
+
+            ;; lda #<(_dda1Step1ASM):
+            ;; sta _dda1StepFunction:
+            ;; lda #>(_dda1Step1ASM):
+            ;; sta _dda1StepFunction+1:
 
             lda #<(dda1Step1ASM_HighLine_00)
             sta patch_dda1StepFunction_HighLine_00 + 1
             lda #>(dda1Step1ASM_HighLine_00)
             sta patch_dda1StepFunction_HighLine_00 + 2
 
+            lda #<(dda1Step1ASM_HighLine_01)
+            sta patch_dda1StepFunction_HighLine_01 + 1
+            lda #>(dda1Step1ASM_HighLine_01)
+            sta patch_dda1StepFunction_HighLine_01 + 2
+
         jmp dda1InitDone_1234_00:
         NbStepGreaterThanNbVal_1234_00    :
             lda _dda1NbStep:
             sta _dda1CurrentError:
-            lda #<(_dda1Step2ASM):
-            sta _dda1StepFunction:
-            lda #>(_dda1Step2ASM):
-            sta _dda1StepFunction+1:
+
+            ;; lda #<(_dda1Step2ASM):
+            ;; sta _dda1StepFunction:
+            ;; lda #>(_dda1Step2ASM):
+            ;; sta _dda1StepFunction+1:
 
             lda #<(dda1Step2ASM_HighLine_00)
             sta patch_dda1StepFunction_HighLine_00 + 1
             lda #>(dda1Step2ASM_HighLine_00)
             sta patch_dda1StepFunction_HighLine_00 + 2
 
+            lda #<(dda1Step2ASM_HighLine_01)
+            sta patch_dda1StepFunction_HighLine_01 + 1
+            lda #>(dda1Step2ASM_HighLine_01)
+            sta patch_dda1StepFunction_HighLine_01 + 2
+
 
         jmp dda1InitDone_1234_00:
         NbStepEqualsNbVal_1234_00    :
             lda _dda1EndValue:
             sta _dda1CurrentError:
-            lda #<(_dda1Step0ASM):
-            sta _dda1StepFunction:
-            lda #>(_dda1Step0ASM):
-            sta _dda1StepFunction+1:
+
+            ;; lda #<(_dda1Step0ASM):
+            ;; sta _dda1StepFunction:
+            ;; lda #>(_dda1Step0ASM):
+            ;; sta _dda1StepFunction+1:
 
             lda #<(dda1Step0ASM_HighLine_00)
             sta patch_dda1StepFunction_HighLine_00 + 1
             lda #>(dda1Step0ASM_HighLine_00)
             sta patch_dda1StepFunction_HighLine_00 + 2
+
+            lda #<(dda1Step0ASM_HighLine_01)
+            sta patch_dda1StepFunction_HighLine_01 + 1
+            lda #>(dda1Step0ASM_HighLine_01)
+            sta patch_dda1StepFunction_HighLine_01 + 2
 
 
 dda1InitDone_1234_00 :
@@ -359,7 +317,61 @@ end_dda1Step2ASM_HighLine_00_SwitchCase
             ldy _theColorLeft: lda _tabLeftBlue,y:  ora _tabRightBlue,x: ldy #200: sta (_wrtAdr),y:
             lda _wrtAdr: clc: adc #240: sta _wrtAdr: .(: bcc skip:    inc _wrtAdr+1: skip: .):
 ;; 1.3.4 DDAs STEP
-            .( : lda _dda1StepFunction : sta call+1: lda _dda1StepFunction+1 : sta call+2 : call : jsr 0000 : .) :
+            ;; .( : lda _dda1StepFunction : sta call+1: lda _dda1StepFunction+1 : sta call+2 : call : jsr 0000 : .) :
+
+patch_dda1StepFunction_HighLine_01
+jmp dda1Step2ASM_HighLine_01
+
+
+dda1Step0ASM_HighLine_01
+patch_dda1Step0ASM_HighLine_01
+    inc         _dda1CurrentValue
+jmp end_dda1Step2ASM_HighLine_01_SwitchCase
+
+
+dda1Step1ASM_HighLine_01
+
+loop_dda1Step1ASM_HighLine_01
+    lda         _dda1CurrentError
+    bmi         end_loop_dda1Step1ASM_HighLine_01
+    asl         
+    cmp         _dda1NbStep
+    bcc         end_loop_dda1Step1ASM_HighLine_01
+            lda         _dda1CurrentError
+            sec ;; FIXME : this sec is useless
+            sbc         _dda1NbStep
+            sta         _dda1CurrentError
+            ;; TODO: OPTIM: replace by patch inc/dec instruction
+patch_dda1Step1ASM_HighLine_01
+            inc         _dda1CurrentValue
+    jmp         loop_dda1Step1ASM_HighLine_01
+end_loop_dda1Step1ASM_HighLine_01
+    lda         _dda1CurrentError
+    clc
+    adc         _dda1NbVal
+    sta         _dda1CurrentError
+jmp end_dda1Step2ASM_HighLine_01_SwitchCase
+
+dda1Step2ASM_HighLine_01
+    lda         _dda1CurrentError
+    sec
+    sbc         _dda1NbVal
+    sta         _dda1CurrentError
+    bmi         updateError_dda1Step2ASM_HighLine_01
+    asl
+    cmp         _dda1NbStep
+    bcc         updateError_dda1Step2ASM_HighLine_01
+    jmp         end_dda1Step2ASM_HighLine_01_SwitchCase
+updateError_dda1Step2ASM_HighLine_01
+            lda         _dda1CurrentError
+            clc
+            adc         _dda1NbStep
+            sta         _dda1CurrentError
+patch_dda1Step2ASM_HighLine_01            
+            inc         _dda1CurrentValue
+            
+end_dda1Step2ASM_HighLine_01_SwitchCase
+
         	.( : lda _dda3StepFunction : sta call+1: lda _dda3StepFunction+1 : sta call+2 : :call : jsr 0000 : .) :
             lda _dda2CurrentError: sec: sbc _dda2NbVal: sta _dda2CurrentError:
             :.(:bmi updateError: asl: cmp _dda2NbStep: bcs  done :updateError: lda _dda2CurrentError: clc: adc _dda2NbStep: sta _dda2CurrentError: inc _dda2CurrentValue: done:.):
