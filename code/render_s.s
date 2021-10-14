@@ -555,10 +555,16 @@ endloopOnIdxLin_01
     :.(:
     lda _dda1StartValue: cmp _dda1EndValue: bcs else:
         lda _dda1EndValue: sec: sbc _dda1StartValue: sta _dda1NbVal:
-        lda #1: sta _dda1Increment:
+        ;; lda #1: sta _dda1Increment:
+        lda #$E6: 
+        sta    patch_dda1Step0ASM_LowLine_00: sta patch_dda1Step1ASM_LowLine_00: sta patch_dda1Step2ASM_LowLine_00
+        sta    patch_dda1Step0ASM_LowLine_01: sta patch_dda1Step1ASM_LowLine_01: sta patch_dda1Step2ASM_LowLine_01
     jmp endif:else:
         sbc _dda1EndValue: sta _dda1NbVal:
-        lda #$FF: sta _dda1Increment:
+        ;; lda #$FF: sta _dda1Increment:
+        lda #$C6: 
+        sta    patch_dda1Step0ASM_LowLine_00: sta patch_dda1Step1ASM_LowLine_00: sta patch_dda1Step2ASM_LowLine_00
+        sta    patch_dda1Step0ASM_LowLine_01: sta patch_dda1Step1ASM_LowLine_01: sta patch_dda1Step2ASM_LowLine_01
     :endif:.):
 
     lda _dda1NbStep:
@@ -566,15 +572,46 @@ endloopOnIdxLin_01
     beq NbStepEqualsNbVal_5678_00 :
     bcs NbStepGreaterThanNbVal_5678_00 :
         lda _dda1NbVal: sta _dda1CurrentError :
-        lda #<(_dda1Step1ASM): sta _dda1StepFunction: lda #>(_dda1Step1ASM):sta _dda1StepFunction+1:
+        ;;lda #<(_dda1Step1ASM): sta _dda1StepFunction: lda #>(_dda1Step1ASM):sta _dda1StepFunction+1:
+        lda #<(dda1Step1ASM_LowLine_00)
+        sta patch_dda1StepFunction_LowLine_00 + 1
+        lda #>(dda1Step1ASM_LowLine_00)
+        sta patch_dda1StepFunction_LowLine_00 + 2
+
+        lda #<(dda1Step1ASM_LowLine_01)
+        sta patch_dda1StepFunction_LowLine_01 + 1
+        lda #>(dda1Step1ASM_LowLine_01)
+        sta patch_dda1StepFunction_LowLine_01 + 2
+
     jmp dda1InitDone_5678_00 :
     NbStepGreaterThanNbVal_5678_00    :
         lda _dda1NbStep: sta _dda1CurrentError:
-        lda #<(_dda1Step2ASM): sta _dda1StepFunction: lda #>(_dda1Step2ASM): sta _dda1StepFunction+1:
+        ;; lda #<(_dda1Step2ASM): sta _dda1StepFunction: lda #>(_dda1Step2ASM): sta _dda1StepFunction+1:
+        lda #<(dda1Step2ASM_LowLine_00)
+        sta patch_dda1StepFunction_LowLine_00 + 1
+        lda #>(dda1Step2ASM_LowLine_00)
+        sta patch_dda1StepFunction_LowLine_00 + 2
+
+        lda #<(dda1Step2ASM_LowLine_01)
+        sta patch_dda1StepFunction_LowLine_01 + 1
+        lda #>(dda1Step2ASM_LowLine_01)
+        sta patch_dda1StepFunction_LowLine_01 + 2
+
     jmp dda1InitDone_5678_00 :
     NbStepEqualsNbVal_5678_00    :
         lda _dda1EndValue: sta _dda1CurrentError:
-        lda #<(_dda1Step0ASM):sta _dda1StepFunction:lda #>(_dda1Step0ASM):sta _dda1StepFunction+1:
+        ;;lda #<(_dda1Step0ASM):sta _dda1StepFunction:lda #>(_dda1Step0ASM):sta _dda1StepFunction+1:
+        lda #<(dda1Step0ASM_LowLine_00)
+        sta patch_dda1StepFunction_LowLine_00 + 1
+        lda #>(dda1Step0ASM_LowLine_00)
+        sta patch_dda1StepFunction_LowLine_00 + 2
+
+        lda #<(dda1Step0ASM_LowLine_01)
+        sta patch_dda1StepFunction_LowLine_01 + 1
+        lda #>(dda1Step0ASM_LowLine_01)
+        sta patch_dda1StepFunction_LowLine_01 + 2
+
+
 dda1InitDone_5678_00 :
 
 ;; 1.4.3  INIT DDA 3 SPECIFIC
@@ -631,8 +668,62 @@ loopOnIdxLin_02
             ldy _theColorLeft: lda _tabLeftGreen,y: ora _tabRightGreen,x: ldy #40: sta (_wrtAdr),y:
             ldy _theColorLeft: lda _tabLeftBlue,y:  ora _tabRightBlue,x: ldy #80: sta (_wrtAdr),y:
 ;; 1.5.2 DDAs STEP
-            .( : lda _dda1StepFunction : sta call+1: lda _dda1StepFunction+1 : sta call+2: call : jsr 0000 : .) :
+            ;;.( : lda _dda1StepFunction : sta call+1: lda _dda1StepFunction+1 : sta call+2: call : jsr 0000 : .) :
+
+patch_dda1StepFunction_LowLine_00
+jmp dda1Step2ASM_LowLine_00
+
+
+dda1Step0ASM_LowLine_00
+patch_dda1Step0ASM_LowLine_00
+    inc         _dda1CurrentValue
+jmp end_dda1Step2ASM_LowLine_00_SwitchCase
+
+
+dda1Step1ASM_LowLine_00
+
+loop_dda1Step1ASM_LowLine_00
+    lda         _dda1CurrentError
+    bmi         end_loop_dda1Step1ASM_LowLine_00
+    asl         
+    cmp         _dda1NbStep
+    bcc         end_loop_dda1Step1ASM_LowLine_00
+            lda         _dda1CurrentError
+            sec ;; FIXME : this sec is useless
+            sbc         _dda1NbStep
+            sta         _dda1CurrentError
+            ;; TODO: OPTIM: replace by patch inc/dec instruction
+patch_dda1Step1ASM_LowLine_00
+            inc         _dda1CurrentValue
+    jmp         loop_dda1Step1ASM_LowLine_00
+end_loop_dda1Step1ASM_LowLine_00
+    lda         _dda1CurrentError
+    clc
+    adc         _dda1NbVal
+    sta         _dda1CurrentError
+jmp end_dda1Step2ASM_LowLine_00_SwitchCase
+
+dda1Step2ASM_LowLine_00
+    lda         _dda1CurrentError
+    sec
+    sbc         _dda1NbVal
+    sta         _dda1CurrentError
+    bmi         updateError_dda1Step2ASM_LowLine_00
+    asl
+    cmp         _dda1NbStep
+    bcc         updateError_dda1Step2ASM_LowLine_00
+    jmp         end_dda1Step2ASM_LowLine_00_SwitchCase
+updateError_dda1Step2ASM_LowLine_00
+            lda         _dda1CurrentError
+            clc
+            adc         _dda1NbStep
+            sta         _dda1CurrentError
+patch_dda1Step2ASM_LowLine_00            
+            inc         _dda1CurrentValue
             
+end_dda1Step2ASM_LowLine_00_SwitchCase
+
+
             lda _dda2CurrentError: sec: sbc _dda2NbVal: sta _dda2CurrentError:
             :.(:bmi updateError: asl: cmp _dda2NbStep: bcs  done :updateError: lda _dda2CurrentError: clc: adc _dda2NbStep: sta _dda2CurrentError: inc _dda2CurrentValue: done:.):
 
@@ -660,7 +751,62 @@ loopOnIdxLin_02
             ldy _theColorLeft: lda _tabLeftBlue,y:  ora _tabRightBlue,x: ldy #200: sta (_wrtAdr),y:
             lda _wrtAdr: clc: adc #240: sta _wrtAdr: .(: bcc skip:    inc _wrtAdr+1: skip: .):
 ;; 1.5.4 DDAs STEP
-            .( : lda _dda1StepFunction : sta call+1: lda _dda1StepFunction+1 : sta call+2 : call : jsr 0000 : .) :
+            ;;.( : lda _dda1StepFunction : sta call+1: lda _dda1StepFunction+1 : sta call+2 : call : jsr 0000 : .) :
+
+patch_dda1StepFunction_LowLine_01
+jmp dda1Step2ASM_LowLine_01
+
+
+dda1Step0ASM_LowLine_01
+patch_dda1Step0ASM_LowLine_01
+    inc         _dda1CurrentValue
+jmp end_dda1Step2ASM_LowLine_01_SwitchCase
+
+
+dda1Step1ASM_LowLine_01
+
+loop_dda1Step1ASM_LowLine_01
+    lda         _dda1CurrentError
+    bmi         end_loop_dda1Step1ASM_LowLine_01
+    asl         
+    cmp         _dda1NbStep
+    bcc         end_loop_dda1Step1ASM_LowLine_01
+            lda         _dda1CurrentError
+            sec ;; FIXME : this sec is useless
+            sbc         _dda1NbStep
+            sta         _dda1CurrentError
+            ;; TODO: OPTIM: replace by patch inc/dec instruction
+patch_dda1Step1ASM_LowLine_01
+            inc         _dda1CurrentValue
+    jmp         loop_dda1Step1ASM_LowLine_01
+end_loop_dda1Step1ASM_LowLine_01
+    lda         _dda1CurrentError
+    clc
+    adc         _dda1NbVal
+    sta         _dda1CurrentError
+jmp end_dda1Step2ASM_LowLine_01_SwitchCase
+
+dda1Step2ASM_LowLine_01
+    lda         _dda1CurrentError
+    sec
+    sbc         _dda1NbVal
+    sta         _dda1CurrentError
+    bmi         updateError_dda1Step2ASM_LowLine_01
+    asl
+    cmp         _dda1NbStep
+    bcc         updateError_dda1Step2ASM_LowLine_01
+    jmp         end_dda1Step2ASM_LowLine_01_SwitchCase
+updateError_dda1Step2ASM_LowLine_01
+            lda         _dda1CurrentError
+            clc
+            adc         _dda1NbStep
+            sta         _dda1CurrentError
+patch_dda1Step2ASM_LowLine_01            
+            inc         _dda1CurrentValue
+            
+end_dda1Step2ASM_LowLine_01_SwitchCase
+
+
             lda _dda2CurrentError: sec: sbc _dda2NbVal: sta _dda2CurrentError:
             :.(:bmi updateError: asl: cmp _dda2NbStep: bcs  done :updateError: lda _dda2CurrentError: clc: adc _dda2NbStep: sta _dda2CurrentError: inc _dda2CurrentValue: done:.):
         	.( : lda _dda3StepFunction : sta call+1: lda _dda3StepFunction+1 : sta call+2 :call : jsr 0000 : .) :
