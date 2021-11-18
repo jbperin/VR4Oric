@@ -1,6 +1,15 @@
 
 // #include <stdio.h>
+#ifdef __GNUC__
 
+unsigned char   dda2NbStep;
+unsigned char   dda2StartValue;
+unsigned char   dda2CurrentValue;
+unsigned char   dda2EndValue;
+unsigned char   dda2NbVal;
+signed char     dda2CurrentError;
+
+#else
 extern unsigned char   dda2NbStep;
 extern unsigned char   dda2StartValue;
 
@@ -8,6 +17,7 @@ extern unsigned char   dda2CurrentValue;
 extern unsigned char   dda2EndValue;
 extern unsigned char   dda2NbVal;
 extern signed char     dda2CurrentError;
+#endif
 void            (*dda2StepFunction)(); 
 
 

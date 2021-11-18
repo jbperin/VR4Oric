@@ -1,6 +1,18 @@
 
 // #include <stdio.h>
 #include "config.h"
+
+
+#ifdef __GNUC__
+unsigned char   dda1NbStep;
+unsigned char   dda1StartValue;
+unsigned char   dda1CurrentValue;
+unsigned char   dda1EndValue;
+unsigned char   dda1NbVal;
+signed char     dda1CurrentError;
+signed char     dda1Increment;
+
+#else
 extern unsigned char   dda1NbStep;
 extern unsigned char   dda1StartValue;
 
@@ -8,9 +20,9 @@ extern unsigned char   dda1CurrentValue;
 extern unsigned char   dda1EndValue;
 extern unsigned char   dda1NbVal;
 extern signed char     dda1CurrentError;
-void            (*dda1StepFunction)(); 
 extern signed char     dda1Increment;
-
+#endif
+void            (*dda1StepFunction)(); 
 
 #ifdef __USE_C_DDA__
 void dda1Step0(){

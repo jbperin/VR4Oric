@@ -1,5 +1,13 @@
 
+#ifdef __GNUC__
+unsigned char   dda4NbStep;
+unsigned char   dda4StartValue;
+unsigned char   dda4CurrentValue;
+unsigned char   dda4EndValue;
+unsigned char   dda4NbVal;
+signed char     dda4CurrentError;
 
+#else
 extern unsigned char   dda4NbStep;
 extern unsigned char   dda4StartValue;
 
@@ -7,6 +15,7 @@ extern unsigned char   dda4CurrentValue;
 extern unsigned char   dda4EndValue;
 extern unsigned char   dda4NbVal;
 extern signed char     dda4CurrentError;
+#endif
 void            (*dda4StepFunction)(); 
 
 #ifdef __USE_C_DDA__

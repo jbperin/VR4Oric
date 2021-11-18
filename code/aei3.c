@@ -1,15 +1,25 @@
 
 // #include <stdio.h>
 #include "config.h"
+
+#ifdef __GNUC__
+unsigned char   dda3NbStep;
+unsigned char   dda3StartValue;
+unsigned char   dda3CurrentValue;
+unsigned char   dda3EndValue;
+unsigned char   dda3NbVal;
+signed char     dda3CurrentError;
+signed char     dda3Increment;
+#else
 extern unsigned char   dda3NbStep;
 extern unsigned char   dda3StartValue;
-
 extern unsigned char   dda3CurrentValue;
 extern unsigned char   dda3EndValue;
 extern unsigned char   dda3NbVal;
 extern signed char     dda3CurrentError;
-void                   (*dda3StepFunction)(); 
 extern signed char     dda3Increment;
+#endif
+void                   (*dda3StepFunction)(); 
 
 
 #ifdef __USE_C_DDA__

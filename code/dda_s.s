@@ -98,6 +98,8 @@ _dda4CurrentError   .dsb 1
 
 .text
 
+#ifndef __USE_PURE_ASM_RENDER__
+
 _dda1Step0ASM
 .(
     ;; TODO: OPTIM: replace by patch inc/dec instruction
@@ -218,3 +220,4 @@ updateError
 .)
     rts
 
+#endif __USE_PURE_ASM_RENDER__
